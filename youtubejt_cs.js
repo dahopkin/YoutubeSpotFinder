@@ -37,7 +37,6 @@ var flashVideoPlayer = function () {
 var getVideoPlayer = function () { return html5VideoPlayer;}
 var videoPlayer = getVideoPlayer();
 
-//alert("script running");
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "goTo1-4") {
         videoPlayer.goTo1_4thPoint();
