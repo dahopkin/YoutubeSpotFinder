@@ -13,7 +13,8 @@ var html5VideoPlayer = function () {
         goTo2_4thPoint: goTo2_4thPoint,
         goTo3_4thPoint: goTo3_4thPoint,
         goTo30Point: goTo30Point,
-        seekToTime:seekToTime
+        seekToTime: seekToTime,
+        getVideoDuration: getVideoDuration
     };
 }();
 
@@ -30,12 +31,62 @@ var flashVideoPlayer = function () {
         goTo2_4thPoint: goTo2_4thPoint,
         goTo3_4thPoint: goTo3_4thPoint,
         goTo30Point: goTo30Point,
-        seekToTime: seekToTime
+        seekToTime: seekToTime,
+        getVideoDuration: getVideoDuration
     };
 }();
 
 var getVideoPlayer = function () { return html5VideoPlayer;}
 var videoPlayer = getVideoPlayer();
+var binarySearcher = function (videoPlayer) {
+    var isRunning = false;
+    var start, end, mid;
+    var calculateMid = function () { mid = (start + end) / 2; }
+    var setStartEndAndMidToDefault = function () {
+        start = 0;
+        end = videoPlayer.getVideoDuration();
+        calculateMid();
+    }
+    var resetBinarySearcher = function () {
+        setStartEndAndMidToDefault();
+        isRunning = false;
+    };
+    var startBinarySearcher = function () {
+        setStartEndAndMidToDefault();
+        isRunning = true;
+        goToMid();
+    }
+    var goToMid = function () { videoPlayer.seekToTime(mid); }
+    var startOrStop = function () {
+        if (isRunning) { resetBinarySearcher(); }
+        else {
+            startBinarySearcher();
+        }
+    }
+    var shouldEndNow = function(){return start > end;}
+    var goLeft = function () {
+        if (!isRunning) { return;}
+        end = mid - 1;
+        calculateMid();
+        goToMid();
+        if (shouldEndNow()) {
+            resetBinarySearcher();
+        }
+    };
+    var goRight = function () {
+        if (!isRunning) { return; }
+        start = mid + 1;
+        calculateMid();
+        goToMid();
+        if (shouldEndNow()) { resetBinarySearcher(); }
+    };
+    return {
+        startOrStop: startOrStop,
+        goLeft: goLeft,
+        goRight: goRight,
+
+    };
+}(videoPlayer);
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "goTo1-4") {
@@ -50,4 +101,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "goTo30") {
         videoPlayer.goTo30Point();
     }
+    if (request.action == "startOrStop") {
+        binarySearcher.startOrStop();
+    }
+    if (request.action == "goLeft") {
+        binarySearcher.goLeft();
+    }
+    if (request.action == "goRight") {
+        binarySearcher.goRight();
+    }
+
 });
