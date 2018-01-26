@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube JumpTo",
+  "description": "Adds functionality to YouTube to be able to jump to certain parts of the video, as well as find a part of the video through a binary search.",
+  "version": "1.0",
+  "page_action": {
+    "default_icon": "yjt_icon.png",
+    "default_title": "YouTube JumpTo",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": [ "eventPage.js" ],
+    "persistent": false
+  },
+
+  "content_scripts": [
+    {
+      "matches": [ "*://*.youtube.com/watch*" ],
+      "js": [ "youtubejt_cs.js", "jquery-3.3.1.min.js" ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": ["tabs", "*://*.youtube.com/*"]
+
+
+}
