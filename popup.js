@@ -16,4 +16,13 @@ $(function () {
     $('#goTo30').click(function () {
         sendActionAsMessageFromCurrentTab("goTo30")
     });
+    $('#startOrStop').click(function () {
+        sendActionAsMessageFromCurrentTab("startOrStop")
+    });
+    $('#goLeft').click(function () {
+        sendActionAsMessageFromCurrentTab("goLeft")
+    });
+    $('#goRight').click(function () {
+        sendActionAsMessageFromCurrentTab("goRight")
+    });
 });

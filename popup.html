@@ -4,12 +4,23 @@
     <title>YouTube JumpTo</title>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="popup.js"></script>
+    <link href="popup.css" rel="stylesheet" />
 </head>
 <body>
     <h1>YouTube JumpTo Controls</h1>
+    <div class="btn-group">
     <input type="submit" id="goTo1-4" value="Go to 1/4" />
     <input type="submit" id="goTo2-4" value="Go to 2/4" />
     <input type="submit" id="goTo3-4" value="Go to 3/4" />
     <input type="submit" id="goTo30" value="Go to 30s before end" />
+    </div>
+
+    <div class="btn-group">
+        <input type="submit" id="startOrStop" value="Start" />
+        <input type="submit" id="goLeft" value="Before This" />
+        <input type="submit" id="goRight" value="After This" />
+    </div>
+
+
 </body>
 </html>
