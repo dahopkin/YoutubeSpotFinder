@@ -1,43 +1,57 @@
 chrome.runtime.sendMessage({ action: "show" });
 
-var html5VideoPlayer = function () {
-    var innerPlayer = document.getElementsByTagName("video")[0];
-    var getVideoDuration = function(){return Number(innerPlayer.duration);}
-    var seekToTime = function (seconds) { innerPlayer.currentTime = seconds;}
+var getVideoPlayerButtonFunctionObject = function (videoObject) {
+    var seekToTime = videoObject.seekToTime;
+    var getVideoDuration = videoObject.getVideoDuration;
     var goTo1_4thPoint = function () { seekToTime(getVideoDuration() * (1 / 4)); };
     var goTo2_4thPoint = function () { seekToTime(getVideoDuration() * (2 / 4)); };
     var goTo3_4thPoint = function () { seekToTime(getVideoDuration() * (3 / 4)); };
-    var goTo30Point = function () { if (getVideoDuration() > 30) { seekToTime(getVideoDuration() - 30); } };
+    var goTo30Point = function () {
+        if (getVideoDuration() > 30) {
+            seekToTime(getVideoDuration() - 30);
+        }
+    };
     return {
         goTo1_4thPoint: goTo1_4thPoint,
         goTo2_4thPoint: goTo2_4thPoint,
         goTo3_4thPoint: goTo3_4thPoint,
         goTo30Point: goTo30Point,
+        seekToTime: seekToTime,
+        getVideoDuration: getVideoDuration
+    };
+};
+var html5VideoObject = function () {
+    var innerPlayer = document.getElementsByTagName("video")[0];
+    var getVideoDuration = function () { return Number(innerPlayer.duration); }
+    var seekToTime = function (seconds) { innerPlayer.currentTime = seconds; }
+    return {
+        seekToTime: seekToTime,
+        getVideoDuration: getVideoDuration
+    };
+}();
+
+var html5VideoPlayer = function () {
+    return getVideoPlayerButtonFunctionObject(html5VideoObject);
+}();
+
+var flashVideoObject = function () {
+    var innerPlayer = document.getElementById("movie_player");
+    var getVideoDuration = function () { return Number(innerPlayer.getDuration()); }
+    var seekToTime = function (seconds) { innerPlayer.seekTo(seconds); }
+    return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration
     };
 }();
 
 var flashVideoPlayer = function () {
-    var innerPlayer = document.getElementById("movie_player");
-    var getVideoDuration = function(){return Number(innerPlayer.getDuration());}
-    var seekToTime = function (seconds) { innerPlayer.seekTo(seconds);}
-    var goTo1_4thPoint = function () { seekToTime(getVideoDuration() * (1 / 4)); };
-    var goTo2_4thPoint = function () { seekToTime(getVideoDuration() * (2 / 4)); };
-    var goTo3_4thPoint = function () { seekToTime(getVideoDuration() * (3 / 4)); };
-    var goTo30Point = function () { if (getVideoDuration() > 30) { seekToTime(getVideoDuration() - 30); } };
-    return {
-        goTo1_4thPoint: goTo1_4thPoint,
-        goTo2_4thPoint: goTo2_4thPoint,
-        goTo3_4thPoint: goTo3_4thPoint,
-        goTo30Point: goTo30Point,
-        seekToTime: seekToTime,
-        getVideoDuration: getVideoDuration
-    };
+    return getVideoPlayerButtonFunctionObject(flashVideoObject);
 }();
 
-var getVideoPlayer = function () { return html5VideoPlayer;}
+var getVideoPlayer = function () { return html5VideoPlayer; }
+
 var videoPlayer = getVideoPlayer();
+
 var binarySearcher = function (videoPlayer) {
     var isRunning = false;
     var start, end, mid;
@@ -63,9 +77,9 @@ var binarySearcher = function (videoPlayer) {
             startBinarySearcher();
         }
     }
-    var shouldEndNow = function(){return start > end;}
+    var shouldEndNow = function () { return start > end; }
     var goLeft = function () {
-        if (!isRunning) { return;}
+        if (!isRunning) { return; }
         end = mid - 1;
         calculateMid();
         goToMid();
