@@ -1,11 +1,21 @@
+body{
+    min-width:350px;
+    border-color: #c1c2c0;
+}
+html {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+ .btn-group {
+    margin:auto;
+}
 .btn-group input[type=submit] {
     background-color: #4CAF50; /* Green background */
     border: 1px solid green; /* Green border */
     color: white; /* White text */
-    padding: 10px 24px; /* Some padding */
+    padding: 6px 12px; /* Some padding */
     cursor: pointer; /* Pointer/hand icon */
     float: left; /* Float the buttons side by side */
-    margin-bottom:25px;
+    margin-bottom:10px;
 }
 
 .btn-group button:not(:last-child) {
@@ -22,4 +32,7 @@
 /* Add a background color on hover */
 .btn-group input[type=submit]:hover {
     background-color: #3e8e41;
+}
+.btn{
+
 }
