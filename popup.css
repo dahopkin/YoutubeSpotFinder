@@ -1,38 +1,72 @@
 body{
     min-width:350px;
     border-color: #c1c2c0;
+    background-color: #f0f0f0
 }
 html {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
- .btn-group {
-    margin:auto;
-}
-.btn-group input[type=submit] {
-    background-color: #4CAF50; /* Green background */
-    border: 1px solid green; /* Green border */
-    color: white; /* White text */
-    padding: 6px 12px; /* Some padding */
-    cursor: pointer; /* Pointer/hand icon */
-    float: left; /* Float the buttons side by side */
-    margin-bottom:10px;
-}
 
-.btn-group button:not(:last-child) {
-    border-right: none; /* Prevent double borders */
-}
 
-/* Clear floats (clearfix hack) */
-.btn-group:after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-/* Add a background color on hover */
-.btn-group input[type=submit]:hover {
-    background-color: #3e8e41;
-}
 .btn{
-
+    border-radius: 6px;
+    border: 2px solid;
+    display: inline-block;
+    font-size: 11px;
+    padding: 0 1em;
+    vertical-align: middle;
+    color: black;
+    background: white;
+    box-sizing: border-box;
+    line-height: 28px;
+    font-weight: bold;
+    text-align: center;
+    text-align: center;
+    text-decoration: none;
+    text-transform:uppercase;
+}
+.btn-red, .btn-red-inverse:hover{
+    color:white;
+    background: red;
+    border-color:red;
+}
+.btn-red:hover,.btn-red-inverse{
+    color:red;
+    background: white;
+    border-color:red;
+}
+.btn-primary{
+    color:white;
+    background: rgb(94, 94, 94);
+    border-color:rgb(94, 94, 94);
+}
+.btn-primary:hover{
+    color:rgb(94, 94, 94);
+    background: white;
+    border-color:rgb(94, 94, 94);
+}
+.float-left{float: left;}
+.div-center{
+    margin-left:auto;
+    margin-right:auto;
+}
+.panel-outer{text-align: center;}
+#startOrStop{
+    margin-right: 10px;
+}
+.center{text-align: center;}
+.btn-disabled{opacity:0.5;}
+.btn-disabled:hover{opacity:0.5;}
+fieldset{
+    border-radius: 5px;
+    border-color: #c1c2c0;
+    border: 1px solid;
+}
+.panel-title{
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+.button-panel{
+   margin-bottom: 10px;
 }
