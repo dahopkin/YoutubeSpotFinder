@@ -1,48 +1,49 @@
 <!doctype html>
 <html>
+
 <head>
     <title>YouTube JumpTo</title>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="popup.js"></script>
     <link href="popup.css" rel="stylesheet" />
 </head>
+
 <body>
     <h2 class="center">YouTube JumpTo Controls</h1>
-    <div class="button-panel">
-        <div class="panel-title">Go To</div>
-        <div class="panel-outer">
-        <div class="div-center">
-            <input class="btn btn-primary" type="submit" id="goTo1-4" value="1/4" />
-            <input class="btn btn-primary" type="submit" id="goTo2-4" value="1/2" />
-            <input class="btn btn-primary" type="submit" id="goTo3-4" value="3/4" />
-            <input class="btn btn-primary" type="submit" id="goTo30" value="30s before end" />
+        <div class="button-panel">
+            <div class="panel-title">Go To</div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-primary" type="submit" id="goTo1-4" value="1/4" />
+                    <input class="btn btn-primary" type="submit" id="goTo2-4" value="1/2" />
+                    <input class="btn btn-primary" type="submit" id="goTo3-4" value="3/4" />
+                    <input class="btn btn-primary" type="submit" id="goTo30" value="30s before end" />
+                </div>
+                <p class="note">
+                    Jump to certain points of the video.
+                </p>
+            </div>
         </div>
-        <p class="note">
-                Jump to certain points of the video.
-            </p>
-    </div>
-    </div>
 
-    <div class="button-panel">
-        <div class="panel-title">Before/After Search</div>
-        <div class="panel-outer">
-        <div class="div-center">
-            <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
-            <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
-            <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
+        <div class="button-panel">
+            <div class="panel-title">Before/After Search</div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
+                    <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
+                    <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
+                </div>
+                <p class="note">
+                    Select "Start" to jump to the middle of the video. If what you're looking for is before the middle, click "Before This".
+                    If not, click "After This". Repeat this process, clicking "Before" or "After" until you find what you
+                    want. Click "Stop" to end the search. Note: Clicking the buttons enough will end the search by itself
+                    if it can't find any more points to jump to.
+                </p>
+            </div>
         </div>
-        <p class="note">
-            Select "Start" to jump to the middle of the video. 
-            If what you're looking for is before the middle, 
-            click "Before This". If not, click "After This".
-            Repeat this process, clicking "Before" or "After" 
-            until you find what you want. Click "Stop" to end the search.
-            Note: Clicking the buttons enough will end the search by itself if it can't find any more points to jump to.
-        </p>
-    </div>
-</div>
 
 
 
 </body>
+
 </html>
