@@ -94,10 +94,14 @@ var binarySearcher = function (videoPlayer) {
         goToMid();
         if (shouldEndNow()) { resetBinarySearcher(); }
     };
+    var getBinarySearchStatus = function(){
+        return { isRunning : isRunning};
+    }
     return {
         startOrStop: startOrStop,
         goLeft: goLeft,
         goRight: goRight,
+        getBinarySearchStatus: getBinarySearchStatus
 
     };
 }(videoPlayer);
@@ -124,5 +128,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "goRight") {
         binarySearcher.goRight();
     }
+    if (request.action == "start") { }
+    sendResponse(binarySearcher.getBinarySearchStatus());
 
 });
