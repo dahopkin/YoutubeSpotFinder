@@ -20,7 +20,11 @@
       "run_at": "document_end"
     }
   ],
-  "permissions": ["tabs", "*://*.youtube.com/*watch?v=*"]
+  "permissions": [
+    "tabs",
+    "storage",
+     "*://*.youtube.com/*watch?v=*"
+    ]
 
 
 }
