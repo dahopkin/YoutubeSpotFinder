@@ -15,12 +15,12 @@
 
   "content_scripts": [
     {
-      "matches": [ "*://*.youtube.com/watch*" ],
+      "matches": [ "*://*.youtube.com/*watch?v=*" ],
       "js": [ "youtubejt_cs.js", "jquery-3.3.1.min.js" ],
       "run_at": "document_end"
     }
   ],
-  "permissions": ["tabs", "*://*.youtube.com/*"]
+  "permissions": ["tabs", "*://*.youtube.com/*watch?v=*"]
 
 
 }
