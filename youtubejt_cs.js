@@ -175,9 +175,14 @@ var bookmarks = function(videoPlayer){
             }else{
                 getBookmarkData(function(bookmarkArray){
                     bookmarkArray.push(oneBookmarkData);
-                    saveResult["status"] = "success";
-                    saveResult["message"] = "Your bookmark was saved successfully.";
-                    callback(saveResult);
+                    var saveObject = {};
+                    saveObject[key] = bookmarkArray;
+                    chrome.storage.sync.set(saveObject, function(items) {
+                        saveResult["status"] = "success";
+                        saveResult["message"] = "Your bookmark was saved successfully.";
+                        callback(saveResult);
+                      });
+                    //callback(saveResult);
                 });
             }
         } else{
@@ -192,6 +197,15 @@ var bookmarks = function(videoPlayer){
     };
 }(videoPlayer);
 var currentTabURL = ""
+var getMultipleDataAndSend = function(sendResponse){
+    bookmarks.getBookmarkData(function(bookmarkData){
+        var appData = {
+            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
+            "bookmarkInfo":bookmarkData
+        };
+        sendResponse(appData);
+    });
+}
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     currentTabURL = request.url;
     if (request.action == "goTo1-4") {
@@ -216,8 +230,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         binarySearcher.goRight();
     }
     else if (request.action == "start") { }
+    else if (request.action == "goToTime") {
+        videoPlayer.seekToTime(request.time);
+    }
+    else if (request.action == "saveDefaultBookmark") {
+        bookmarks.saveBookmark(getMultipleDataAndSend(sendResponse));
+    }
     bookmarks.getBookmarkData(function(bookmarkData){
-        sendResponse(binarySearcher.getBinarySearchStatus());
+        var appData = {
+            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
+            "bookmarkInfo":bookmarkData
+        };
+        sendResponse(appData);
     });
     return true;
 

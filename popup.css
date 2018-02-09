@@ -50,7 +50,7 @@ html {
     margin-left:auto;
     margin-right:auto;
 }
-.panel-outer{text-align: center;}
+.panel-outer, .center{text-align: center;}
 #startOrStop{
     margin-right: 10px;
 }
@@ -70,3 +70,9 @@ fieldset{
 .button-panel{
    margin-bottom: 10px;
 }
+.hidden{display:none;}
+.time-link{
+    text-decoration: underline;
+    cursor:pointer;
+}
+

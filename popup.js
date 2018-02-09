@@ -4,7 +4,10 @@ $(function () {
             chrome.tabs.sendMessage(tabs[0].id, { action: actionToSend, url:tabs[0].url }, callback);
         });
     }
-    
+    function setPageDom(appInfo){
+        setBinarySearchDom(appInfo.binarySearchStatusInfo);
+        setBookmarkDom(appInfo.bookmarkInfo);
+    }
     function setBinarySearchDom(binarySearchStatusInfo){
         if(binarySearchStatusInfo){
             if(binarySearchStatusInfo.isRunning){
@@ -16,6 +19,33 @@ $(function () {
             }
         }
         
+    }
+    //https://jsfiddle.net/mplungjan/u8ar8en8/
+    function pad(str) {
+        return ("0"+str).slice(-2);
+    }
+    function hhmmss(secs) {
+      var minutes = Math.floor(secs / 60);
+      secs = secs%60;
+      var hours = Math.floor(minutes/60)
+      minutes = minutes%60;
+      return pad(hours)+":"+pad(minutes)+":"+pad(secs);
+    }
+    //end url help.
+    function getTableContentsFromBookmarks(bookmarkInfo){
+        var currentBookmark;
+        var html;
+        for (var i = 0; i < bookmarkInfo.length; i++) {
+            currentBookmark = bookmarkInfo[i];
+            html += "<tr><td><a class='time-link' data-time="+currentBookmark.time+">"+hhmmss(currentBookmark.time)+"</a></td><td><p class=note'>"+currentBookmark.description+"<p></td><tr>";
+            //Do something
+        }
+        return html;
+    }
+    function setBookmarkDom(bookmarkInfo){
+        $('#description').val("");
+        $('#time').text('');
+        $('#bookmark-table').html(getTableContentsFromBookmarks(bookmarkInfo));
     }
     $('#goTo1-4').click(function () {
         sendActionAsMessageFromCurrentTab("goTo1-4")
@@ -30,13 +60,23 @@ $(function () {
         sendActionAsMessageFromCurrentTab("goTo30")
     });
     $('#startOrStop').click(function () {
-        sendActionAsMessageFromCurrentTab("startOrStop", setBinarySearchDom)
+        sendActionAsMessageFromCurrentTab("startOrStop", setPageDom)
     });
     $('#goLeft').click(function () {
-        sendActionAsMessageFromCurrentTab("goLeft", setBinarySearchDom)
+        sendActionAsMessageFromCurrentTab("goLeft", setPageDom)
     });
     $('#goRight').click(function () {
-        sendActionAsMessageFromCurrentTab("goRight", setBinarySearchDom)
+        sendActionAsMessageFromCurrentTab("goRight", setPageDom)
     });
-    sendActionAsMessageFromCurrentTab("start", setBinarySearchDom);
+    $(document).on("click.send", ".time-link", function(e){
+        e.preventDefault();
+        var time = $(this).data("time");
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { action: "goToTime", url:tabs[0].url, time:time }, setPageDom);
+        });
+    });
+    $('#saveBookmark').click(function(){
+        sendActionAsMessageFromCurrentTab("saveDefaultBookmark", setPageDom)
+    })
+    sendActionAsMessageFromCurrentTab("start", setPageDom);
 });
