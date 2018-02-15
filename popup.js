@@ -20,18 +20,7 @@ $(function () {
         }
         
     }
-    //https://jsfiddle.net/mplungjan/u8ar8en8/
-    function pad(str) {
-        return ("0"+str).slice(-2);
-    }
-    function hhmmss(secs) {
-      var minutes = Math.floor(secs / 60);
-      secs = secs%60;
-      var hours = Math.floor(minutes/60)
-      minutes = minutes%60;
-      return pad(hours)+":"+pad(minutes)+":"+pad(secs);
-    }
-    //end url help.
+    
     function getTableContentsFromBookmarks(bookmarkInfo){
         var currentBookmark;
         var html;
