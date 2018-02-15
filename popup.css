@@ -25,6 +25,19 @@ html {
     text-decoration: none;
     text-transform:uppercase;
 }
+.btn-small{
+    padding: 0 .25em;
+    line-height:7px;
+    font-size:5px;
+}
+.btn-medium{
+    padding: 0 .25em;
+    line-height:10px;
+    font-size:10px;
+}
+.btn-circle{
+    border-radius: 50%;
+}
 .btn-red, .btn-red-inverse:hover{
     color:white;
     background: red;
@@ -75,4 +88,5 @@ fieldset{
     text-decoration: underline;
     cursor:pointer;
 }
+table { margin: 0 auto; }
 

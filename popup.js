@@ -22,11 +22,16 @@ $(function () {
     }
     
     function getTableContentsFromBookmarks(bookmarkInfo){
-        var currentBookmark;
-        var html;
+        var currentBookmark, html, time, formattedTime, description;
         for (var i = 0; i < bookmarkInfo.length; i++) {
             currentBookmark = bookmarkInfo[i];
-            html += "<tr><td><a class='time-link' data-time="+currentBookmark.time+">"+hhmmss(currentBookmark.time)+"</a></td><td><p class=note'>"+currentBookmark.description+"<p></td><tr>";
+            if(i === 0){
+                html += "<tr><th>Time (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>";    
+            }
+            time = currentBookmark.time;
+            description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
+            formattedTime = hhmmss(currentBookmark.time);
+            html += "<tr><td><a class='time-link' data-time="+time+">"+formattedTime+"</a></td><td>"+description+"</td><td><button data-time="+time+" class='delete-button btn btn-medium btn-circle btn-primary'>X</button></td><tr>";
             //Do something
         }
         return html;
@@ -64,8 +69,19 @@ $(function () {
             chrome.tabs.sendMessage(tabs[0].id, { action: "goToTime", url:tabs[0].url, time:time }, setPageDom);
         });
     });
+    $(document).on("click.delete", ".delete-button", function(e){
+        e.preventDefault();
+        if (confirm("Are you sure you want to delete this bookmark?")) {
+            var time = $(this).data("time");
+            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, { action: "deleteBookmark", url: tabs[0].url, time: time }, setPageDom);
+            });
+        }
+        
+    });
     $('#saveBookmark').click(function(){
         sendActionAsMessageFromCurrentTab("saveDefaultBookmark", setPageDom)
     })
+    
     sendActionAsMessageFromCurrentTab("start", setPageDom);
 });
