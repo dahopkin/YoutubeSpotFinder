@@ -104,7 +104,7 @@ var bookmarks = function(videoPlayer){
         var description = oneBookmarkData.description;
         return {time:time, description:description};
     }
-    var saveBookmark = function(callback){
+    var saveDefaultBookmark = function(callback){
         var defaultBookmark = {time:videoPlayer.getCurrentTime(), description: ""};
         defaultBookmark = formatBookmarkData(defaultBookmark);
         saveCustomBookmark(defaultBookmark, callback);
@@ -128,7 +128,6 @@ var bookmarks = function(videoPlayer){
                         saveResult["message"] = "Your bookmark was saved successfully.";
                         callback(saveResult);
                       });
-                    //callback(saveResult);
                 });
             }
         } else{
@@ -136,10 +135,37 @@ var bookmarks = function(videoPlayer){
             saveResult["message"] = "You cannot save bookmarks on this page.";
         }
     };
+    var bookmarkExists = function(oneBookmarkData){
+        var key = getBookmarkKey();
+
+    };
+    var deleteBookmark = function(bookmarkTime, callback){
+        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var saveResult = {status:"", message:""};
+        if(videoID){
+            var key = getBookmarkKey(videoID);
+                getBookmarkData(function(bookmarkArray){
+                    bookmarkArray = bookmarkArray.filter(function(bookmark){
+                        return Number(bookmark.time) !== Number(bookmarkTime);
+                    });
+                    var saveObject = {};
+                    saveObject[key] = bookmarkArray;
+                    chrome.storage.sync.set(saveObject, function(items) {
+                        saveResult["status"] = "success";
+                        saveResult["message"] = "Your bookmark was deleted successfully.";
+                        callback(saveResult);
+                      });
+                });
+        } else{
+            saveResult["status"] = "failure";
+            saveResult["message"] = "There was an error in deleting this bookmark.";
+        }
+    };
     return {
         getBookmarkData:getBookmarkData,
-        saveBookmark:saveBookmark,
-        saveCustomBookmark:saveCustomBookmark
+        saveDefaultBookmark:saveDefaultBookmark,
+        saveCustomBookmark:saveCustomBookmark,
+        deleteBookmark:deleteBookmark
     };
 }(videoPlayer);
 var currentTabURL = ""
@@ -156,39 +182,50 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     currentTabURL = request.url;
     if (request.action == "goTo1-4") {
         videoPlayer.goTo1_4thPoint();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo2-4") {
         videoPlayer.goTo2_4thPoint();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo3-4") {
         videoPlayer.goTo3_4thPoint();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo30") {
         videoPlayer.goTo30Point();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "startOrStop") {
         binarySearcher.startOrStop();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goLeft") {
         binarySearcher.goLeft();
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goRight") {
         binarySearcher.goRight();
+        getMultipleDataAndSend(sendResponse);
     }
-    else if (request.action == "start") { }
+    else if (request.action == "start") { 
+        getMultipleDataAndSend(sendResponse);
+    }
     else if (request.action == "goToTime") {
         videoPlayer.seekToTime(request.time);
+        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "saveDefaultBookmark") {
-        bookmarks.saveBookmark(getMultipleDataAndSend(sendResponse));
+        bookmarks.saveDefaultBookmark(function(saveResult){
+            getMultipleDataAndSend(sendResponse)
+        });
     }
-    bookmarks.getBookmarkData(function(bookmarkData){
-        var appData = {
-            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
-            "bookmarkInfo":bookmarkData
-        };
-        sendResponse(appData);
-    });
+    else if (request.action == "deleteBookmark") {
+        bookmarks.deleteBookmark(request.time, function(saveResult){
+            getMultipleDataAndSend(sendResponse);
+        });
+    }
+    
     return true;
 
     
