@@ -23,6 +23,7 @@ $(function () {
     
     function getTableContentsFromBookmarks(bookmarkInfo){
         var currentBookmark, html, time, formattedTime, description;
+        html = "";
         for (var i = 0; i < bookmarkInfo.length; i++) {
             currentBookmark = bookmarkInfo[i];
             if(i === 0){
