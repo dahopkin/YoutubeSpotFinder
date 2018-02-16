@@ -135,6 +135,36 @@ var bookmarks = function(videoPlayer){
             saveResult["message"] = "You cannot save bookmarks on this page.";
         }
     };
+    var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){
+        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var saveResult = {status:"", message:""};
+        if(videoID){
+            var key = getBookmarkKey(videoID);
+            if(!singleBookmarkDataIsValid(oneBookmarkData)){
+                saveResult["status"] = "failure";
+                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
+                callback(saveResult);
+            }else{
+                getBookmarkData(function(bookmarkArray){
+                    var updateIndex = bookmarkArray.findIndex(bookmark => bookmark.time == bookmarkTime);
+                    if(updateIndex != -1){
+                        bookmarkArray[updateIndex].time = oneBookmarkData.time;
+                        bookmarkArray[updateIndex].description = oneBookmarkData.description;
+                    }
+                    var saveObject = {};
+                    saveObject[key] = bookmarkArray;
+                    chrome.storage.sync.set(saveObject, function(items) {
+                        saveResult["status"] = "success";
+                        saveResult["message"] = "Your bookmark was saved successfully.";
+                        callback(saveResult);
+                      });
+                });
+            }
+        } else{
+            saveResult["status"] = "failure";
+            saveResult["message"] = "You cannot save bookmarks on this page.";
+        }
+    };
     var bookmarkExists = function(oneBookmarkData){
         var key = getBookmarkKey();
 
@@ -147,7 +177,7 @@ var bookmarks = function(videoPlayer){
                 getBookmarkData(function(bookmarkArray){
                     bookmarkArray = bookmarkArray.filter(function(bookmark){
                         return Number(bookmark.time) !== Number(bookmarkTime);
-                    });
+                    }); 
                     var saveObject = {};
                     saveObject[key] = bookmarkArray;
                     chrome.storage.sync.set(saveObject, function(items) {
@@ -165,7 +195,8 @@ var bookmarks = function(videoPlayer){
         getBookmarkData:getBookmarkData,
         saveDefaultBookmark:saveDefaultBookmark,
         saveCustomBookmark:saveCustomBookmark,
-        deleteBookmark:deleteBookmark
+        deleteBookmark:deleteBookmark,
+        updateBookmark:updateBookmark
     };
 }(videoPlayer);
 var currentTabURL = ""
@@ -222,6 +253,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     else if (request.action == "deleteBookmark") {
         bookmarks.deleteBookmark(request.time, function(saveResult){
+            getMultipleDataAndSend(sendResponse);
+        });
+    }
+    else if (request.action == "updateBookmark") {
+        var updateBookmarkData = {time:request.updateData.newTime, description:request.updateData.newDescription};
+        bookmarks.updateBookmark(request.updateData.oldTime, updateBookmarkData, function(saveResult){
             getMultipleDataAndSend(sendResponse);
         });
     }
