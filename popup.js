@@ -31,7 +31,12 @@ $(function () {
             time = currentBookmark.time;
             description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
             formattedTime = hhmmss(currentBookmark.time);
-            html += "<tr><td><a class='time-link' data-time="+time+">"+formattedTime+"</a></td><td>"+description+"</td><td><button data-time="+time+" class='delete-button btn btn-medium btn-circle btn-primary'>X</button></td><tr>";
+            html += `<tr>
+            <td><a class='time-link' data-time=${time}>${formattedTime}</a></td>
+            <td><span class='description' data-time=${time}>${description}</span></td>
+            <td><button data-time=${time} class='edit-button btn btn-medium btn-primary'>Edit</button></td>
+            <td><button data-time=${time} class='delete-button btn btn-medium btn-primary'>Delete</button></td>
+            <tr>`;
             //Do something
         }
         return html;
@@ -78,6 +83,30 @@ $(function () {
             });
         }
         
+    });
+    $(document).on("click.update", ".update-button", function (e) {
+        e.preventDefault();
+        var updateData = {};
+        var time = $(this).data("time");
+        updateData["oldTime"] = time;
+        updateData["newTime"] = time;
+        var newDescription = $(".edit-description[data-time='"+time+"']").val();
+        updateData["newDescription"] = newDescription;
+
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { action: "updateBookmark", url: tabs[0].url, updateData:updateData }, setPageDom);
+        });
+
+    });
+    $(document).on("click.edit", ".edit-button", function (e) {
+        e.preventDefault();
+        var time = $(this).data("time");
+        var originalText = $(".description[data-time='"+time+"']").html();
+        var editHtml = `<input type='text' class='edit-description' data-time=${time} maxlength=100 value=${originalText}\><button data-time=${time} class='update-button'>Update</button>`;
+        $(".description[data-time='"+time+"']").html(editHtml);
+        $(".edit-description[data-time='"+time+"']").focus();
+
+
     });
     $('#saveBookmark').click(function(){
         sendActionAsMessageFromCurrentTab("saveDefaultBookmark", setPageDom)
