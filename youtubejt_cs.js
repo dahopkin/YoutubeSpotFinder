@@ -1,5 +1,5 @@
 chrome.runtime.sendMessage({ action: "show" });
-
+var currentTabURL = window.location.href;
 var getYoutubeVideoIDFromURL = function (url) {
     var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
@@ -9,6 +9,17 @@ var getYoutubeVideoIDFromURL = function (url) {
         return undefined;
     }
 };
+
+var getNetflixVideoIDFromURL = function (url) {
+    var regExp = /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    if (match && match[2].length == 8) {
+        return match[2];
+    } else {
+        return undefined;
+    }
+};
+
 
 var getVideoPlayerButtonFunctionObject = function (videoObject) {
     var seekToTime = videoObject.seekToTime;
@@ -70,18 +81,74 @@ var getVideoPlayer = function () {
     if(pageHasFlashVideo()) return flashVideoPlayer;
  }
 
-var videoPlayer = getVideoPlayer();
-var binarySearcher = getBinarySearcher(videoPlayer);
+var pageIsYoutube = function(){
+    return typeof getYoutubeVideoIDFromURL !== "undefined";
+};
+var netflixIDSource = function(){
+    var getNetflixVideoIDFromURL = function (url) {
+        url = url || currentTabURL;
+        var regExp = /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match && match[2].length == 8) {
+            return match[2];
+        } else {
+            return undefined;
+        }
+    };
+    var pageIsNetflix = function(){
+        return typeof getNetflixVideoIDFromURL(currentTabURL) !== "undefined";
+    };
+    var getBookmarkKey = function(videoID){
+        var videoID = videoID || getNetflixVideoIDFromURL(currentTabURL);
+        return "netflix-" + videoID.toString() +  "-bookmarks";
+    };
+    return{
+        pageIsNetflix:pageIsNetflix,
+        getBookmarkKey:getBookmarkKey,
+        getVideoID:getNetflixVideoIDFromURL
+    };
+}();
+var youtubeIDSource = function(){
+    var getYoutubeVideoIDFromURL = function (url) {
+        url = url || currentTabURL;
+        var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match && match[2].length == 11) {
+            return match[2];
+        } else {
+            return undefined;
+        }
+    };
+    var pageIsYoutube = function(){
+        return typeof getYoutubeVideoIDFromURL(currentTabURL) !== "undefined";
+    };
+    var getBookmarkKey = function(videoID){
+        var videoID = videoID || getYoutubeVideoIDFromURL(currentTabURL);
+        return "youtube-" + videoID.toString() +  "-bookmarks";
+    };
+    return{
+        pageIsYoutube:pageIsYoutube,
+        getBookmarkKey:getBookmarkKey,
+        getVideoID:getYoutubeVideoIDFromURL
+    };
+}();
+var getIdSource = function(){
+    if(netflixIDSource.pageIsNetflix()) return netflixIDSource;
+    if(youtubeIDSource.pageIsYoutube()) return youtubeIDSource;
+}
 
-var bookmarks = function(videoPlayer){
+var videoPlayer = getVideoPlayer();
+var idSource = getIdSource();
+var binarySearcher = getBinarySearcher(videoPlayer);
+var bookmarks = function(videoPlayer, idSource){
     var getBookmarkKey = function(videoID){
         var videoID = videoID || getYoutubeVideoIDFromURL(currentTabURL);
         return videoID.toString() +  "-bookmarks";
     };
     var getBookmarkData = function(callback){
-        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var videoID = idSource.getVideoID(currentTabURL);
         if(videoID){
-            var key = getBookmarkKey(videoID);
+            var key = idSource.getBookmarkKey(videoID);
             var defaultObject = {};
             defaultObject[key] = [];
             chrome.storage.sync.get(defaultObject, function(items) {
@@ -110,10 +177,10 @@ var bookmarks = function(videoPlayer){
         saveCustomBookmark(defaultBookmark, callback);
     }
     var saveCustomBookmark = function(oneBookmarkData, callback){
-        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var videoID = idSource.getVideoID(currentTabURL);
         var saveResult = {status:"", message:""};
         if(videoID){
-            var key = getBookmarkKey(videoID);
+            var key = idSource.getBookmarkKey(videoID);
             if(!singleBookmarkDataIsValid(oneBookmarkData)){
                 saveResult["status"] = "failure";
                 saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
@@ -136,10 +203,10 @@ var bookmarks = function(videoPlayer){
         }
     };
     var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){
-        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var videoID = idSource.getVideoID(currentTabURL);
         var saveResult = {status:"", message:""};
         if(videoID){
-            var key = getBookmarkKey(videoID);
+            var key = idSource.getBookmarkKey(videoID);
             if(!singleBookmarkDataIsValid(oneBookmarkData)){
                 saveResult["status"] = "failure";
                 saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
@@ -170,10 +237,10 @@ var bookmarks = function(videoPlayer){
 
     };
     var deleteBookmark = function(bookmarkTime, callback){
-        var videoID = getYoutubeVideoIDFromURL(currentTabURL);
+        var videoID = idSource.getVideoID(currentTabURL);
         var saveResult = {status:"", message:""};
         if(videoID){
-            var key = getBookmarkKey(videoID);
+            var key = idSource.getBookmarkKey(videoID);
                 getBookmarkData(function(bookmarkArray){
                     bookmarkArray = bookmarkArray.filter(function(bookmark){
                         return Number(bookmark.time) !== Number(bookmarkTime);
@@ -198,8 +265,7 @@ var bookmarks = function(videoPlayer){
         deleteBookmark:deleteBookmark,
         updateBookmark:updateBookmark
     };
-}(videoPlayer);
-var currentTabURL = ""
+}(videoPlayer, idSource);
 var getMultipleDataAndSend = function(sendResponse){
     bookmarks.getBookmarkData(function(bookmarkData){
         var appData = {
