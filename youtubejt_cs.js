@@ -40,8 +40,8 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
     };
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
-var html5VideoObject = function () {
-    var innerPlayer = document.getElementsByTagName("video")[0];
+var getHtml5VideoObject = function (videoDomElement) {
+    var innerPlayer = videoDomElement || document.getElementsByTagName("video")[0];
     var getVideoDuration = function () { return Number(innerPlayer.duration); };
     var seekToTime = function (seconds) { innerPlayer.currentTime = seconds; };
     var getCurrentTime = function(){return innerPlayer.currentTime; };
@@ -58,7 +58,8 @@ var html5VideoObject = function () {
         seekToPercentage:seekToPercentage,
         seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
     };
-}();
+};
+var html5VideoObject = getHtml5VideoObject();
 
 var html5VideoPlayer = function () {
     return getVideoPlayerButtonFunctionObject(html5VideoObject);
