@@ -40,8 +40,8 @@ $(function () {
             html += `<tr>
             <td><a class='time-link' data-time='${time}'>${formattedTime}</a></td>
             <td><span class='description' data-time='${time}'>${description}</span></td>
-            <td><button data-time='${time}' class='edit-button btn btn-medium btn-primary'>Edit</button></td>
-            <td><button data-time='${time}' class='delete-button btn btn-medium btn-primary'>Delete</button></td>
+            <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
+            <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
             <tr>`;
             //Do something
         }
@@ -112,8 +112,8 @@ $(function () {
         var time = $(this).data("time");
         var originalText = $(".description[data-time='"+time+"']").html();
         var editHtml = `<input type='text' class='edit-description' data-time='${time}' maxlength=100 value='${originalText}'\>
-        <button data-time='${time}' class='btn btn-medium btn-primary update-button'>Update</button>
-        <button class='btn btn-medium btn-primary cancel-button'>Cancel</button>`;
+        <button data-time='${time}' class='btn btn-small btn-primary update-button'>Update</button>
+        <button class='btn btn-small btn-primary cancel-button'>Cancel</button>`;
         $(".description[data-time='"+time+"']").html(editHtml);
         $(".edit-description[data-time='"+time+"']").focus();
 

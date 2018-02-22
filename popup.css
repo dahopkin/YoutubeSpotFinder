@@ -25,14 +25,15 @@ html {
     text-decoration: none;
     text-transform:uppercase;
 }
+
 .btn-small{
     padding: 0 .25em;
-    line-height:7px;
-    font-size:5px;
+    line-height:10px;
+    font-size:10px;
 }
 .btn-medium{
-    padding: 0 .25em;
-    line-height:10px;
+    padding: 0 .7em;
+    line-height:18px;
     font-size:10px;
 }
 .btn-circle{
