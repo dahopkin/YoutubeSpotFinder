@@ -12,6 +12,23 @@
 <body>
     <h2 class="center">YouTube JumpTo Controls</h1>
         <div class="button-panel">
+            <div class="panel-title">Before/After Search <span><button class="btn btn-small btn-primary forced-skinny" id="bas-help-button">?</button></span></div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
+                    <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
+                    <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
+                </div>
+                <p class="note hidden" id="bas-help-note">
+                    Select "Start" to jump to the middle of the video. If what you're looking for is before the middle, click "Before This".
+                    If not, click "After This". Repeat this process, clicking "Before" or "After" until you find what you
+                    want. Click "Stop" to end the search. Note: Clicking the buttons enough will end the search by itself
+                    if it can't find any more points to jump to.
+                </p>
+            </div>
+        </div>
+        
+        <div class="button-panel">
             <div class="panel-title">Go To</div>
             <div class="panel-outer">
                 <div class="div-center">
@@ -44,22 +61,7 @@
             </div>
         </div>
 
-        <div class="button-panel">
-            <div class="panel-title">Before/After Search <span><button class="btn btn-small btn-primary forced-skinny" id="bas-help-button">?</button></span></div>
-            <div class="panel-outer">
-                <div class="div-center">
-                    <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
-                    <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
-                    <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
-                </div>
-                <p class="note hidden" id="bas-help-note">
-                    Select "Start" to jump to the middle of the video. If what you're looking for is before the middle, click "Before This".
-                    If not, click "After This". Repeat this process, clicking "Before" or "After" until you find what you
-                    want. Click "Stop" to end the search. Note: Clicking the buttons enough will end the search by itself
-                    if it can't find any more points to jump to.
-                </p>
-            </div>
-        </div>
+        
         <div class="center">
                 <div class="panel-title">Bookmarks</div>
                 <input class="btn btn-primary" type="submit" id="saveBookmark" value="Save Bookmark" />
