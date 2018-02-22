@@ -25,14 +25,10 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
     var seekToTime = videoObject.seekToTime;
     var getVideoDuration = videoObject.getVideoDuration;
     var getCurrentTime = videoObject.getCurrentTime;
-    var goTo1_4thPoint = function () { seekToTime(getVideoDuration() * (1 / 4)); };
-    var goTo2_4thPoint = function () { seekToTime(getVideoDuration() * (2 / 4)); };
-    var goTo3_4thPoint = function () { seekToTime(getVideoDuration() * (3 / 4)); };
-    var goTo30Point = function () {
-        if (getVideoDuration() > 30) {
-            seekToTime(getVideoDuration() - 30);
-        }
-    };
+    var goTo1_4thPoint = function () { videoObject.seekToPercentage((1 / 4)); };
+    var goTo2_4thPoint = function () { videoObject.seekToPercentage((2 / 4)); };
+    var goTo3_4thPoint = function () { videoObject.seekToPercentage((3 / 4)); };
+    var goTo30Point = function () { videoObject.seekToSecondsBeforeEnd(30); };
     return {
         goTo1_4thPoint: goTo1_4thPoint,
         goTo2_4thPoint: goTo2_4thPoint,
@@ -49,10 +45,18 @@ var html5VideoObject = function () {
     var getVideoDuration = function () { return Number(innerPlayer.duration); };
     var seekToTime = function (seconds) { innerPlayer.currentTime = seconds; };
     var getCurrentTime = function(){return innerPlayer.currentTime; };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToSecondsBeforeEnd = function (seconds) {
+        if (getVideoDuration() > seconds) {
+            seekToTime(getVideoDuration() - seconds);
+        }
+    };
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
-        getCurrentTime:getCurrentTime
+        getCurrentTime:getCurrentTime,
+        seekToPercentage:seekToPercentage,
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
     };
 }();
 
@@ -65,10 +69,18 @@ var flashVideoObject = function () {
     var getVideoDuration = function () { return Number(innerPlayer.getDuration()); };
     var seekToTime = function (seconds) { innerPlayer.seekTo(seconds); };
     var getCurrentTime = function(){ return innerPlayer.getCurrentTime(); };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToSecondsBeforeEnd = function (seconds) {
+        if (getVideoDuration() > seconds) {
+            seekToTime(getVideoDuration() - seconds);
+        }
+    };
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
-        getCurrentTime:getCurrentTime
+        getCurrentTime:getCurrentTime,
+        seekToPercentage:seekToPercentage,
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
     };
 }();
 
