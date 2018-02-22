@@ -1,10 +1,12 @@
 $(function () {
+    var appInfo;
     function sendActionAsMessageFromCurrentTab(actionToSend, callback) {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: actionToSend, url:tabs[0].url }, callback);
         });
     }
-    function setPageDom(appInfo){
+    function setPageDom(newAppInfo){
+        appInfo = newAppInfo || appInfo;
         setBinarySearchDom(appInfo.binarySearchStatusInfo);
         setBookmarkDom(appInfo.bookmarkInfo);
     }
@@ -99,11 +101,17 @@ $(function () {
         });
 
     });
+    $(document).on("click.update", ".cancel-button", function (e) {
+        setPageDom(appInfo);
+
+    });
     $(document).on("click.edit", ".edit-button", function (e) {
         e.preventDefault();
         var time = $(this).data("time");
         var originalText = $(".description[data-time='"+time+"']").html();
-        var editHtml = `<input type='text' class='edit-description' data-time=${time} maxlength=100 value=${originalText}\><button data-time=${time} class='update-button'>Update</button>`;
+        var editHtml = `<input type='text' class='edit-description' data-time=${time} maxlength=100 value='${originalText}'\>
+        <button data-time=${time} class='btn btn-medium btn-primary update-button'>Update</button>
+        <button class='btn btn-medium btn-primary cancel-button'>Cancel</button>`;
         $(".description[data-time='"+time+"']").html(editHtml);
         $(".edit-description[data-time='"+time+"']").focus();
 
