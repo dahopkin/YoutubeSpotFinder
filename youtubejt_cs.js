@@ -119,7 +119,8 @@ var netflixVideoPlayer = function () {
 }();
 
 
-
+var huluVideoObject = getHtml5VideoObject(document.getElementById("content-video-player"));
+var huluVideoPlayer = function () { return getVideoPlayerButtonFunctionObject(huluVideoObject);}();
 
 var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber, bookmarkPrefix){
     return{
@@ -173,8 +174,14 @@ var netflixIDSource = getURLIDSource(
         8, 2, "netflix"
     )
 );
+var huluIDSource = getURLIDSource(
+    getURLIDSourceSettingsObject(
+        /^.*(hulu\.com\/watch\/)([^#\&\?]*).*/,
+        6, 2, "hulu"
+    )
+);
 var getIdSource = function(){
-    var potentialIDSources = [youtubeIDSource, netflixIDSource]
+    var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource]
     for(var i=0; i < potentialIDSources.length; i++){
         if(potentialIDSources[i].pageMatches()) return potentialIDSources[i];
     }
@@ -184,8 +191,8 @@ var youtubeVideoPlayer = function(){
     if(pageHasFlashVideo()) return flashVideoPlayer;
 }();
 var getVideoPlayer = function () { 
-    var potentialIDSources = [youtubeIDSource, netflixIDSource];
-    var potentialPlayers = [youtubeVideoPlayer, netflixVideoPlayer];
+    var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource];
+    var potentialPlayers = [youtubeVideoPlayer, netflixVideoPlayer, huluVideoPlayer];
     for(var i=0; i < potentialIDSources.length; i++){
         if(potentialIDSources[i].pageMatches()) return potentialPlayers[i];
     }
