@@ -144,5 +144,9 @@ $(function () {
     $('#playOrPause').click(function () {
         sendActionAsMessageFromCurrentTab("playOrPause", setPageDom)
     });
+    $("#bas-help-button").click(function(){
+        var hiddenClass = "hidden";
+        $("#bas-help-note").toggleClass(hiddenClass);
+    });
     sendActionAsMessageFromCurrentTab("start", setPageDom);
 });

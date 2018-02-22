@@ -45,14 +45,14 @@
         </div>
 
         <div class="button-panel">
-            <div class="panel-title">Before/After Search</div>
+            <div class="panel-title">Before/After Search <span><input class="btn btn-small btn-primary forced-skinny" id="bas-help-button" value="?"/></span></div>
             <div class="panel-outer">
                 <div class="div-center">
                     <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
                     <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
                     <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
                 </div>
-                <p class="note">
+                <p class="note hidden" id="bas-help-note">
                     Select "Start" to jump to the middle of the video. If what you're looking for is before the middle, click "Before This".
                     If not, click "After This". Repeat this process, clicking "Before" or "After" until you find what you
                     want. Click "Stop" to end the search. Note: Clicking the buttons enough will end the search by itself
