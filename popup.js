@@ -12,7 +12,15 @@ $(function () {
         appInfo = newAppInfo || appInfo;
         setBinarySearchDom(appInfo.binarySearchStatusInfo);
         setBookmarkDom(appInfo.bookmarkInfo);
+        setPlayButton(appInfo.isPlaying);
     }
+    function setPlayButton(isPlaying){
+        if(isPlaying){
+            $("#playOrPause").val("Pause").removeClass("btn-red").addClass("btn-red-inverse");
+        } else{
+            $("#playOrPause").val("Play").removeClass("btn-red-inverse").addClass("btn-red");
+        }
+    };
     function setBinarySearchDom(binarySearchStatusInfo){
         if(binarySearchStatusInfo){
             if(binarySearchStatusInfo.isRunning){
@@ -132,6 +140,9 @@ $(function () {
         e.preventDefault();
         var time = $(this).data("time");
         sendActionAsMessageFromCurrentTab("fastForward", setPageDom, {time:time});
+    });
+    $('#playOrPause').click(function () {
+        sendActionAsMessageFromCurrentTab("playOrPause", setPageDom)
     });
     sendActionAsMessageFromCurrentTab("start", setPageDom);
 });

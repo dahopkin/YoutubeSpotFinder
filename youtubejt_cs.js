@@ -27,6 +27,9 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
     var getCurrentTime = videoObject.getCurrentTime;
     var rewind = videoObject.rewind;
     var fastForward = videoObject.fastForward;
+    var play = videoObject.play;
+    var pause = videoObject.pause;
+    var isPlaying = videoObject.isPlaying;
     var goTo1_4thPoint = function () { videoObject.seekToPercentage((1 / 4)); };
     var goTo2_4thPoint = function () { videoObject.seekToPercentage((2 / 4)); };
     var goTo3_4thPoint = function () { videoObject.seekToPercentage((3 / 4)); };
@@ -40,7 +43,10 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
         getVideoDuration: getVideoDuration,
         getCurrentTime: getCurrentTime,
         rewind:rewind,
-        fastForward:fastForward
+        fastForward:fastForward,
+        play:play,
+        pause:pause,
+        isPlaying:isPlaying
     };
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
@@ -63,6 +69,9 @@ var getHtml5VideoObject = function (videoDomElement) {
         var fastForwardTime = getCurrentTime() + seconds;
         if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
     };
+    var play = function(){innerPlayer.play();};
+    var pause = function(){innerPlayer.pause();};
+    var isPlaying = function(){ return !innerPlayer.paused;}
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
@@ -70,7 +79,10 @@ var getHtml5VideoObject = function (videoDomElement) {
         seekToPercentage:seekToPercentage,
         seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
         rewind:rewind,
-        fastForward:fastForward
+        fastForward:fastForward,
+        play:play,
+        pause:pause,
+        isPlaying:isPlaying
     };
 };
 var html5VideoObject = getHtml5VideoObject();
@@ -98,6 +110,12 @@ var flashVideoObject = function () {
         var fastForwardTime = getCurrentTime() + seconds;
         if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
     };
+    var play = function(){innerPlayer.playVideo();};
+    var pause = function(){innerPlayer.pauseVideo();};
+    var isPlaying = function(){
+        var playerStatePlaying = 1;
+        return innerPlayer.getPlayerState() == playerStatePlaying;
+    }
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
@@ -105,7 +123,10 @@ var flashVideoObject = function () {
         seekToPercentage:seekToPercentage,
         seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
         rewind:rewind,
-        fastForward:fastForward
+        fastForward:fastForward,
+        play:play,
+        pause:pause,
+        isPlaying:isPlaying
     };
 }();
 
@@ -138,6 +159,9 @@ var netflixVideoObject = function () {
         var fastForwardTime = getCurrentTime() + seconds;
         if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
     };
+    var play = function(){innerPlayer.play();};
+    var pause = function(){innerPlayer.pause();};
+    var isPlaying = function(){ return !innerPlayer.getPaused() }
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
@@ -145,7 +169,10 @@ var netflixVideoObject = function () {
         seekToPercentage:seekToPercentage,
         seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
         rewind:rewind,
-        fastForward:fastForward
+        fastForward:fastForward,
+        play:play,
+        pause:pause,
+        isPlaying:isPlaying
     };
 }();
 var netflixVideoPlayer = function () {
@@ -236,7 +263,8 @@ var getMultipleDataAndSend = function(sendResponse){
     bookmarks.getBookmarkData(function(bookmarkData){
         var appData = {
             "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
-            "bookmarkInfo":bookmarkData
+            "bookmarkInfo":bookmarkData,
+            "isPlaying":videoPlayer.isPlaying()
         };
         sendResponse(appData);
     });
@@ -295,6 +323,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
     else if (request.action == "fastForward") {
         videoPlayer.fastForward(request.time);
+    }
+    else if (request.action == "playOrPause") {
+        if(videoPlayer.isPlaying()){ videoPlayer.pause(); }
+        else{ videoPlayer.play(); }
+        getMultipleDataAndSend(sendResponse);
     }
     
     return true;
