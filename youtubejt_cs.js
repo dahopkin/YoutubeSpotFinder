@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({ action: "show" });
+
 var currentTabURL = window.location.href;
 var getYoutubeVideoIDFromURL = function (url) {
     var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -88,10 +88,6 @@ var flashVideoPlayer = function () {
     return getVideoPlayerButtonFunctionObject(flashVideoObject);
 }();
 
-var getVideoPlayer = function () { 
-    if(pageHasHTML5Video()) return html5VideoPlayer;
-    if(pageHasFlashVideo()) return flashVideoPlayer;
- }
 var netflixVideoObject = function () {
     var innerPlayer = function () {
         var tempPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
@@ -121,9 +117,6 @@ var netflixVideoPlayer = function () {
     return getVideoPlayerButtonFunctionObject(netflixVideoObject);
 }();
 
-var pageIsYoutube = function(){
-    return typeof getYoutubeVideoIDFromURL !== "undefined";
-};
 var netflixIDSource = function(){
     var getNetflixVideoIDFromURL = function (url) {
         url = url || currentTabURL;
@@ -172,140 +165,59 @@ var youtubeIDSource = function(){
         getVideoID:getYoutubeVideoIDFromURL
     };
 }();
+var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber){
+    return{
+        urlRegex: urlRegex,
+        urlIDLength: urlIDLength,
+        urlRegexMatchNumber: urlRegexMatchNumber
+    }
+};
+/*
+settings:
+-urlRegex - regex to use on url for matching.
+-urlIDLength - length of the id within the URL.
+-urlRegexMatchNumber - regex match index number to return if valid
+ as the ID when the matching happens.
+*/
+var getURLIDSource = function(settings){
+    var getVideoIDFromURL = function (url) {
+        url = url || currentTabURL;
+        var regExp = settings.urlRegex;
+        var match = url.match(regExp);
+        if (match && match[settings.urlRegexMatchNumber].length == settings.urlIDLength) {
+            return match[settings.urlRegexMatchNumber];
+        } else {
+            return undefined;
+        }
+    };
+    var pageMatches = function(){
+        return typeof getVideoIDFromURL(currentTabURL) !== "undefined";
+    };
+    var getBookmarkKey = function(videoID){
+        var videoID = videoID || getVideoIDFromURL(currentTabURL);
+        return "youtube-" + videoID.toString() +  "-bookmarks";
+    };
+    return{
+        pageMatches:pageMatches,
+        getBookmarkKey:getBookmarkKey,
+        getVideoID:getYoutubeVideoIDFromURL
+    };
+};
 var getIdSource = function(){
+
     if(netflixIDSource.pageIsNetflix()) return netflixIDSource;
     if(youtubeIDSource.pageIsYoutube()) return youtubeIDSource;
 }
+var youtubeVideoPlayer = function(){
+    if(pageHasHTML5Video()) return html5VideoPlayer;
+    if(pageHasFlashVideo()) return flashVideoPlayer;
+}();
+var getVideoPlayer = function () { 
+    if(youtubeIDSource.pageIsYoutube()) return youtubeVideoPlayer;
+    if(netflixIDSource.pageIsNetflix()) return netflixVideoPlayer;
+ }
 
-var videoPlayer = getVideoPlayer();
-var idSource = getIdSource();
-var binarySearcher = getBinarySearcher(videoPlayer);
-var bookmarks = function(videoPlayer, idSource){
-    var getBookmarkKey = function(videoID){
-        var videoID = videoID || getYoutubeVideoIDFromURL(currentTabURL);
-        return videoID.toString() +  "-bookmarks";
-    };
-    var getBookmarkData = function(callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        if(videoID){
-            var key = idSource.getBookmarkKey(videoID);
-            var defaultObject = {};
-            defaultObject[key] = [];
-            chrome.storage.sync.get(defaultObject, function(items) {
-                var bookmarksForVideo = items[key];
-                callback(bookmarksForVideo);
-              });
-        }
-    };
-    var singleBookmarkDataIsValid = function(singleBookmarkData){
-        //if the time is not a number or is more than the duration, fail.
-        var time = singleBookmarkData.time;
-        if(isNaN(time) || time > videoPlayer.getVideoDuration()) return false;
-        //if the description is more than 100 characters, fail.
-        var description = singleBookmarkData.description;
-        if(description.length > 100) return false;
-        return true;
-    };
-    var formatBookmarkData = function(oneBookmarkData){
-        var time = Math.floor(oneBookmarkData.time);
-        var description = oneBookmarkData.description;
-        return {time:time, description:description};
-    }
-    var saveDefaultBookmark = function(callback){
-        var defaultBookmark = {time:videoPlayer.getCurrentTime(), description: ""};
-        defaultBookmark = formatBookmarkData(defaultBookmark);
-        saveCustomBookmark(defaultBookmark, callback);
-    }
-    var saveCustomBookmark = function(oneBookmarkData, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            var key = idSource.getBookmarkKey(videoID);
-            if(!singleBookmarkDataIsValid(oneBookmarkData)){
-                saveResult["status"] = "failure";
-                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
-                callback(saveResult);
-            }else{
-                getBookmarkData(function(bookmarkArray){
-                    bookmarkArray.push(oneBookmarkData);
-                    var saveObject = {};
-                    saveObject[key] = bookmarkArray;
-                    chrome.storage.sync.set(saveObject, function(items) {
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was saved successfully.";
-                        callback(saveResult);
-                      });
-                });
-            }
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "You cannot save bookmarks on this page.";
-        }
-    };
-    var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            var key = idSource.getBookmarkKey(videoID);
-            if(!singleBookmarkDataIsValid(oneBookmarkData)){
-                saveResult["status"] = "failure";
-                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
-                callback(saveResult);
-            }else{
-                getBookmarkData(function(bookmarkArray){
-                    var updateIndex = bookmarkArray.findIndex(bookmark => bookmark.time == bookmarkTime);
-                    if(updateIndex != -1){
-                        bookmarkArray[updateIndex].time = oneBookmarkData.time;
-                        bookmarkArray[updateIndex].description = oneBookmarkData.description;
-                    }
-                    var saveObject = {};
-                    saveObject[key] = bookmarkArray;
-                    chrome.storage.sync.set(saveObject, function(items) {
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was saved successfully.";
-                        callback(saveResult);
-                      });
-                });
-            }
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "You cannot save bookmarks on this page.";
-        }
-    };
-    var bookmarkExists = function(oneBookmarkData){
-        var key = getBookmarkKey();
 
-    };
-    var deleteBookmark = function(bookmarkTime, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            var key = idSource.getBookmarkKey(videoID);
-                getBookmarkData(function(bookmarkArray){
-                    bookmarkArray = bookmarkArray.filter(function(bookmark){
-                        return Number(bookmark.time) !== Number(bookmarkTime);
-                    }); 
-                    var saveObject = {};
-                    saveObject[key] = bookmarkArray;
-                    chrome.storage.sync.set(saveObject, function(items) {
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was deleted successfully.";
-                        callback(saveResult);
-                      });
-                });
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "There was an error in deleting this bookmark.";
-        }
-    };
-    return {
-        getBookmarkData:getBookmarkData,
-        saveDefaultBookmark:saveDefaultBookmark,
-        saveCustomBookmark:saveCustomBookmark,
-        deleteBookmark:deleteBookmark,
-        updateBookmark:updateBookmark
-    };
-}(videoPlayer, idSource);
 var getMultipleDataAndSend = function(sendResponse){
     bookmarks.getBookmarkData(function(bookmarkData){
         var appData = {
@@ -319,19 +231,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     currentTabURL = request.url;
     if (request.action == "goTo1-4") {
         videoPlayer.goTo1_4thPoint();
-        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo2-4") {
         videoPlayer.goTo2_4thPoint();
-        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo3-4") {
         videoPlayer.goTo3_4thPoint();
-        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "goTo30") {
         videoPlayer.goTo30Point();
-        getMultipleDataAndSend(sendResponse);
     }
     else if (request.action == "startOrStop") {
         binarySearcher.startOrStop();
@@ -371,6 +279,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     
     return true;
 
-    
-
 });
+var videoPlayer, idSource, binarySearcher, bookmarks;
+function initialize(){
+    chrome.runtime.sendMessage({ action: "show" });
+    videoPlayer = getVideoPlayer();
+    idSource = getIdSource();
+    binarySearcher = getBinarySearcher(videoPlayer);
+    bookmarks = getBookmarksModule(videoPlayer,idSource);
+}
+$(window).on("load", function() { initialize(); });
