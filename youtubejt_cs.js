@@ -92,6 +92,34 @@ var getVideoPlayer = function () {
     if(pageHasHTML5Video()) return html5VideoPlayer;
     if(pageHasFlashVideo()) return flashVideoPlayer;
  }
+var netflixVideoObject = function () {
+    var innerPlayer = function () {
+        var tempPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
+        var playerSessionId = tempPlayer.getAllPlayerSessionIds()[0];
+        var player = tempPlayer.getVideoPlayerBySessionId(playerSessionId);
+        return player;
+    };
+    var getVideoDuration = function () { return Number(innerPlayer().getDuration()/1000); };
+    var seekToTime = function (seconds) { innerPlayer().seek(seconds*1000); };
+    var getCurrentTime = function(){ return innerPlayer().getCurrentTime()/1000; };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToSecondsBeforeEnd = function (seconds) {
+        var milliseconds = seconds * 1000;
+        if (getVideoDuration() > milliseconds) {
+            seekToTime(getVideoDuration() - milliseconds);
+        }
+    };
+    return {
+        seekToTime: seekToTime,
+        getVideoDuration: getVideoDuration,
+        getCurrentTime:getCurrentTime,
+        seekToPercentage:seekToPercentage,
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
+    };
+}();
+var netflixVideoPlayer = function () {
+    return getVideoPlayerButtonFunctionObject(netflixVideoObject);
+}();
 
 var pageIsYoutube = function(){
     return typeof getYoutubeVideoIDFromURL !== "undefined";
