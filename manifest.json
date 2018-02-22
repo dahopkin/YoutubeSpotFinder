@@ -15,15 +15,16 @@
 
   "content_scripts": [
     {
-      "matches": [ "*://*.youtube.com/*watch?v=*" ],
-      "js": [ "common.js","binarySearcher.js", "youtubejt_cs.js", "jquery-3.3.1.min.js" ],
+      "matches": [ "*://*.youtube.com/*watch?v=*", "*://*.netflix.com/watch/*" ],
+      "js": [ "jquery-3.3.1.min.js", "common.js","binarySearcher.js", "bookmarksModule.js", "youtubejt_cs.js" ],
       "run_at": "document_end"
     }
   ],
   "permissions": [
     "tabs",
     "storage",
-     "*://*.youtube.com/*watch?v=*"
+     "*://*.youtube.com/*watch?v=*",
+     "*://*.netflix.com/watch/*"
     ]
 
 
