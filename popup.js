@@ -1,8 +1,11 @@
 $(function () {
     var appInfo;
-    function sendActionAsMessageFromCurrentTab(actionToSend, callback) {
+    function sendActionAsMessageFromCurrentTab(actionToSend, callback, extraDataObject) {
+        
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: actionToSend, url:tabs[0].url }, callback);
+            var dataToSend = { action: actionToSend, url:tabs[0].url }
+            if(extraDataObject){ dataToSend = Object.assign(dataToSend, extraDataObject)};
+            chrome.tabs.sendMessage(tabs[0].id, dataToSend, callback);
         });
     }
     function setPageDom(newAppInfo){
@@ -103,7 +106,6 @@ $(function () {
     });
     $(document).on("click.update", ".cancel-button", function (e) {
         setPageDom(appInfo);
-
     });
     $(document).on("click.edit", ".edit-button", function (e) {
         e.preventDefault();
@@ -120,6 +122,16 @@ $(function () {
     $('#saveBookmark').click(function(){
         sendActionAsMessageFromCurrentTab("saveDefaultBookmark", setPageDom)
     })
-    
+
+    $(document).on("click.rewind", ".rewind-button", function(e){
+        e.preventDefault();
+        var time = $(this).data("time");
+        sendActionAsMessageFromCurrentTab("rewind", setPageDom, {time:time});
+    });
+    $(document).on("click.fastForward", ".fastForward-button", function(e){
+        e.preventDefault();
+        var time = $(this).data("time");
+        sendActionAsMessageFromCurrentTab("fastForward", setPageDom, {time:time});
+    });
     sendActionAsMessageFromCurrentTab("start", setPageDom);
 });

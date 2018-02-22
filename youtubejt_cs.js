@@ -25,6 +25,8 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
     var seekToTime = videoObject.seekToTime;
     var getVideoDuration = videoObject.getVideoDuration;
     var getCurrentTime = videoObject.getCurrentTime;
+    var rewind = videoObject.rewind;
+    var fastForward = videoObject.fastForward;
     var goTo1_4thPoint = function () { videoObject.seekToPercentage((1 / 4)); };
     var goTo2_4thPoint = function () { videoObject.seekToPercentage((2 / 4)); };
     var goTo3_4thPoint = function () { videoObject.seekToPercentage((3 / 4)); };
@@ -36,7 +38,9 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
         goTo30Point: goTo30Point,
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
-        getCurrentTime: getCurrentTime
+        getCurrentTime: getCurrentTime,
+        rewind:rewind,
+        fastForward:fastForward
     };
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
@@ -51,12 +55,22 @@ var getHtml5VideoObject = function (videoDomElement) {
             seekToTime(getVideoDuration() - seconds);
         }
     };
+    var rewind = function(seconds){
+        var rewindTime = getCurrentTime() - seconds;
+        if(rewindTime > 0) seekToTime(rewindTime);
+    };
+    var fastForward = function(seconds){
+        var fastForwardTime = getCurrentTime() + seconds;
+        if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
+    };
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
         getCurrentTime:getCurrentTime,
         seekToPercentage:seekToPercentage,
-        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
+        rewind:rewind,
+        fastForward:fastForward
     };
 };
 var html5VideoObject = getHtml5VideoObject();
@@ -76,12 +90,22 @@ var flashVideoObject = function () {
             seekToTime(getVideoDuration() - seconds);
         }
     };
+    var rewind = function(seconds){
+        var rewindTime = getCurrentTime() - seconds;
+        if(rewindTime > 0) seekToTime(rewindTime);
+    };
+    var fastForward = function(seconds){
+        var fastForwardTime = getCurrentTime() + seconds;
+        if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
+    };
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
         getCurrentTime:getCurrentTime,
         seekToPercentage:seekToPercentage,
-        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
+        rewind:rewind,
+        fastForward:fastForward
     };
 }();
 
@@ -106,12 +130,22 @@ var netflixVideoObject = function () {
             seekToTime(getVideoDuration() - milliseconds);
         }
     };
+    var rewind = function(seconds){
+        var rewindTime = getCurrentTime() - seconds;
+        if(rewindTime > 0) seekToTime(rewindTime);
+    };
+    var fastForward = function(seconds){
+        var fastForwardTime = getCurrentTime() + seconds;
+        if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
+    };
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
         getCurrentTime:getCurrentTime,
         seekToPercentage:seekToPercentage,
-        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd
+        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
+        rewind:rewind,
+        fastForward:fastForward
     };
 }();
 var netflixVideoPlayer = function () {
@@ -255,6 +289,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         bookmarks.updateBookmark(request.updateData.oldTime, updateBookmarkData, function(saveResult){
             getMultipleDataAndSend(sendResponse);
         });
+    }
+    else if (request.action == "rewind") {
+        videoPlayer.rewind(request.time);
+    }
+    else if (request.action == "fastForward") {
+        videoPlayer.fastForward(request.time);
     }
     
     return true;
