@@ -117,59 +117,15 @@ var netflixVideoPlayer = function () {
     return getVideoPlayerButtonFunctionObject(netflixVideoObject);
 }();
 
-var netflixIDSource = function(){
-    var getNetflixVideoIDFromURL = function (url) {
-        url = url || currentTabURL;
-        var regExp = /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/;
-        var match = url.match(regExp);
-        if (match && match[2].length == 8) {
-            return match[2];
-        } else {
-            return undefined;
-        }
-    };
-    var pageIsNetflix = function(){
-        return typeof getNetflixVideoIDFromURL(currentTabURL) !== "undefined";
-    };
-    var getBookmarkKey = function(videoID){
-        var videoID = videoID || getNetflixVideoIDFromURL(currentTabURL);
-        return "netflix-" + videoID.toString() +  "-bookmarks";
-    };
-    return{
-        pageIsNetflix:pageIsNetflix,
-        getBookmarkKey:getBookmarkKey,
-        getVideoID:getNetflixVideoIDFromURL
-    };
-}();
-var youtubeIDSource = function(){
-    var getYoutubeVideoIDFromURL = function (url) {
-        url = url || currentTabURL;
-        var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        var match = url.match(regExp);
-        if (match && match[2].length == 11) {
-            return match[2];
-        } else {
-            return undefined;
-        }
-    };
-    var pageIsYoutube = function(){
-        return typeof getYoutubeVideoIDFromURL(currentTabURL) !== "undefined";
-    };
-    var getBookmarkKey = function(videoID){
-        var videoID = videoID || getYoutubeVideoIDFromURL(currentTabURL);
-        return "youtube-" + videoID.toString() +  "-bookmarks";
-    };
-    return{
-        pageIsYoutube:pageIsYoutube,
-        getBookmarkKey:getBookmarkKey,
-        getVideoID:getYoutubeVideoIDFromURL
-    };
-}();
-var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber){
+
+
+
+var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber, bookmarkPrefix){
     return{
         urlRegex: urlRegex,
         urlIDLength: urlIDLength,
-        urlRegexMatchNumber: urlRegexMatchNumber
+        urlRegexMatchNumber: urlRegexMatchNumber,
+        bookmarkPrefix:bookmarkPrefix
     }
 };
 /*
@@ -178,6 +134,7 @@ settings:
 -urlIDLength - length of the id within the URL.
 -urlRegexMatchNumber - regex match index number to return if valid
  as the ID when the matching happens.
+-bookmarkPrefix - prefix for the bookmark key.
 */
 var getURLIDSource = function(settings){
     var getVideoIDFromURL = function (url) {
@@ -195,7 +152,7 @@ var getURLIDSource = function(settings){
     };
     var getBookmarkKey = function(videoID){
         var videoID = videoID || getVideoIDFromURL(currentTabURL);
-        return "youtube-" + videoID.toString() +  "-bookmarks";
+        return settings.bookmarkPrefix+"-" + videoID.toString() +  "-bookmarks";
     };
     return{
         pageMatches:pageMatches,
@@ -203,20 +160,35 @@ var getURLIDSource = function(settings){
         getVideoID:getYoutubeVideoIDFromURL
     };
 };
+var youtubeIDSource = getURLIDSource(
+    getURLIDSourceSettingsObject(
+        /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/,
+        11, 2, "youtube"
+    )
+);
+var netflixIDSource = getURLIDSource(
+    getURLIDSourceSettingsObject(
+        /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/,
+        8, 2, "netflix"
+    )
+);
 var getIdSource = function(){
-
-    if(netflixIDSource.pageIsNetflix()) return netflixIDSource;
-    if(youtubeIDSource.pageIsYoutube()) return youtubeIDSource;
+    var potentialIDSources = [youtubeIDSource, netflixIDSource]
+    for(var i=0; i < potentialIDSources.length; i++){
+        if(potentialIDSources[i].pageMatches()) return potentialIDSources[i];
+    }
 }
 var youtubeVideoPlayer = function(){
     if(pageHasHTML5Video()) return html5VideoPlayer;
     if(pageHasFlashVideo()) return flashVideoPlayer;
 }();
 var getVideoPlayer = function () { 
-    if(youtubeIDSource.pageIsYoutube()) return youtubeVideoPlayer;
-    if(netflixIDSource.pageIsNetflix()) return netflixVideoPlayer;
- }
-
+    var potentialIDSources = [youtubeIDSource, netflixIDSource];
+    var potentialPlayers = [youtubeVideoPlayer, netflixVideoPlayer];
+    for(var i=0; i < potentialIDSources.length; i++){
+        if(potentialIDSources[i].pageMatches()) return potentialPlayers[i];
+    }
+}
 
 var getMultipleDataAndSend = function(sendResponse){
     bookmarks.getBookmarkData(function(bookmarkData){
