@@ -93,4 +93,9 @@ fieldset{
 table { margin: 0 auto; }
 
 .forced-skinny{width:15px;}
+.top-right{
+    position:absolute;
+    top:10px;
+    right:10px;
+}
 

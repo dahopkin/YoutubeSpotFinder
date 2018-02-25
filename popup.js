@@ -148,5 +148,8 @@ $(function () {
         var hiddenClass = "hidden";
         $("#bas-help-note").toggleClass(hiddenClass);
     });
+    $("#close-button").click(function(){
+        close();
+    });
     sendActionAsMessageFromCurrentTab("start", setPageDom);
 });
