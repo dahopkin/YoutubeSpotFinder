@@ -334,11 +334,32 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 });
 var videoPlayer, idSource, binarySearcher, bookmarks;
+var embedUIOnPage = function () {
+    $.get(chrome.runtime.getURL('popup-inject.html'), function(data) {
+        var html = $.parseHTML(data);
+        $("#info").prepend(html);
+    });
+};
+
 function initialize(){
     chrome.runtime.sendMessage({ action: "show" });
     videoPlayer = getVideoPlayer();
     idSource = getIdSource();
     binarySearcher = getBinarySearcher(videoPlayer);
     bookmarks = getBookmarksModule(videoPlayer,idSource);
+    embedUIOnPage();
 }
-$(window).on("load", function() { initialize(); });
+function waitForElementToDisplay(selector, time, functionToRun) {
+    if(document.querySelector(selector)!=null) {
+        functionToRun();
+        return;
+    }
+    else {
+        setTimeout(function() {
+            waitForElementToDisplay(selector, time);
+        }, time);
+    }
+}
+$(window).on("load", function() { 
+    waitForElementToDisplay("#info", 500, initialize);
+});

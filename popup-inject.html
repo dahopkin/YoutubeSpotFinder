@@ -1,0 +1,77 @@
+<div class="panel-html">
+    <button class="btn btn-small btn-primary forced-skinny top-right" id="close-button">X</button>
+    <h2 class="center">YouTube JumpTo Controls</h1>
+        <div class="button-panel">
+            <div class="panel-title">Before/After Search
+                <span>
+                    <button class="btn btn-small btn-primary forced-skinny" id="bas-help-button">?</button>
+                </span>
+            </div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-red" type="submit" id="startOrStop" value="Start" />
+                    <input class="btn btn-primary" type="submit" id="goLeft" value="Before This" />
+                    <input class="btn btn-primary" type="submit" id="goRight" value="After This" />
+                </div>
+                <p class="note hidden" id="bas-help-note">
+                    Select "Start" to jump to the middle of the video. If what you're looking for is before the middle, click "Before This".
+                    If not, click "After This". Repeat this process, clicking "Before" or "After" until you find what you
+                    want. Click "Stop" to end the search. Note: Clicking the buttons enough will end the search by itself
+                    if it can't find any more points to jump to.
+                </p>
+            </div>
+        </div>
+
+        <div class="button-panel">
+            <div class="panel-title">Go To</div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-primary" type="submit" id="goTo1-4" value="1/4" />
+                    <input class="btn btn-primary" type="submit" id="goTo2-4" value="1/2" />
+                    <input class="btn btn-primary" type="submit" id="goTo3-4" value="3/4" />
+                    <input class="btn btn-primary" type="submit" id="goTo30" value="30s before end" />
+                </div>
+                <p class="note">
+                    Jump to certain points of the video.
+                </p>
+            </div>
+        </div>
+
+        <div class="button-panel">
+            <div class="panel-title">Rewind/Fast-Forward</div>
+            <div class="panel-outer">
+                <div class="div-center">
+                    <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind60" value="-1m" data-time='60' />
+                    <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind30" value="-30s" data-time='30' />
+                    <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind10" value="-10s" data-time='10' />
+                    <input class="btn btn-red btn-medium" type="submit" id="playOrPause" value="Play" />
+                    <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward10" value="+10s" data-time='10'
+                    />
+                    <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward30" value="+30s" data-time='30'
+                    />
+                    <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward60" value="+1m" data-time='60'
+                    />
+                </div>
+                <p class="note">
+                    Rewind or Fast-Forward the video.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="center">
+            <div class="panel-title">Bookmarks</div>
+            <input class="btn btn-primary" type="submit" id="saveBookmark" value="Save Bookmark" />
+            <div id="new-bookmark" class="hidden">
+                <div class="panel-title">New Bookmark</div>
+                <span id=time></span>
+                <input type=text maxlength="100" placeholder="New Description" />
+                <input class="btn btn-primary" type="submit" id="saveBookmark2" value="After This" />
+            </div>
+            <div id="table-section">
+                <table id="bookmark-table" class="bookmark-table">
+
+                </table>
+            </div>
+        </div>
+</div>

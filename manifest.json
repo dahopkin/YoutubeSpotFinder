@@ -16,16 +16,20 @@
   "content_scripts": [
     {
       "matches": [ "*://*.youtube.com/*watch?v=*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
-      "js": [ "jquery-3.3.1.min.js", "common.js","binarySearcher.js", "bookmarksModule.js", "youtubejt_cs.js" ],
+      "js": [ "jquery-3.3.1.min.js", "common.js","binarySearcher.js", "bookmarksModule.js", "popup.js","youtubejt_cs.js" ],
+      "css": ["popup.css"],
       "run_at": "document_end"
     }
   ],
   "permissions": [
-    "tabs",
+    "tabs", "activeTab",
     "storage",
      "*://*.youtube.com/*watch?v=*",
      "*://*.netflix.com/watch/*",
      "*://*.hulu.com/watch/*"
+    ],
+    "web_accessible_resources": [
+      "popup-inject.html"
     ]
 
 
