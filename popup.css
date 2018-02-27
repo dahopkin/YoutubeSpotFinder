@@ -1,9 +1,9 @@
-body{
+.popup-body{
     min-width:350px;
     border-color: #c1c2c0;
     background-color: #f0f0f0
 }
-html {
+.popup-html {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
@@ -90,7 +90,7 @@ fieldset{
     text-decoration: underline;
     cursor:pointer;
 }
-table { margin: 0 auto; }
+.bookmark-table { margin: 0 auto; }
 
 .forced-skinny{width:15px;}
 .top-right{
