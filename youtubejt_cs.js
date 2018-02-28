@@ -356,7 +356,7 @@ function waitForElementToDisplay(selector, time, functionToRun) {
     }
     else {
         setTimeout(function() {
-            waitForElementToDisplay(selector, time);
+            waitForElementToDisplay(selector, time, functionToRun);
         }, time);
     }
 }
