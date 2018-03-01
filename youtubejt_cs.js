@@ -334,10 +334,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 });
 var videoPlayer, idSource, binarySearcher, bookmarks;
-var embedUIOnPage = function () {
-    $.get(chrome.runtime.getURL('popup-inject.html'), function(data) {
+var embedUIOnPage = function (functionToRunAfter) {
+    $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
         var html = $.parseHTML(data);
         $("#info").prepend(html);
+        functionToRunAfter();
     });
 };
 
