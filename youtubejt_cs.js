@@ -258,7 +258,7 @@ var getVideoPlayer = function () {
         if(potentialIDSources[i].pageMatches()) return potentialPlayers[i];
     }
 }
-
+var appInfo;
 var getMultipleDataAndSend = function(sendResponse){
     bookmarks.getBookmarkData(function(bookmarkData){
         var appData = {
@@ -269,70 +269,16 @@ var getMultipleDataAndSend = function(sendResponse){
         sendResponse(appData);
     });
 }
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    currentTabURL = request.url;
-    if (request.action == "goTo1-4") {
-        videoPlayer.goTo1_4thPoint();
-    }
-    else if (request.action == "goTo2-4") {
-        videoPlayer.goTo2_4thPoint();
-    }
-    else if (request.action == "goTo3-4") {
-        videoPlayer.goTo3_4thPoint();
-    }
-    else if (request.action == "goTo30") {
-        videoPlayer.goTo30Point();
-    }
-    else if (request.action == "startOrStop") {
-        binarySearcher.startOrStop();
-        getMultipleDataAndSend(sendResponse);
-    }
-    else if (request.action == "goLeft") {
-        binarySearcher.goLeft();
-        getMultipleDataAndSend(sendResponse);
-    }
-    else if (request.action == "goRight") {
-        binarySearcher.goRight();
-        getMultipleDataAndSend(sendResponse);
-    }
-    else if (request.action == "start") { 
-        getMultipleDataAndSend(sendResponse);
-    }
-    else if (request.action == "goToTime") {
-        videoPlayer.seekToTime(request.time);
-        getMultipleDataAndSend(sendResponse);
-    }
-    else if (request.action == "saveDefaultBookmark") {
-        bookmarks.saveDefaultBookmark(function(saveResult){
-            getMultipleDataAndSend(sendResponse)
-        });
-    }
-    else if (request.action == "deleteBookmark") {
-        bookmarks.deleteBookmark(request.time, function(saveResult){
-            getMultipleDataAndSend(sendResponse);
-        });
-    }
-    else if (request.action == "updateBookmark") {
-        var updateBookmarkData = {time:request.updateData.newTime, description:request.updateData.newDescription};
-        bookmarks.updateBookmark(request.updateData.oldTime, updateBookmarkData, function(saveResult){
-            getMultipleDataAndSend(sendResponse);
-        });
-    }
-    else if (request.action == "rewind") {
-        videoPlayer.rewind(request.time);
-    }
-    else if (request.action == "fastForward") {
-        videoPlayer.fastForward(request.time);
-    }
-    else if (request.action == "playOrPause") {
-        if(videoPlayer.isPlaying()){ videoPlayer.pause(); }
-        else{ videoPlayer.play(); }
-        getMultipleDataAndSend(sendResponse);
-    }
-    
-    return true;
-
-});
+var setAppInfo = function(appInfoCallback){
+    bookmarks.getBookmarkData(function(bookmarkData){
+        appInfo = {
+            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
+            "bookmarkInfo":bookmarkData,
+            "isPlaying":videoPlayer.isPlaying()
+        };
+        appInfoCallback(appInfo);
+    });
+}
 var videoPlayer, idSource, binarySearcher, bookmarks;
 var embedUIOnPage = function (functionToRunAfter) {
     $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
@@ -341,14 +287,22 @@ var embedUIOnPage = function (functionToRunAfter) {
         functionToRunAfter();
     });
 };
-
-function initialize(){
+function initializeVariables(callback){
+    videoPlayer = getVideoPlayer();
+    idSource = getIdSource();
+    binarySearcher = getBinarySearcher(videoPlayer);
+    bookmarks = getBookmarksModule(videoPlayer, idSource);
+    callback()
+}
+function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
     videoPlayer = getVideoPlayer();
     idSource = getIdSource();
     binarySearcher = getBinarySearcher(videoPlayer);
-    bookmarks = getBookmarksModule(videoPlayer,idSource);
-    embedUIOnPage();
+    bookmarks = getBookmarksModule(videoPlayer, idSource);
+    embedUIOnPage(function () {
+        setAppInfo(setPageDom);
+    });
 }
 function waitForElementToDisplay(selector, time, functionToRun) {
     if(document.querySelector(selector)!=null) {
@@ -363,4 +317,66 @@ function waitForElementToDisplay(selector, time, functionToRun) {
 }
 $(window).on("load", function() { 
     waitForElementToDisplay("#info", 500, initialize);
+});
+function setPageDom(newAppInfo){
+    appInfo = newAppInfo || appInfo;
+    setBinarySearchDom(appInfo.binarySearchStatusInfo);
+    setBookmarkDom(appInfo.bookmarkInfo);
+    setPlayButton(appInfo.isPlaying);
+}
+function setPlayButton(isPlaying){
+    if(isPlaying){
+        $("#playOrPause").val("Pause").removeClass("btn-red").addClass("btn-red-inverse");
+    } else{
+        $("#playOrPause").val("Play").removeClass("btn-red-inverse").addClass("btn-red");
+    }
+};
+function setBinarySearchDom(binarySearchStatusInfo){
+    if(binarySearchStatusInfo){
+        if(binarySearchStatusInfo.isRunning){
+            $("#startOrStop").val("Stop").removeClass("btn-red").addClass("btn-red-inverse");
+            $("#goLeft, #goRight").prop("disabled",false).removeClass("btn-disabled");
+        } else{
+            $("#startOrStop").val("Start").removeClass("btn-red-inverse").addClass("btn-red");
+            $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
+        }
+    }
+    
+}
+
+function getTableContentsFromBookmarks(bookmarkInfo){
+    var currentBookmark, html, time, formattedTime, description;
+    html = "";
+    for (var i = 0; i < bookmarkInfo.length; i++) {
+        currentBookmark = bookmarkInfo[i];
+        if(i === 0){
+            html += "<tr><th>Time (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>";    
+        }
+        time = currentBookmark.time;
+        description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
+        formattedTime = hhmmss(currentBookmark.time);
+        html += `<tr>
+        <td><a class='time-link' data-time='${time}'>${formattedTime}</a></td>
+        <td><span class='description' data-time='${time}'>${description}</span></td>
+        <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
+        <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
+        <tr>`;
+        //Do something
+    }
+    return html;
+}
+function setBookmarkDom(bookmarkInfo){
+    $('#description').val("");
+    $('#time').text('');
+    $('#bookmark-table').html(getTableContentsFromBookmarks(bookmarkInfo));
+}
+function resetDataForNewPage(){
+    binarySearcher.reset();
+    setAppInfo(setPageDom);
+}
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (currentTabURL != request.data.url) {
+        currentTabURL = request.data.url;
+        resetDataForNewPage();
+    }
 });
