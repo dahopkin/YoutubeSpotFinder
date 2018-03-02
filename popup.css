@@ -3,14 +3,39 @@
     border-color: #c1c2c0;
     background-color: #f0f0f0
 }
-.popup-html {
+.popup-html{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+#control-html{
+    width: 100%;
+    max-height: 700px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: .25fr .75fr;
+    grid-template-areas:"before-after-section rewind-ff-section"
+                        "go-to-section  bookmark-section";
+}
+
+#before-after-section{
+    grid-area: before-after-section;
+}
+#rewind-ff-section{
+    grid-area: rewind-ff-section;
+}
+#go-to-section{
+    grid-area: go-to-section;
+}
+#bookmark-section{
+    grid-area: bookmark-section;
+}
+#header{
+    padding-top:10px;
 }
 
 
 .btn{
     border-radius: 6px;
-    border: 2px solid;
+    border: 1px solid;
     display: inline-block;
     font-size: 11px;
     padding: 0 1em;
@@ -81,6 +106,7 @@ fieldset{
     text-align: center;
     margin-bottom: 10px;
     font-weight: bold;
+    font-size: 12px;
 }
 .button-panel{
    margin-bottom: 10px;
@@ -99,3 +125,30 @@ fieldset{
     right:10px;
 }
 
+@media (max-width: 656px) { 
+    #control-html{
+        width: 100%;
+        max-height: 1000px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: .2fr .2fr .2fr .5fr;
+        grid-template-areas:"before-after-section" "rewind-ff-section"
+                            "go-to-section"  "bookmark-section";
+    }
+    #header{
+        padding-top:0;
+    }
+ }
+
+
+@media (min-width: 657px) { 
+    #control-html{
+        width: 100%;
+        max-height: 700px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: .25fr .75fr;
+        grid-template-areas:"before-after-section rewind-ff-section"
+                            "go-to-section  bookmark-section";
+    }
+ }

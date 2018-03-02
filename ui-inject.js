@@ -100,4 +100,12 @@ $(function () {
         var hiddenClass = "hidden";
         $("#bas-help-note").toggleClass(hiddenClass);
     });
+    $(document).on("click.togglecontrols", '#toggle-button',function(){
+        var showHideObject = {"true":"SHOW", "false":"HIDE"};
+        var hiddenClass = "hidden";
+        var $wrap = $("#wrap");
+        $wrap.toggleClass(hiddenClass);
+        var controlSectionIsHidden = $wrap.hasClass(hiddenClass).toString();
+        $(this).html(showHideObject[controlSectionIsHidden]);
+    });
 });
