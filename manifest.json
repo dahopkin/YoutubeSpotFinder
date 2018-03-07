@@ -4,7 +4,7 @@
   "description": "Adds functionality to YouTube to be able to jump to certain parts of the video, as well as find a part of the video through a binary search.",
   "version": "1.0",
   "page_action": {
-    "default_icon": "yjt_icon.png",
+    "default_icon": "images/yjt_icon.png",
     "default_title": "YouTube JumpTo",
     "default_popup": "popup.html"
   },
