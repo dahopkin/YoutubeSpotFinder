@@ -48,8 +48,6 @@
     background: white;
     box-sizing: border-box;
     line-height: 28px;
-    font-weight: bold;
-    text-align: center;
     text-align: center;
     text-decoration: none;
     text-transform:uppercase;
@@ -80,7 +78,8 @@
     border-color:red;
 }
 .btn-primary{
-    color:rgb(88, 88, 88);
+    /* color:rgb(88, 88, 88);*/
+    color:hsl(0, 0%, 53.3%);
     background: transparent;
     border-color:transparent;
 }
@@ -136,6 +135,9 @@ fieldset{
     position:absolute;
     top:10px;
     right:10px;
+}
+.note{
+    font-size:12px;
 }
 
 @media (max-width: 656px) { 
