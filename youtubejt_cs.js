@@ -51,10 +51,10 @@ var getVideoPlayerButtonFunctionObject = function (videoObject) {
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
 var getHtml5VideoObject = function (videoDomElement) {
-    var innerPlayer = videoDomElement || document.getElementsByTagName("video")[0];
-    var getVideoDuration = function () { return Number(innerPlayer.duration); };
-    var seekToTime = function (seconds) { innerPlayer.currentTime = seconds; };
-    var getCurrentTime = function(){return innerPlayer.currentTime; };
+    var innerPlayer = function(){return videoDomElement || document.getElementsByTagName("video")[0]};
+    var getVideoDuration = function () { return Number(innerPlayer().duration); };
+    var seekToTime = function (seconds) { innerPlayer().currentTime = seconds; };
+    var getCurrentTime = function(){return innerPlayer().currentTime; };
     var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
     var seekToSecondsBeforeEnd = function (seconds) {
         if (getVideoDuration() > seconds) {
@@ -69,9 +69,9 @@ var getHtml5VideoObject = function (videoDomElement) {
         var fastForwardTime = getCurrentTime() + seconds;
         if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
     };
-    var play = function(){innerPlayer.play();};
-    var pause = function(){innerPlayer.pause();};
-    var isPlaying = function(){ return !innerPlayer.paused;}
+    var play = function(){innerPlayer().play();};
+    var pause = function(){innerPlayer().pause();};
+    var isPlaying = function(){ return !innerPlayer().paused;}
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
@@ -92,10 +92,10 @@ var html5VideoPlayer = function () {
 }();
 var pageHasFlashVideo = function(){return typeof(document.getElementById("movie_player")) !== 'undefined';}
 var flashVideoObject = function () {
-    var innerPlayer = document.getElementById("movie_player");
-    var getVideoDuration = function () { return Number(innerPlayer.getDuration()); };
-    var seekToTime = function (seconds) { innerPlayer.seekTo(seconds); };
-    var getCurrentTime = function(){ return innerPlayer.getCurrentTime(); };
+    var innerPlayer = function(){document.getElementById("movie_player")};
+    var getVideoDuration = function () { return Number(innerPlayer().getDuration()); };
+    var seekToTime = function (seconds) { innerPlayer().seekTo(seconds); };
+    var getCurrentTime = function(){ return innerPlayer().getCurrentTime(); };
     var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
     var seekToSecondsBeforeEnd = function (seconds) {
         if (getVideoDuration() > seconds) {
@@ -110,11 +110,11 @@ var flashVideoObject = function () {
         var fastForwardTime = getCurrentTime() + seconds;
         if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
     };
-    var play = function(){innerPlayer.playVideo();};
-    var pause = function(){innerPlayer.pauseVideo();};
+    var play = function(){innerPlayer().playVideo();};
+    var pause = function(){innerPlayer().pauseVideo();};
     var isPlaying = function(){
         var playerStatePlaying = 1;
-        return innerPlayer.getPlayerState() == playerStatePlaying;
+        return innerPlayer().getPlayerState() == playerStatePlaying;
     }
     return {
         seekToTime: seekToTime,
@@ -210,8 +210,9 @@ var getURLIDSource = function(settings){
             return undefined;
         }
     };
-    var pageMatches = function(){
-        return typeof getVideoIDFromURL(currentTabURL) !== "undefined";
+    var pageMatches = function(url){
+        url = url || currentTabURL;
+        return typeof getVideoIDFromURL(url) !== "undefined";
     };
     var getBookmarkKey = function(videoID){
         var videoID = videoID || getVideoIDFromURL(currentTabURL);
@@ -249,7 +250,8 @@ var getIdSource = function(){
 }
 var youtubeVideoPlayer = function(){
     if(pageHasHTML5Video()) return html5VideoPlayer;
-    if(pageHasFlashVideo()) return flashVideoPlayer;
+    //if(pageHasFlashVideo()) return flashVideoPlayer;
+    return html5VideoPlayer;
 }();
 var getVideoPlayer = function () { 
     var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource];
@@ -283,6 +285,7 @@ var videoPlayer, idSource, binarySearcher, bookmarks;
 var embedUIOnPage = function (functionToRunAfter) {
     $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
         var html = $.parseHTML(data);
+        if($(".yjt-html").length){$(".yjt-html").remove();}
         $("#info").prepend(html);
         functionToRunAfter();
     });
@@ -296,8 +299,8 @@ function initializeVariables(callback){
 }
 function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
-    videoPlayer = getVideoPlayer();
     idSource = getIdSource();
+    videoPlayer = getVideoPlayer();
     binarySearcher = getBinarySearcher(videoPlayer);
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     embedUIOnPage(function () {
@@ -305,7 +308,7 @@ function initialize() {
     });
 }
 function waitForElementToDisplay(selector, time, functionToRun) {
-    if(document.querySelector(selector)!=null) {
+    if(document.querySelector(selector)!=null && typeof document.querySelector(selector)!= "undefined") {
         functionToRun();
         return;
     }
@@ -315,9 +318,12 @@ function waitForElementToDisplay(selector, time, functionToRun) {
         }, time);
     }
 }
-$(window).on("load", function() { 
-    waitForElementToDisplay("#info", 500, initialize);
-});
+function initializeWhenElementIsLoaded(){
+    $(window).on("load", function() { 
+        waitForElementToDisplay("#info", 500, initialize);
+    });
+}
+
 function setPageDom(newAppInfo){
     appInfo = newAppInfo || appInfo;
     setBinarySearchDom(appInfo.binarySearchStatusInfo);
@@ -374,9 +380,17 @@ function resetDataForNewPage(){
     binarySearcher.reset();
     setAppInfo(setPageDom);
 }
+function isAVideoWatchPage(url){
+    return youtubeIDSource.pageMatches(url)
+}
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (currentTabURL != request.data.url) {
+    if (request.action == "change") {
         currentTabURL = request.data.url;
-        resetDataForNewPage();
+        if (isAVideoWatchPage(request.data.url)) {
+            waitForElementToDisplay("video", 500, initialize);
+        } else {
+            chrome.runtime.sendMessage({ action: "hide" });
+        }
     }
+    return true;
 });

@@ -15,7 +15,7 @@
 
   "content_scripts": [
     {
-      "matches": [ "*://*.youtube.com/*watch?v=*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
+      "matches": [ "*://*.youtube.com/*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
       "js": [ "jquery-3.3.1.min.js", "common.js","binarySearcher.js", "bookmarksModule.js", "youtubejt_cs.js", "ui-inject.js" ],
       "css": ["popup.css"],
       "run_at": "document_end"
@@ -24,7 +24,7 @@
   "permissions": [
     "tabs", "activeTab",
     "storage",
-     "*://*.youtube.com/*watch?v=*",
+     "*://*.youtube.com/*",
      "*://*.netflix.com/watch/*",
      "*://*.hulu.com/watch/*"
     ],
