@@ -20,34 +20,10 @@ var getNetflixVideoIDFromURL = function (url) {
     }
 };
 
-
-var getVideoPlayerButtonFunctionObject = function (videoObject) {
-    var seekToTime = videoObject.seekToTime;
-    var getVideoDuration = videoObject.getVideoDuration;
-    var getCurrentTime = videoObject.getCurrentTime;
-    var rewind = videoObject.rewind;
-    var fastForward = videoObject.fastForward;
-    var play = videoObject.play;
-    var pause = videoObject.pause;
-    var isPlaying = videoObject.isPlaying;
-    var goTo1_4thPoint = function () { videoObject.seekToPercentage((1 / 4)); };
-    var goTo2_4thPoint = function () { videoObject.seekToPercentage((2 / 4)); };
-    var goTo3_4thPoint = function () { videoObject.seekToPercentage((3 / 4)); };
-    var goTo30Point = function () { videoObject.seekToSecondsBeforeEnd(30); };
-    return {
-        goTo1_4thPoint: goTo1_4thPoint,
-        goTo2_4thPoint: goTo2_4thPoint,
-        goTo3_4thPoint: goTo3_4thPoint,
-        goTo30Point: goTo30Point,
-        seekToTime: seekToTime,
-        getVideoDuration: getVideoDuration,
-        getCurrentTime: getCurrentTime,
-        rewind:rewind,
-        fastForward:fastForward,
-        play:play,
-        pause:pause,
-        isPlaying:isPlaying
-    };
+var getDecimalPercentage = function(percentage){
+    percentage = Number(percentage);
+    if(percentage >= 0 && percentage <= 1){ return percentage; }
+    return percentage / 100;
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
 var getHtml5VideoObject = function (videoDomElement) {
@@ -55,7 +31,7 @@ var getHtml5VideoObject = function (videoDomElement) {
     var getVideoDuration = function () { return Number(innerPlayer().duration); };
     var seekToTime = function (seconds) { innerPlayer().currentTime = seconds; };
     var getCurrentTime = function(){return innerPlayer().currentTime; };
-    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * getDecimalPercentage(percentage)); };
     var seekToSecondsBeforeEnd = function (seconds) {
         if (getVideoDuration() > seconds) {
             seekToTime(getVideoDuration() - seconds);
@@ -87,16 +63,14 @@ var getHtml5VideoObject = function (videoDomElement) {
 };
 var html5VideoObject = getHtml5VideoObject();
 
-var html5VideoPlayer = function () {
-    return getVideoPlayerButtonFunctionObject(html5VideoObject);
-}();
+var html5VideoPlayer = html5VideoObject;
 var pageHasFlashVideo = function(){return typeof(document.getElementById("movie_player")) !== 'undefined';}
 var flashVideoObject = function () {
     var innerPlayer = function(){document.getElementById("movie_player")};
     var getVideoDuration = function () { return Number(innerPlayer().getDuration()); };
     var seekToTime = function (seconds) { innerPlayer().seekTo(seconds); };
     var getCurrentTime = function(){ return innerPlayer().getCurrentTime(); };
-    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * getDecimalPercentage(percentage)); };
     var seekToSecondsBeforeEnd = function (seconds) {
         if (getVideoDuration() > seconds) {
             seekToTime(getVideoDuration() - seconds);
@@ -130,9 +104,7 @@ var flashVideoObject = function () {
     };
 }();
 
-var flashVideoPlayer = function () {
-    return getVideoPlayerButtonFunctionObject(flashVideoObject);
-}();
+var flashVideoPlayer = flashVideoObject;
 
 var netflixVideoObject = function () {
     var innerPlayer = function () {
@@ -144,7 +116,7 @@ var netflixVideoObject = function () {
     var getVideoDuration = function () { return Number(innerPlayer().getDuration()/1000); };
     var seekToTime = function (seconds) { innerPlayer().seek(seconds*1000); };
     var getCurrentTime = function(){ return innerPlayer().getCurrentTime()/1000; };
-    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * percentage); };
+    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * getDecimalPercentage(percentage)); };
     var seekToSecondsBeforeEnd = function (seconds) {
         var milliseconds = seconds * 1000;
         if (getVideoDuration() > milliseconds) {

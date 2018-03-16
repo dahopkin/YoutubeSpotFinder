@@ -1,15 +1,16 @@
 $(function () {
-    $(document).on("click.go14", '#goTo1-4', function () {
-        videoPlayer.goTo1_4thPoint();
+    
+    $(document).on("click.percentage", ".percentage-button", function(e){
+        e.preventDefault();
+        var percentage = $(this).data("percentage");
+        videoPlayer.seekToPercentage(percentage);
+        setAppInfo(setPageDom);
     });
-    $(document).on("click.go24", '#goTo2-4', function () {
-        videoPlayer.goTo2_4thPoint();
-    });
-    $(document).on("click.go34", '#goTo3-4', function () {
-        videoPlayer.goTo3_4thPoint();
-    });
-    $(document).on("click.go30", '#goTo30', function () {
-        videoPlayer.goTo30Point();
+    $(document).on("click.beforeend", '.before-end-button', function (e) {
+        e.preventDefault();
+        var secondsBeforeEnd = $(this).data("secondsbeforeend");
+        videoPlayer.seekToSecondsBeforeEnd(secondsBeforeEnd);
+        setAppInfo(setPageDom);
     });
     
     $(document).on("click.startstop", '#startOrStop',function () {
