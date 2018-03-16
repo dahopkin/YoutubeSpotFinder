@@ -213,6 +213,10 @@ var getIdSource = function(){
         if(potentialIDSources[i].pageMatches()) return potentialIDSources[i];
     }
 }
+/*TODO: Figure out a solution for this; 
+the check for seeing if the page has html5 video might fail, 
+but using an html5 player anyway turns out fine. 
+Might be because I'm retrieving the dom element constantly.*/
 var youtubeVideoPlayer = function(){
     if(pageHasHTML5Video()) return html5VideoPlayer;
     //if(pageHasFlashVideo()) return flashVideoPlayer;
