@@ -359,7 +359,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "change") {
         currentTabURL = request.data.url;
         if (isAVideoWatchPage(request.data.url)) {
-            waitForElementToDisplay("video", 500, initialize);
+            waitForElementToDisplay("#info", 500, initialize);
         } else {
             chrome.runtime.sendMessage({ action: "hide" });
         }
