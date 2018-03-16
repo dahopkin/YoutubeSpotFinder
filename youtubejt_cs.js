@@ -61,11 +61,10 @@ var getHtml5VideoObject = function (videoDomElement) {
         isPlaying:isPlaying
     };
 };
-var html5VideoObject = getHtml5VideoObject();
 
-var html5VideoPlayer = html5VideoObject;
+var html5VideoPlayer = getHtml5VideoObject();
 var pageHasFlashVideo = function(){return typeof(document.getElementById("movie_player")) !== 'undefined';}
-var flashVideoObject = function () {
+var flashVideoPlayer = function () {
     var innerPlayer = function(){document.getElementById("movie_player")};
     var getVideoDuration = function () { return Number(innerPlayer().getDuration()); };
     var seekToTime = function (seconds) { innerPlayer().seekTo(seconds); };
@@ -104,9 +103,7 @@ var flashVideoObject = function () {
     };
 }();
 
-var flashVideoPlayer = flashVideoObject;
-
-var netflixVideoObject = function () {
+var netflixVideoPlayer = function () {
     var innerPlayer = function () {
         var tempPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
         var playerSessionId = tempPlayer.getAllPlayerSessionIds()[0];
@@ -147,10 +144,6 @@ var netflixVideoObject = function () {
         isPlaying:isPlaying
     };
 }();
-var netflixVideoPlayer = function () {
-    return getVideoPlayerButtonFunctionObject(netflixVideoObject);
-}();
-
 
 var huluVideoObject = getHtml5VideoObject(document.getElementById("content-video-player"));
 var huluVideoPlayer = function () { return getVideoPlayerButtonFunctionObject(huluVideoObject);}();
