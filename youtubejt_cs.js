@@ -145,8 +145,7 @@ var netflixVideoPlayer = function () {
     };
 }();
 
-var huluVideoObject = getHtml5VideoObject(document.getElementById("content-video-player"));
-var huluVideoPlayer = function () { return getVideoPlayerButtonFunctionObject(huluVideoObject);}();
+var huluVideoPlayer = getHtml5VideoObject(document.getElementById("content-video-player"));
 
 var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber, bookmarkPrefix){
     return{
