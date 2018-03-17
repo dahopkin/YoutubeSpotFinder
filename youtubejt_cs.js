@@ -318,24 +318,29 @@ function setBinarySearchDom(binarySearchStatusInfo){
     
 }
 
-function getTableContentsFromBookmarks(bookmarkInfo){
+function getTableContentsFromBookmarks(bookmarkInfo) {
     var currentBookmark, html, time, formattedTime, description;
     html = "";
-    for (var i = 0; i < bookmarkInfo.length; i++) {
-        currentBookmark = bookmarkInfo[i];
-        if(i === 0){
-            html += "<tr><th>Time (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>";    
-        }
-        time = currentBookmark.time;
-        description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
-        formattedTime = hhmmss(currentBookmark.time);
-        html += `<tr>
+    if (bookmarkInfo.length == 0) {
+        html += "<tr><td class='note'>No bookmarks for this video.</td><tr>";
+        return html;
+    } else {
+        for (var i = 0; i < bookmarkInfo.length; i++) {
+            currentBookmark = bookmarkInfo[i];
+            if (i === 0) {
+                html += "<tr><th>Time (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>";
+            }
+            time = currentBookmark.time;
+            description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
+            formattedTime = hhmmss(currentBookmark.time);
+            html += `<tr>
         <td><a class='time-link' data-time='${time}'>${formattedTime}</a></td>
         <td><span class='description' data-time='${time}'>${description}</span></td>
         <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
         <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
         <tr>`;
-        //Do something
+            //Do something
+        }
     }
     return html;
 }
