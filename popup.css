@@ -154,16 +154,3 @@ fieldset{
         padding-top:0;
     }
  }
-
-
-@media (min-width: 657px) { 
-    #control-html{
-        width: 100%;
-        max-height: 700px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: .25fr .75fr;
-        grid-template-areas:"before-after-section rewind-ff-section"
-                            "go-to-section  bookmark-section";
-    }
- }
