@@ -44,7 +44,7 @@ var getBinarySearcher = function (videoPlayer) {
         if (shouldEndNow()) { resetBinarySearcher(); }
     };
     var getBinarySearchStatus = function(){
-        return { isRunning : isRunning };
+        return { isRunning : isRunning, start:start, end:end, mid:mid, duration:videoPlayer.getVideoDuration() };
     }
     return {
         startOrStop: startOrStop,
