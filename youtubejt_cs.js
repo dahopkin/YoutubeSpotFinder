@@ -315,6 +315,7 @@ function setBinarySearchDom(binarySearchStatusInfo){
             $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
         }
     }
+    setProgressBarDom(binarySearchStatusInfo);
     
 }
 
@@ -343,6 +344,31 @@ function getTableContentsFromBookmarks(bookmarkInfo) {
         }
     }
     return html;
+}
+
+function setProgressBarDom(binarySearchStatusInfo){
+    var $progressBarOuter = $(".progress-outer");
+    var $progressBarInner = $(".progress-inner");
+    var $progressBarMid = $(".progress-mid");
+    if(binarySearchStatusInfo.isRunning){
+        $progressBarOuter.show();
+        var progressBarWidth = $progressBarOuter.width();
+        var start = binarySearchStatusInfo.start;
+        var end = binarySearchStatusInfo.end;
+        var mid = binarySearchStatusInfo.mid;
+        var duration = binarySearchStatusInfo.duration;
+        var difference = end - start;
+        var differencePercentage = difference/duration;
+        var startOnProgressPercentage = start/duration;
+        var midPercentage = mid/duration;
+        var startLeftMid = midPercentage * progressBarWidth;
+        var startLeft = startOnProgressPercentage * progressBarWidth;
+        var innerProgressWidth = differencePercentage * progressBarWidth;
+        $progressBarInner.css({width:innerProgressWidth, left:startLeft});
+        $progressBarMid.css({left:startLeftMid});
+    } else{
+        $progressBarOuter.hide();
+    }
 }
 function setBookmarkDom(bookmarkInfo){
     $('#description').val("");
