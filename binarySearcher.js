@@ -41,30 +41,31 @@ var getBinarySearcher = function (videoPlayer) {
         }
     }
     var shouldEndNow = function () { return start > end; }
-    var goLeft = function () {
+    var endSearchIfNoMoreValidTimes = function(){
+        if (shouldEndNow()) {resetBinarySearcher();}
+    };
+    var setStartAfterMiddle = function(){start = mid + 1;};
+    var setEndBeforeMiddle = function(){end = mid - 1;};
+    var changeStartOrEndAndJumpToMiddle = function (startOrEndChangeFunction) {
         if (!isRunning) { return; }
         saveCurrentStatusToSearchHistory();
-        end = mid - 1;
+        startOrEndChangeFunction();
         calculateMid();
         goToMid();
-        if (shouldEndNow()) {
-            resetBinarySearcher();
-        }
+        endSearchIfNoMoreValidTimes();
+    };
+    var goLeft = function () {
+        changeStartOrEndAndJumpToMiddle(setEndBeforeMiddle);  
     };
     var goRight = function () {
-        if (!isRunning) { return; }
-        saveCurrentStatusToSearchHistory();
-        start = mid + 1;
-        calculateMid();
-        goToMid();
-        if (shouldEndNow()) { resetBinarySearcher(); }
+        changeStartOrEndAndJumpToMiddle(setStartAfterMiddle);
     };
     var undoLastStep = function(){
         if(isRunning && !searchHistoryIsEmpty()){
             var lastStatusObject = searchHistory.pop();
             setStatusFromStatusObject(lastStatusObject);
             goToMid();
-            if (shouldEndNow()) { resetBinarySearcher(); }
+            endSearchIfNoMoreValidTimes();
         }
     }
     var getBinarySearchStatus = function(){
@@ -76,7 +77,7 @@ var getBinarySearcher = function (videoPlayer) {
             duration:videoPlayer.getVideoDuration(),
             canUndoLastStep: !searchHistoryIsEmpty(),
           };
-    }
+    };
     return {
         startOrStop: startOrStop,
         goLeft: goLeft,
