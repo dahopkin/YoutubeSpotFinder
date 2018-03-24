@@ -315,8 +315,16 @@ function setBinarySearchDom(binarySearchStatusInfo){
             $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
         }
     }
+    setUndoButtonDom(binarySearchStatusInfo);
     setProgressBarDom(binarySearchStatusInfo);
     
+}
+function setUndoButtonDom(binarySearchStatusInfo){
+    if(binarySearchStatusInfo.isRunning && binarySearchStatusInfo.canUndoLastStep){
+        $("#undo").prop("disabled",false).removeClass("btn-disabled");
+    } else{
+        $("#undo").prop("disabled",true).addClass("btn-disabled");
+    }
 }
 
 function getTableContentsFromBookmarks(bookmarkInfo) {

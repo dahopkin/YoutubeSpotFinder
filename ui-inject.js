@@ -26,6 +26,10 @@ $(function () {
         binarySearcher.goRight();
         setAppInfo(setPageDom);
     });
+    $(document).on("click.undo", '#undo',function () {
+        binarySearcher.undoLastStep();
+        setAppInfo(setPageDom);
+    });
     $(document).on("click.send", ".time-link", function(e){
         e.preventDefault();
         var time = $(this).data("time");
