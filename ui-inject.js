@@ -38,7 +38,7 @@ $(function () {
     });
     $(document).on("click.delete", ".delete-button", function(e){
         e.preventDefault();
-        if (confirm("Are you sure you want to delete this bookmark?")) {
+        if (confirm("Are you sure you want to delete this bookmarked time?")) {
             var time = $(this).data("time");
             bookmarks.deleteBookmark(time, function(saveResult){
                 setAppInfo(setPageDom);

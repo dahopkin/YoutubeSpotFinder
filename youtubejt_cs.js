@@ -331,7 +331,7 @@ function getTableContentsFromBookmarks(bookmarkInfo) {
     var currentBookmark, html, time, formattedTime, description;
     html = "";
     if (bookmarkInfo.length == 0) {
-        html += "<tr><td class='note'>No bookmarks for this video.</td><tr>";
+        html += "<tr><td class='note'>No bookmarked times for this video.</td><tr>";
         return html;
     } else {
         for (var i = 0; i < bookmarkInfo.length; i++) {
