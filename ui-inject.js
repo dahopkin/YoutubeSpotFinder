@@ -1,5 +1,5 @@
 $(function () {
-    
+
     $(document).on("click.percentage", ".percentage-button", function(e){
         e.preventDefault();
         var percentage = $(this).data("percentage");
@@ -113,4 +113,13 @@ $(function () {
         var controlSectionIsHidden = $wrap.hasClass(hiddenClass).toString();
         $(this).html(showHideObject[controlSectionIsHidden]);
     });
+    $(document).on("mouseenter mouseleave", '.hover-help', function (e) {
+        if (e.type == "mouseenter") {
+            var help = $(this).data("help");
+            $("#help-note").html(help);
+          
+        } else {
+            $("#help-note").html("");
+        }
+      });
 });

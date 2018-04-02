@@ -1,7 +1,4 @@
 <div class="yjt-html">    
-    <h2 class="center" id="header">YouTube JumpTo Controls &nbsp;
-    <button id="toggle-button" class="btn btn-medium btn-primary">HIDE</button>
-    </h2>
     <div id="wrap">
         <div id="control-html">
             <div class="button-panel" id="before-after-section">
@@ -31,40 +28,35 @@
                 </div>
             </div>
 
-            <div class="button-panel" id="go-to-section">
-                <div class="panel-title">Go To</div>
-                <div class="panel-outer">
-                    <div class="div-center">
-                        <input class="btn btn-primary btn-medium percentage-button" type="submit" id="goToStart" value="Start" data-percentage='0' />
-                        <input class="btn btn-primary btn-medium percentage-button" type="submit" id="goTo1-4" value="1/4" data-percentage='25' />
-                        <input class="btn btn-primary btn-medium percentage-button" type="submit" id="goTo2-4" value="1/2" data-percentage='50' />
-                        <input class="btn btn-primary btn-medium percentage-button" type="submit" id="goTo3-4" value="3/4" data-percentage='75' />
-                        <input class="btn btn-primary btn-medium before-end-button" type="submit" id="goTo30" value="30s before end" data-secondsbeforeend='30' />
+            <div class="button-panel" id="jump-to-section">
+                <div class="">
+                    <div class="">
+                        <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" value="-60" data-time='60'
+                            data-help='Rewind 1 minute.' />
+                        <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" value="-30" data-time='30'
+                            data-help='Rewind 30 seconds.' />
+                        <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind10" value="-10" data-time='10'
+                            data-help='Rewind 10 seconds.' />
+                        <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward10" value="+10" data-time='10'
+                            data-help='Fast-Forward 10 seconds.' />
+                        <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward30" value="+30" data-time='30'
+                            data-help='Fast-Forward 30 seconds.' />
+                        <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" value="+60" data-time='60'
+                            data-help='Fast-Forward 1 minute.' />
+                        <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" value="Start" data-percentage='0'
+                            data-help='Go to the start.' />
+                        <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo1-4" value="1/4" data-percentage='25'
+                            data-help='Go to the 1/4th point of the video.' />
+                        <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo2-4" value="1/2" data-percentage='50'
+                            data-help='Go to the 1/2 point of the video.' />
+                        <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo3-4" value="3/4" data-percentage='75'
+                            data-help='Go to the 3/4th point of the video.' />
+                        <input class="btn btn-primary btn-medium before-end-button hover-help" type="submit" id="goTo30" value="30s before end" data-secondsbeforeend='30'
+                            data-help='Go to 30 seconds before the end.' />
                     </div>
-                    <p class="note">
-                        Jump to certain points of the video.
-                    </p>
+                    <p class="note" id="help-note"></p>
                 </div>
             </div>
-
-            <div class="button-panel" id="rewind-ff-section">
-                <div class="panel-title">Rewind/Fast-Forward</div>
-                <div class="panel-outer">
-                    <div class="div-center">
-                        <!-- <input class="btn btn-red btn-medium" type="submit" id="playOrPause" value="Play" /> -->
-                        <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind60" value="-60" data-time='60' />
-                        <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind30" value="-30" data-time='30' />
-                        <input class="btn btn-primary btn-medium rewind-button" type="submit" id="rewind10" value="-10" data-time='10' />
-                        <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward10" value="+10" data-time='10'/>
-                        <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward30" value="+30" data-time='30'/>
-                        <input class="btn btn-primary btn-medium fastForward-button" type="submit" id="fastForward60" value="+60" data-time='60'/>
-                    </div>
-                    <p class="note">
-                        Rewind or Fast-Forward the video.
-                    </p>
-                </div>
-            </div>
-
 
             <div class="center" id="bookmark-section">
                 <div class="panel-title">Bookmarked Times</div>
@@ -83,4 +75,7 @@
             </div>
         </div>
     </div>
+    <h2 class="center" id="header">YouTube JumpTo Controls &nbsp;
+            <button id="toggle-button" class="btn btn-medium btn-primary">HIDE</button>
+            </h2>
 </div>
