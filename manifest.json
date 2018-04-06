@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "YouTube JumpTo",
-  "description": "Adds functionality to YouTube to be able to jump to certain parts of the video, as well as find a part of the video through a binary search.",
+  "name": "YouTube Spot Finder",
+  "description": "Helps you find a specific spot in a youtube video by narrowing things down. Also has time bookmarking and buttons for going back and forth.",
   "version": "1.0",
   "page_action": {
     "default_icon": "images/yjt_icon.png",
