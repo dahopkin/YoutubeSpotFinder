@@ -311,7 +311,7 @@ function setBinarySearchDom(binarySearchStatusInfo){
             $("#startOrStop").val("Stop").removeClass("btn-red").addClass("btn-red-inverse");
             $("#goLeft, #goRight").prop("disabled",false).removeClass("btn-disabled");
         } else{
-            $("#startOrStop").val("Start").removeClass("btn-red-inverse").addClass("btn-red");
+            $("#startOrStop").val("Find").removeClass("btn-red-inverse").addClass("btn-red");
             $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
         }
     }
