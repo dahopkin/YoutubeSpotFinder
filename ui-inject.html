@@ -1,4 +1,5 @@
 <div class="yjt-html">    
+    
     <div id="wrap">
         <div id="control-html">
             <div class="button-panel" id="before-after-section">
@@ -29,30 +30,32 @@
             </div>
 
             <div class="button-panel" id="jump-to-section">
-                <div class="">
-                    <div class="">
+                <div class="panel-outer">
+                    <div class="div-center">
                         <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" value="-60" data-time='60'
-                            data-help='Rewind 1 minute.' />
+                            data-help='Rewind 1 minute.' data-helptarget="help-note" />
                         <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" value="-30" data-time='30'
-                            data-help='Rewind 30 seconds.' />
-                        <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind10" value="-10" data-time='10'
-                            data-help='Rewind 10 seconds.' />
-                        <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward10" value="+10" data-time='10'
-                            data-help='Fast-Forward 10 seconds.' />
+                            data-help='Rewind 30 seconds.'  data-helptarget="help-note"/>
+                        <input class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind15" value="-15" data-time='15'
+                            data-help='Rewind 15 seconds.'  data-helptarget="help-note"/>
+                            <span class="separator-small"></span>
+                        <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward15" value="+15" data-time='15'
+                            data-help='Fast-Forward 15 seconds.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward30" value="+30" data-time='30'
-                            data-help='Fast-Forward 30 seconds.' />
+                            data-help='Fast-Forward 30 seconds.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" value="+60" data-time='60'
-                            data-help='Fast-Forward 1 minute.' />
-                        <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" value="Start" data-percentage='0'
-                            data-help='Go to the start.' />
+                            data-help='Fast-Forward 1 minute.'  data-helptarget="help-note"/>
+                        <span class="separator"></span>
+                            <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" value="Start" data-percentage='0'
+                            data-help='Go to the start.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo1-4" value="1/4" data-percentage='25'
-                            data-help='Go to the 1/4th point of the video.' />
+                            data-help='Go to the 1/4th point of the video.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo2-4" value="1/2" data-percentage='50'
-                            data-help='Go to the 1/2 point of the video.' />
+                            data-help='Go to the 1/2 point of the video.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo3-4" value="3/4" data-percentage='75'
-                            data-help='Go to the 3/4th point of the video.' />
+                            data-help='Go to the 3/4th point of the video.'  data-helptarget="help-note"/>
                         <input class="btn btn-primary btn-medium before-end-button hover-help" type="submit" id="goTo30" value="30s before end" data-secondsbeforeend='30'
-                            data-help='Go to 30 seconds before the end.' />
+                            data-help='Go to 30 seconds before the end.'  data-helptarget="help-note"/>
                     </div>
                     <p class="note" id="help-note"></p>
                 </div>
