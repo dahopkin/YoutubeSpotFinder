@@ -1,24 +1,5 @@
 
 var currentTabURL = window.location.href;
-var getYoutubeVideoIDFromURL = function (url) {
-    var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    var match = url.match(regExp);
-    if (match && match[2].length == 11) {
-        return match[2];
-    } else {
-        return undefined;
-    }
-};
-
-var getNetflixVideoIDFromURL = function (url) {
-    var regExp = /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/;
-    var match = url.match(regExp);
-    if (match && match[2].length == 8) {
-        return match[2];
-    } else {
-        return undefined;
-    }
-};
 
 var getDecimalPercentage = function(percentage){
     percentage = Number(percentage);
@@ -229,16 +210,6 @@ var getVideoPlayer = function () {
     }
 }
 var appInfo;
-var getMultipleDataAndSend = function(sendResponse){
-    bookmarks.getBookmarkData(function(bookmarkData){
-        var appData = {
-            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
-            "bookmarkInfo":bookmarkData,
-            "isPlaying":videoPlayer.isPlaying()
-        };
-        sendResponse(appData);
-    });
-}
 var setAppInfo = function(appInfoCallback){
     bookmarks.getBookmarkData(function(bookmarkData){
         appInfo = {
