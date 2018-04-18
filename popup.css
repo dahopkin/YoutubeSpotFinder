@@ -79,18 +79,17 @@
     border-color:red;
     font-weight:bold;
 }
-.btn-primary{
+.btn-primary, .btn-primary:hover{
     /* color:rgb(88, 88, 88);*/
-    color:hsl(0, 0%, 53.3%);
     background: transparent;
     border-color:transparent;
     font-weight:bold;
 }
+.btn-primary{
+    color:hsl(0, 0%, 53.3%);
+}
 .btn-primary:hover{
     color:black;
-    background: rgb(250, 250, 250);
-    border-color:rgb(250, 250, 250);
-    font-weight:bold;
     font-size:15px;
 }
 .float-left{float: left;}
