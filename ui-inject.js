@@ -114,12 +114,13 @@ $(function () {
         $(this).html(showHideObject[controlSectionIsHidden]);
     });
     $(document).on("mouseenter mouseleave", '.hover-help', function (e) {
+        var helpTarget = $(this).data("helptarget");
         if (e.type == "mouseenter") {
             var help = $(this).data("help");
-            $("#help-note").html(help);
+            $("#"+helpTarget).html(help);
           
         } else {
-            $("#help-note").html("");
+            $("#"+helpTarget).html("");
         }
       });
 });
