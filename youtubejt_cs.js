@@ -166,7 +166,7 @@ var getURLIDSource = function(settings){
     return{
         pageMatches:pageMatches,
         getBookmarkKey:getBookmarkKey,
-        getVideoID:getYoutubeVideoIDFromURL
+        getVideoID:getVideoIDFromURL
     };
 };
 var youtubeIDSource = getURLIDSource(
