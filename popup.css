@@ -1,3 +1,6 @@
+:root{
+    --tooltip-color: rgba(0,0,0,0.7);
+}
 .popup-body{
     min-width:350px;
     border-color: #c1c2c0;
@@ -167,6 +170,95 @@ fieldset{
 }
 .separator{margin-right: 30px;}
 .separator-small{margin-right: 20px;}
+
+/*Tooltip code, despite my changes, comes from:
+https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips-3d5a3e237346
+*/
+[tooltip]{
+    position:relative;
+    display:inline-block;
+  }
+  /*arrow*/
+  [tooltip]::before {
+      content: "";
+      position: absolute;
+      top:-6px;
+      left:50%;
+      transform: translateX(-50%);
+      border-width: 4px 6px 0 6px;
+      border-style: solid;
+      border-color: var(--tooltip-color) transparent transparent transparent;
+      z-index: 99;
+      opacity:0;
+  }
+  
+  [tooltip-position='left']::before{
+    left:0%;
+    top:50%;
+    margin-left:-12px;
+    transform:translatey(-50%) rotate(-90deg) 
+  }
+  [tooltip-position='top']::before{
+    left:50%;
+  }
+  [tooltip-position='bottom']::before{
+    top:100%;
+    margin-top:8px;
+    transform: translateX(-50%) translatey(-100%) rotate(-180deg)
+  }
+  [tooltip-position='right']::before{
+    left:100%;
+    top:50%;
+    margin-left:1px;
+    transform:translatey(-50%) rotate(90deg)
+  }
+  /*word bubble*/
+  [tooltip]::after {
+      content: attr(tooltip);
+      position: absolute;
+      left:50%;
+      top:-6px;
+      transform: translateX(-50%)   translateY(-100%);
+      background: var(--tooltip-color);
+      text-align: center;
+      color: #fff;
+      padding:4px 2px;
+      font-size: 12px;
+      min-width: 240px;
+      border-radius: 5px;
+      pointer-events: none;
+      padding: 4px 4px;
+      z-index:99;
+      opacity:0;
+  }
+  
+  [tooltip-position='left']::after{
+    left:0%;
+    top:50%;
+    margin-left:-8px;
+    transform: translateX(-100%)   translateY(-50%);
+  }
+  [tooltip-position='top']::after{
+    left:50%;
+  }
+  [tooltip-position='bottom']::after{
+    top:100%;
+    margin-top:8px;
+    transform: translateX(-50%) translateY(0%);
+  }
+  [tooltip-position='right']::after{
+    left:100%;
+    top:50%;
+    margin-left:8px;
+    transform: translateX(0%)   translateY(-50%);
+  }
+  
+  [tooltip]:hover::after,[tooltip]:hover::before {
+     opacity:1;
+     transition: all ease 0.75s;
+     transition-delay: 1.0s;     
+  }
+  /*End Tooltip code.*/
 @media (max-width: 656px) { 
     #control-html{
         width: 100%;

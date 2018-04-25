@@ -279,10 +279,10 @@ function setPlayButton(isPlaying){
 function setBinarySearchDom(binarySearchStatusInfo){
     if(binarySearchStatusInfo){
         if(binarySearchStatusInfo.isRunning){
-            $("#startOrStop").val("Stop").removeClass("btn-red").addClass("btn-red-inverse");
+            $("#startOrStop").text("Stop").removeClass("btn-red").addClass("btn-red-inverse");
             $("#goLeft, #goRight").prop("disabled",false).removeClass("btn-disabled");
         } else{
-            $("#startOrStop").val("Find").removeClass("btn-red-inverse").addClass("btn-red");
+            $("#startOrStop").text("Find").removeClass("btn-red-inverse").addClass("btn-red");
             $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
         }
     }

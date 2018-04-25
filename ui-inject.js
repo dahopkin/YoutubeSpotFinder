@@ -113,14 +113,4 @@ $(function () {
         var controlSectionIsHidden = $wrap.hasClass(hiddenClass).toString();
         $(this).html(showHideObject[controlSectionIsHidden]);
     });
-    $(document).on("mouseenter mouseleave", '.hover-help', function (e) {
-        var helpTarget = $(this).data("helptarget");
-        if (e.type == "mouseenter") {
-            var help = $(this).data("help");
-            $("#"+helpTarget).html(help);
-          
-        } else {
-            $("#"+helpTarget).html("");
-        }
-      });
 });
