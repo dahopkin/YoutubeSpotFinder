@@ -278,12 +278,16 @@ function setPlayButton(isPlaying){
 };
 function setBinarySearchDom(binarySearchStatusInfo){
     if(binarySearchStatusInfo){
+        let $startStopButton = $("#startOrStop");
+        let $leftRightButtons = $("#goLeft, #goRight");
         if(binarySearchStatusInfo.isRunning){
-            $("#startOrStop").text("Stop").removeClass("btn-red").addClass("btn-red-inverse");
-            $("#goLeft, #goRight").prop("disabled",false).removeClass("btn-disabled");
+            $startStopButton.text("Stop").removeClass("btn-red").addClass("btn-red-inverse");
+            $startStopButton.attr("tooltip", "Stop spot finding.");
+            $leftRightButtons.prop("disabled",false).removeClass("btn-disabled");
         } else{
-            $("#startOrStop").text("Find").removeClass("btn-red-inverse").addClass("btn-red");
-            $("#goLeft, #goRight").prop("disabled",true).addClass("btn-disabled");
+            $startStopButton.text("Find").removeClass("btn-red-inverse").addClass("btn-red");
+            $startStopButton.attr("tooltip", "Start finding your spot.");
+            $leftRightButtons.prop("disabled",true).addClass("btn-disabled");
         }
     }
     setUndoButtonDom(binarySearchStatusInfo);
@@ -308,7 +312,8 @@ function getTableContentsFromBookmarks(bookmarkInfo) {
         for (var i = 0; i < bookmarkInfo.length; i++) {
             currentBookmark = bookmarkInfo[i];
             if (i === 0) {
-                html += "<tr><th>Time (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>";
+                //html += `<tr><th>Go To: (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>`;
+                html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
             }
             time = currentBookmark.time;
             description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;

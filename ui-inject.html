@@ -1,87 +1,80 @@
 <div class="yjt-html">    
     
     <div id="wrap">
-        <div id="control-html">
+        <div id="control-html" class="grey-panel rounded-bottom-panel">
             <div class="button-panel" id="before-after-section">
-                <div class="panel-title">Find a Spot
-                    <span>
-                        <button class="btn btn-small btn-primary forced-skinny" id="bas-help-button">?</button>
-                    </span>
-                </div>
-                <div class="panel-outer">
-                    <div class="div-center">
+                        <span class="panel-title-inline">Find a Spot
+                            <span>
+                                <button class="btn btn-small btn-primary" id="bas-help-button">?</button>
+                            </span>
+                        </span>
+                <div class="inline-block">
                         <button id="startOrStop"class="btn btn-red btn-medium hover-help" 
                         type="submit"  
-                        tooltip-position="bottom" tooltip="Start finding your spot." >
+                        tooltip-position="top" tooltip="Start finding your spot." >
                             Find
                         </button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goLeft" tooltip-position="bottom" tooltip='"What I want is before this..."'  >Before This</button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goRight" tooltip-position="bottom" tooltip='"What I want is after this..."'  >After This</button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="undo" tooltip-position="bottom" tooltip='Undo the previous step.'  >Undo</button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goLeft" tooltip-position="top" tooltip='"What I want is before this..."'  >Before This</button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goRight" tooltip-position="top" tooltip='"What I want is after this..."'  >After This</button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="undo" tooltip-position="top" tooltip='Undo the previous step.'  >Undo</button>
+                        
+                    <div class="progress-section">
                         <div class="progress-outer">
-                                <div class="progress-mid"></div>
-                                <div class="progress-inner">
-                                </div>
+                            <div class="progress-mid"></div>
+                            <div class="progress-inner">
+                            </div>
                         </div>
                     </div>
-                    <p class="note hidden" id="bas-help-note">
-                            Click "Find" to jump to the middle of the video.
-                            If the spot you're looking for is at or close enough to the middle, click "Stop". If it's before the middle, click "Before This". If it's after, click "After This".</li>
-                            Keep clicking the "Before" or "After" buttons until you find what you want.
-                    </p>
                 </div>
+                    <ol class="note hidden white" id="bas-help-note">
+                        <li>Click "Find" to jump to the middle of the video.</li>
+                        <li>If the spot you're looking for is at or close enough to the middle, click "Stop".
+                            <br> If it's before the middle, click "Before This". 
+                            <br>If it's after, click "After This".</li>
+                        <li>Repeat the previous step until you find what you want.</li>
+                            
+                    </ol>
             </div>
 
             <div class="button-panel" id="jump-to-section">
-                <div class="panel-outer">
-                    <div class="div-center">
-                        <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" data-time='60'
-                            tooltip-position="bottom" tooltip='Rewind 1 minute.'>-60</button>
-                        <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" data-time='30'
-                            tooltip-position="bottom" tooltip='Rewind 30 seconds.'>-30</button>
-                        <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind15" data-time='15'
-                            tooltip-position="bottom" tooltip='Rewind 15 seconds.'>-15</button>
-                            <span class="separator-small"></span>
-                        <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward15" data-time='15'
-                            tooltip-position="bottom" tooltip='Fast-Forward 15 seconds.'>+15</button>
-                        <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward30" data-time='30'
-                            tooltip-position="bottom" tooltip='Fast-Forward 30 seconds.'>+30</button>
-                        <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" data-time='60'
-                            tooltip-position="bottom" tooltip='Fast-Forward 1 minute.'>+60</button>
-                        <span class="separator"></span>
-                            <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" data-percentage='0'
-                            tooltip-position="bottom" tooltip='Go to the start.'>Start</button>
-                        <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo1-4" data-percentage='25'
-                            tooltip-position="bottom" tooltip='Go to the 1/4th point of the video.'>1/4</button>
-                        <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo2-4" data-percentage='50'
-                            tooltip-position="bottom" tooltip='Go to the 1/2 point of the video.'>1/2</button>
-                        <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo3-4" data-percentage='75'
-                            tooltip-position="bottom" tooltip='Go to the 3/4th point of the video.'>3/4</button>
-                        <button class="btn btn-primary btn-medium before-end-button hover-help" type="submit" id="goTo30" data-secondsbeforeend='30'
-                            tooltip-position="bottom" tooltip='Go to 30 seconds before the end.'>30s before end</button>
-                    </div>
-                    <p class="note" id="help-note"> </p>
-                </div>
+                <span class="panel-title-inline">Back/Forward<span>
+                <span class="separator-xsmall"></span>
+                <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" data-time='60'
+                    tooltip-position="top" tooltip='Go back 1 minute.'>-60</button>
+                <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" data-time='30'
+                    tooltip-position="top" tooltip='Go back 30 seconds.'>-30</button>
+                <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind15" data-time='15'
+                    tooltip-position="top" tooltip='Go back 15 seconds.'>-15</button>
+                <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward15" data-time='15'
+                    tooltip-position="top" tooltip='Go forward 15 seconds.'>+15</button>
+                <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward30" data-time='30'
+                    tooltip-position="top" tooltip='Go forward 30 seconds.'>+30</button>
+                <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" data-time='60'
+                    tooltip-position="top" tooltip='Go forward 1 minute.'>+60</button>
+                    <!-- <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" data-percentage='0'
+                    tooltip-position="bottom" tooltip='Go to the start.'>Start</button>
+                <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo1-4" data-percentage='25'
+                    tooltip-position="bottom" tooltip='Go to the 1/4th point of the video.'>1/4</button>
+                <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo2-4" data-percentage='50'
+                    tooltip-position="bottom" tooltip='Go to the 1/2 point of the video.'>1/2</button>
+                <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo3-4" data-percentage='75'
+                    tooltip-position="bottom" tooltip='Go to the 3/4th point of the video.'>3/4</button>
+                <button class="btn btn-primary btn-medium before-end-button hover-help" type="submit" id="goTo30" data-secondsbeforeend='30'
+                    tooltip-position="bottom" tooltip='Go to 30 seconds before the end.'>30s before end</button> -->
             </div>
 
-            <div class="center" id="bookmark-section">
-                <div class="panel-title">Bookmarked Times</div>
-                <input class="btn btn-primary btn-medium" type="submit" id="saveBookmark" value="Bookmark Current Time" />
-                <div id="new-bookmark" class="hidden">
-                    <div class="panel-title">New Bookmark</div>
-                    <span id=time></span>
-                    <input type=text maxlength="100" placeholder="New Description" />
-                    <input class="btn btn-primary" type="submit" id="saveBookmark2" value="After This" />
-                </div>
+            <div class="" id="bookmark-section">
+                <span class="panel-title-inline">Bookmarked Times</span>
+                <span class="separator-xsmall"></span>
+                <button class="btn btn-primary btn-medium" id="saveBookmark" tooltip-position="bottom" tooltip='Save current time to bookmarks.'>Bookmark Current Time</button>
+                
                 <div id="table-section">
-                    <table id="bookmark-table" class="bookmark-table">
-
-                    </table>
+                    <table id="bookmark-table" class="bookmark-table white note"></table>
                 </div>
             </div>
         </div>
     </div>
-    <h2 class="center" id="header">YouTube JumpTo Controls &nbsp;
+    <!-- <h2 class="center" id="header">YouTube JumpTo Controls &nbsp;
         <button id="toggle-button" class="btn btn-medium btn-primary">HIDE</button>
-        </h2>
+        </h2> -->
 </div>

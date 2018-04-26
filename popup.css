@@ -1,5 +1,5 @@
 :root{
-    --tooltip-color: rgba(0,0,0,0.7);
+    --tooltip-color: rgba(0,0,0,0.8);
 }
 .popup-body{
     min-width:350px;
@@ -13,10 +13,10 @@
     width: 100%;
     max-height: 700px;
     display: grid;
-    grid-template-columns: .50fr .50fr;
-    grid-template-rows: .15fr .85fr;
-    grid-template-areas:"jump-to-section jump-to-section"
-                        "before-after-section bookmark-section";
+    grid-template-columns: .55fr .45fr;
+    grid-template-rows: .10fr .90fr;
+    grid-template-areas:"before-after-section jump-to-section"
+                        "bookmark-section bookmark-section";
 }
 
 #before-after-section{
@@ -41,19 +41,19 @@
 }
 
 .btn{
-    border-radius: 3px;
+    /* border-radius: 3px; */
     border: 1px solid;
     display: inline-block;
-    font-size: 11px;
+    font-size: 12px;
     padding: 0 1em;
     vertical-align: middle;
     color: black;
     background: white;
     box-sizing: border-box;
-    line-height: 28px;
+    /* line-height: 28px; */
     text-align: center;
     text-decoration: none;
-    text-transform:uppercase;
+    /* text-transform:uppercase; */
     cursor: pointer;
 }
 
@@ -75,25 +75,28 @@
     background: red;
     border-color:red;
     font-weight:bold;
+    transition: all ease 0.35s;
 }
 .btn-red:hover,.btn-red-inverse{
     color:red;
     background: white;
-    border-color:red;
+    border-color:white;
     font-weight:bold;
+    transition: all ease 0.35s;
 }
 .btn-primary, .btn-primary:hover{
-    /* color:rgb(88, 88, 88);*/
     background: transparent;
     border-color:transparent;
     font-weight:bold;
 }
 .btn-primary{
-    color:hsl(0, 0%, 53.3%);
+    color:rgba(255, 255, 255, 0.7);
 }
 .btn-primary:hover{
-    color:black;
-    font-size:15px;
+    color:rgba(255, 255, 255, 1);
+    background:rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid white;
+    transition: all ease 0.35s;
 }
 .float-left{float: left;}
 .div-center{
@@ -105,14 +108,14 @@
 }
 .panel-outer, .center{text-align: center;}
 #startOrStop{
-    margin-right: 10px;
+    /* margin-right: 10px; */
 }
 .center{text-align: center;}
 .btn-disabled, .btn-disabled:hover{
     cursor: default;
     background: transparent;
     border-color:transparent;
-    color:rgb(243, 243, 243);
+    color:rgba(255, 255, 255, 0.1);
     font-weight:normal;
     font-size:13px;
 }
@@ -128,15 +131,23 @@ fieldset{
     font-weight: bold;
     font-size: 13px;
 }
+.panel-title-inline{
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    color: white;
+    padding-left:1em;
+}
 .button-panel{
-   margin-bottom: 10px;
+   margin-bottom: 15px;
 }
 .hidden{display:none;}
 .time-link{
     text-decoration: underline;
     cursor:pointer;
 }
-.bookmark-table { margin: 0 auto; }
+.bookmark-table { margin: 0 10px; }
 
 .forced-skinny{width:15px;}
 .top-right{
@@ -149,32 +160,37 @@ fieldset{
 }
 .progress-outer{
     height:4px;
-    background-color:rgb(190, 190, 190);
-    width:75%;
+    background-color:rgb(255, 255, 255);
+    width:100%;
     margin-left:auto;
     margin-right:auto;
-    margin-top:10px;
+    margin-top:5px;
+    position: relative;
+    border-radius: 1px 1px 1px 1px;
 }
 .progress-inner{
     position:relative;
     height: 2px;
     background-color:red;
     top:1px;
+    border-radius: 4px;
 }
 .progress-mid{
-    position:relative;
-    height: 4px;
-    width:1px;
-    background-color: black;
-    top:1px;
+    position:absolute;
+    height: 8px;
+    width:3px;
+    background-color: red;
+    top:-2px;
+    z-index:10;
 }
 .separator{margin-right: 30px;}
 .separator-small{margin-right: 20px;}
+.separator-xsmall{margin-right: 10px;}
 
 /*Tooltip code, despite my changes, comes from:
 https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips-3d5a3e237346
 */
-[tooltip]{
+[tooltip]:not(.btn-disabled){
     position:relative;
     display:inline-block;
   }
@@ -256,18 +272,28 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
   [tooltip]:hover::after,[tooltip]:hover::before {
      opacity:1;
      transition: all ease 0.75s;
-     transition-delay: 1.0s;     
+     transition-delay: .5s;     
   }
   /*End Tooltip code.*/
-@media (max-width: 656px) { 
+  .grey-panel{
+      /* background-color: rgba(0,0,0,0.85) */
+      background-image: linear-gradient(to bottom, #000000, #222222, #3e3e3e, #5d5d5d, #7e7e7e);
+  }
+  .white{color:white;}
+  .inline-block{display:inline-block;}
+  .rounded-bottom-panel{ border-radius:0 0 3px 3px; }
+  #table-section { margin-bottom: 20px;}
+  td, th { padding: 0 5px; }
+@media (max-width: 656px)
+, (min-width: 657px) and (max-width: 856px)
+, (min-width: 999px) and (max-width: 1293px){ 
     #control-html{
         width: 100%;
         max-height: 1000px;
         display: grid;
         grid-template-columns: 1fr;
         grid-template-rows: .2fr .2fr .5fr;
-        grid-template-areas:"jump-to-section""before-after-section"
-                              "bookmark-section";
+        grid-template-areas:"before-after-section" "jump-to-section" "bookmark-section";
     }
     #header{
         padding-top:0;
