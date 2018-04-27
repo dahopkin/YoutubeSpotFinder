@@ -159,25 +159,27 @@ fieldset{
     font-size:12px;
 }
 .progress-outer{
-    height:4px;
+    height:2px;
     background-color:rgb(255, 255, 255);
     width:100%;
     margin-left:auto;
     margin-right:auto;
     margin-top:5px;
     position: relative;
+    border-radius:6px;
 }
 .progress-inner{
     position:relative;
-    height: 4px;
+    height: 2px;
     background-color:red;
+    border-radius:6px;
 }
 .progress-mid{
     position:absolute;
     height: 8px;
-    width:3px;
+    width:2px;
     background-color: red;
-    top:-2px;
+    top:-3px;
     z-index:10;
 }
 .separator{margin-right: 30px;}
