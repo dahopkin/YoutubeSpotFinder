@@ -166,14 +166,11 @@ fieldset{
     margin-right:auto;
     margin-top:5px;
     position: relative;
-    border-radius: 1px 1px 1px 1px;
 }
 .progress-inner{
     position:relative;
-    height: 2px;
+    height: 4px;
     background-color:red;
-    top:1px;
-    border-radius: 4px;
 }
 .progress-mid{
     position:absolute;
