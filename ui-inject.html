@@ -39,6 +39,8 @@
             <div class="button-panel" id="jump-to-section">
                 <span class="panel-title-inline">Back/Forward<span>
                 <span class="separator-xsmall"></span>
+                <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" data-percentage='0'
+                    tooltip-position="bottom" tooltip='Go to the start.'>Start</button>
                 <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" data-time='60'
                     tooltip-position="top" tooltip='Go back 1 minute.'>-60</button>
                 <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" data-time='30'
@@ -51,8 +53,7 @@
                     tooltip-position="top" tooltip='Go forward 30 seconds.'>+30</button>
                 <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" data-time='60'
                     tooltip-position="top" tooltip='Go forward 1 minute.'>+60</button>
-                    <!-- <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" data-percentage='0'
-                    tooltip-position="bottom" tooltip='Go to the start.'>Start</button>
+                    <!-- 
                 <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo1-4" data-percentage='25'
                     tooltip-position="bottom" tooltip='Go to the 1/4th point of the video.'>1/4</button>
                 <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goTo2-4" data-percentage='50'
