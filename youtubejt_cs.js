@@ -221,11 +221,22 @@ var setAppInfo = function(appInfoCallback){
     });
 }
 var videoPlayer, idSource, binarySearcher, bookmarks;
+var insertHTMLAfterElement = function(elementSelector, html){
+    $(elementSelector).after(html);
+};
+var insertHTMLBeforeElement = function(elementSelector, html){
+    $(elementSelector).before(html);
+};
+var insertHTMLAtTopOfElement = function(elementSelector, html){
+    $(elementSelector).prepend(html);
+}
 var embedUIOnPage = function (functionToRunAfter) {
     $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
         var html = $.parseHTML(data);
-        if($(".yjt-html").length){$(".yjt-html").remove();}
-        $("#info").prepend(html);
+        var checkSelector = ".yjt-html";
+        if($(checkSelector).length){$(checkSelector).remove();}
+        insertHTMLAtTopOfElement("#info", html);
+        if($(checkSelector).length){$(checkSelector).show();}
         functionToRunAfter();
     });
 };
