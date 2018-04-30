@@ -181,13 +181,11 @@ fieldset{
     margin-right:auto;
     margin-top:5px;
     position: relative;
-    border-radius:6px;
 }
 .progress-inner{
     position:relative;
     height: 2px;
     background-color:red;
-    border-radius:6px;
 }
 .progress-mid{
     position:absolute;
