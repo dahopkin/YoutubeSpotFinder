@@ -32,6 +32,9 @@
 #bookmark-section{
     grid-area: bookmark-section;
 }
+#show-hide-section{
+    padding: 5px 0;
+}
 #header{
     padding-top:10px;
 }

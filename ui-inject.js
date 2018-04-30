@@ -105,8 +105,8 @@ $(function () {
         var hiddenClass = "hidden";
         $("#bas-help-note").toggleClass(hiddenClass);
     });
-    $(document).on("click.togglecontrols", '#toggle-button',function(){
-        var showHideObject = {"true":"SHOW", "false":"HIDE"};
+    $(document).on("click.togglecontrols", '#show-hide-button',function(){
+        var showHideObject = {"true":"Show Youtube Spot Finder", "false":"Hide Youtube Spot Finder"};
         var hiddenClass = "hidden";
         var $wrap = $("#wrap");
         $wrap.toggleClass(hiddenClass);
