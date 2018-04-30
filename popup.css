@@ -1,5 +1,6 @@
 :root{
     --tooltip-color: rgba(0,0,0,0.8);
+    --blue-button-color: hsl(206.1, 79.3%, 52.7%);
 }
 .popup-body{
     min-width:350px;
@@ -70,19 +71,33 @@
 .btn-circle{
     border-radius: 50%;
 }
-.btn-red, .btn-red-inverse:hover{
+.btn-red{
     color:white;
     background: red;
     border-color:red;
     font-weight:bold;
     transition: all ease 0.35s;
 }
-.btn-red:hover,.btn-red-inverse{
+.btn-red:hover{
     color:red;
     background: white;
     border-color:white;
     font-weight:bold;
+    border-bottom: 1px solid red; 
     transition: all ease 0.35s;
+}
+.btn-blue {
+    color:white;
+    background:var(--blue-button-color);
+    border-color:var(--blue-button-color);
+    font-weight:bold;
+}
+.btn-blue:hover {
+    background:white;
+    color:var(--blue-button-color);
+    border-color:transparent;
+    border-bottom: 1px solid var(--blue-button-color); 
+    font-weight:bold;
 }
 .btn-primary, .btn-primary:hover{
     background: transparent;

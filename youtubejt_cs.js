@@ -281,11 +281,11 @@ function setBinarySearchDom(binarySearchStatusInfo){
         let $startStopButton = $("#startOrStop");
         let $leftRightButtons = $("#goLeft, #goRight");
         if(binarySearchStatusInfo.isRunning){
-            $startStopButton.text("Stop").removeClass("btn-red").addClass("btn-red-inverse");
+            $startStopButton.text("Stop").removeClass("btn-blue").addClass("btn-red");
             $startStopButton.attr("tooltip", "Stop spot finding.");
             $leftRightButtons.prop("disabled",false).removeClass("btn-disabled");
         } else{
-            $startStopButton.text("Find").removeClass("btn-red-inverse").addClass("btn-red");
+            $startStopButton.text("Find").removeClass("btn-red").addClass("btn-blue");
             $startStopButton.attr("tooltip", "Start finding your spot.");
             $leftRightButtons.prop("disabled",true).addClass("btn-disabled");
         }
