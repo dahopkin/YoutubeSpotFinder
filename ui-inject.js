@@ -100,14 +100,34 @@ $(function () {
         else{ videoPlayer.play(); }
         setAppInfo(setPageDom);
     });
-    
+    var hiddenClass = "hidden";
+    var decideBasHelpButtonHTML = function(){
+        var showHideObject = {
+            "true":{tooltip:"Show instructions.", text:"?", "tooltip-position":"bottom"}
+            , "false":{tooltip:"Hide instructions.", text:"X", "tooltip-position":"right"}};
+        var $helpNote = $("#bas-help-note");
+        var controlSectionIsHidden = $helpNote.hasClass(hiddenClass).toString();
+        var $helpButton = $('#bas-help-button');
+        $helpButton.html(showHideObject[controlSectionIsHidden]["text"]);
+        $helpButton.attr("tooltip", showHideObject[controlSectionIsHidden]["tooltip"]);
+        $helpButton.attr("tooltip-position", showHideObject[controlSectionIsHidden]["tooltip-position"]);
+    };
     $(document).on("click.togglehelp", '#bas-help-button',function(){
-        var hiddenClass = "hidden";
-        $("#bas-help-note").toggleClass(hiddenClass);
+        var $helpNote = $("#bas-help-note");
+        $helpNote.toggleClass(hiddenClass);
+        decideBasHelpButtonHTML();
     });
+    $(document).on("click", "html", function() {
+        $('#bas-help-note').addClass(hiddenClass);
+        decideBasHelpButtonHTML();
+     })
+    
+     $(document).on("click.showhelp", '#before-after-section', function(e){
+         e.stopPropagation();
+     });
+    
     $(document).on("click.togglecontrols", '#show-hide-button',function(){
         var showHideObject = {"true":"Show Youtube Spot Finder", "false":"Hide Youtube Spot Finder"};
-        var hiddenClass = "hidden";
         var $wrap = $("#wrap");
         $wrap.toggleClass(hiddenClass);
         var controlSectionIsHidden = $wrap.hasClass(hiddenClass).toString();

@@ -22,6 +22,18 @@
 
 #before-after-section{
     grid-area: before-after-section;
+    position:relative;
+}
+#bas-help-note {
+    position:absolute;
+    top:110%;
+    left:10%;
+    width:100%;
+    transition: all ease-in-out 0.75s;
+    border-radius:5px;
+    border:1px solid rgb(160, 160, 160);
+    background-color: rgb(80, 80, 80);
+    z-index:9;
 }
 #rewind-ff-section{
     grid-area: rewind-ff-section;
