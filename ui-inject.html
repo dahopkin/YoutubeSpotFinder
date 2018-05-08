@@ -12,14 +12,18 @@
                         </div>
                             
                 <div class="inline-block">
-                        <button id="startOrStop"class="btn btn-blue btn-medium hover-help" 
-                        type="submit"  
-                        tooltip-position="top" tooltip="Start finding your spot." >
-                            Find
+                        <button id="startOrStop" class="btn btn-blue btn-medium hover-help" type="submit" tooltip-position="top" tooltip="Start finding your spot." >
+                            <span>Find</span>
                         </button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goLeft" tooltip-position="top" tooltip='"What I want is before this..."'  >Before This</button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goRight" tooltip-position="top" tooltip='"What I want is after this..."'  >After This</button>
-                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="undo" tooltip-position="top" tooltip='Undo the previous step.'  >Undo</button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goLeft" tooltip-position="top" tooltip='"What I want is before this..."'>
+                            <span>Before This</span>
+                        </button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="goRight" tooltip-position="top" tooltip='"What I want is after this..."'>
+                            <span>After This</span>
+                        </button>
+                        <button class="btn btn-primary btn-medium hover-help" type="submit" id="undo" tooltip-position="top" tooltip='Undo the previous step.'>
+                            <span>Undo</span>
+                        </button>
                         
                     <div class="progress-section">
                         <div class="progress-outer">
@@ -46,19 +50,33 @@
                 <span class="panel-title-inline">Back/Forward<span>
                 <span class="separator-xsmall"></span>
                 <button class="btn btn-primary btn-medium percentage-button hover-help" type="submit" id="goToStart" data-percentage='0'
-                    tooltip-position="bottom" tooltip='Go to the start.'>Start</button>
+                    tooltip-position="bottom" tooltip='Go to the start.'>
+                    <span>Start</span>
+                </button>
                 <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind60" data-time='60'
-                    tooltip-position="top" tooltip='Go back 1 minute.'>-60</button>
+                    tooltip-position="bottom" tooltip='Go back 1 minute.'>
+                    <span>-60</span>
+                </button>
                 <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind30" data-time='30'
-                    tooltip-position="top" tooltip='Go back 30 seconds.'>-30</button>
+                    tooltip-position="bottom" tooltip='Go back 30 seconds.'>
+                    <span>-30</span>
+                </button>
                 <button class="btn btn-primary btn-medium rewind-button hover-help" type="submit" id="rewind15" data-time='15'
-                    tooltip-position="top" tooltip='Go back 15 seconds.'>-15</button>
+                    tooltip-position="bottom" tooltip='Go back 15 seconds.'>
+                    <span>-15</span>
+                </button>
                 <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward15" data-time='15'
-                    tooltip-position="top" tooltip='Go forward 15 seconds.'>+15</button>
+                    tooltip-position="bottom" tooltip='Go forward 15 seconds.'>
+                    <span>+15</span>
+                </button>
                 <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward30" data-time='30'
-                    tooltip-position="top" tooltip='Go forward 30 seconds.'>+30</button>
+                    tooltip-position="bottom" tooltip='Go forward 30 seconds.'>
+                    <span>+30</span>
+                </button>
                 <button class="btn btn-primary btn-medium fastForward-button hover-help" type="submit" id="fastForward60" data-time='60'
-                    tooltip-position="top" tooltip='Go forward 1 minute.'>+60</button>
+                    tooltip-position="bottom" tooltip='Go forward 1 minute.'>
+                    <span>+60</span>
+                </button>
             </div>
 
             <div class="" id="bookmark-section">
