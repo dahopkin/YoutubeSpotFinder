@@ -9,6 +9,7 @@
 }
 .yjt-html{
     font-family: 'Roboto', Arial, sans-serif;
+    position: relative;
 }
 #control-html{
     width: 100%;
