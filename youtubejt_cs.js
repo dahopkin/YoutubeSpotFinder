@@ -235,12 +235,16 @@ var insertHTMLBeforeElement = function(elementSelector, html){
 var insertHTMLAtTopOfElement = function(elementSelector, html){
     $(elementSelector).prepend(html);
 }
+var insertHTMLAtBottomOfElement = function(elementSelector, html){
+    $(elementSelector).append(html);
+}
 var embedUIOnPage = function (functionToRunAfter) {
     $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
         var html = $.parseHTML(data);
         var checkSelector = ".yjt-html";
         if($(checkSelector).length){$(checkSelector).remove();}
-        insertHTMLAtTopOfElement("#info", html);
+        insertHTMLAtBottomOfElement("#content-separator", html);
+        //insertHTMLAtTopOfElement("#info", html);
         if($(checkSelector).length){$(checkSelector).show();}
         functionToRunAfter();
     });
