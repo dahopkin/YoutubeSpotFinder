@@ -5,7 +5,7 @@
   "version": "1.0",
   "page_action": {
     "default_icon": "images/yjt_icon.png",
-    "default_title": "YouTube JumpTo",
+    "default_title": "YouTube Spot Finder",
     "default_popup": "popup.html"
   },
   "background": {
