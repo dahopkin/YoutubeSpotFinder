@@ -3,11 +3,14 @@
     <div id="wrap">
         <div id="control-html" class="">
             <div class="button-panel" id="before-after-section">
-                        <span class="panel-title-inline">Find a Spot
-                            <span>
-                                <button class="btn btn-medium btn-primary" id="bas-help-button" tooltip-position="bottom" tooltip='Show Instructions.'>?</button>
-                            </span>
-                        </span>
+                        <div class="panel-title-inline">Find a Spot
+                            <div id="bas-help-section" class="inline-block">
+                                <button class="btn btn-medium btn-light" id="bas-help-button" tooltip-position="top" tooltip='Show Instructions.'>
+                                <span>?</span>
+                                </button>
+                            </div>
+                        </div>
+                            
                 <div class="inline-block">
                         <button id="startOrStop"class="btn btn-blue btn-medium hover-help" 
                         type="submit"  
@@ -33,6 +36,7 @@
                             <br> If it's before the middle, click "Before This". 
                             <br>If it's after, click "After This".</li>
                         <li>Repeat the previous step until you find what you want.</li>
+                        <button class="btn btn-light btn-small" type="submit" id="bas-help-close-button">X</button>
                     </ol>
                 </div>
 
