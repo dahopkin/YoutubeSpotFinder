@@ -1,0 +1,358 @@
+:root{
+    --tooltip-color: rgba(0,0,0,0.9);
+    --blue-button-color: hsl(206.1, 79.3%, 52.7%);
+}
+.popup-body{
+    min-width:350px;
+    border-color: #c1c2c0;
+    background-color: #f0f0f0
+}
+.yjt-html{
+    font-family: 'Roboto', Arial, sans-serif;
+    position: relative;
+}
+#control-html{
+    width: 100%;
+    max-height: 700px;
+    display: grid;
+    grid-template-columns: .50fr .50fr;
+    grid-template-rows: .10fr .90fr;
+    grid-template-areas:"before-after-section bookmark-section"
+                        "jump-to-section bookmark-section";
+}
+
+#before-after-section{
+    grid-area: before-after-section;
+    position:relative;
+}
+#bas-help-note {
+    position:absolute;
+    top:110%;
+    left:10%;
+    width:100%;
+    transition: all ease-in-out 0.75s;
+    border-radius:5px;
+    border:1px solid rgb(160, 160, 160);
+    background-color: rgb(80, 80, 80);
+    z-index:9;
+}
+#bas-help-close-button {
+    position:absolute;
+    top:5px;
+    right:5px;
+}
+#bas-help-button{
+    padding:3px 3px;
+}
+
+#rewind-ff-section{
+    grid-area: rewind-ff-section;
+}
+#jump-to-section{
+    grid-area: jump-to-section;
+}
+#bookmark-section{
+    grid-area: bookmark-section;
+}
+#show-hide-section{
+    padding: 5px 0;
+}
+#header{
+    padding-top:10px;
+}
+
+.btn:focus,
+.btn:active:focus{
+    outline:none;
+}
+
+.btn{
+    /* border-radius: 3px; */
+    border: 1px solid;
+    display: inline-block;
+    font-size: 12px;
+    padding: 0 1em;
+    vertical-align: middle;
+    color: black;
+    background: white;
+    box-sizing: border-box;
+    /* line-height: 28px; */
+    text-align: center;
+    text-decoration: none;
+    /* text-transform:uppercase; */
+    cursor: pointer;
+}
+
+.btn-small{
+    padding: 0 .25em;
+    line-height:10px;
+    font-size:10px;
+}
+.btn-medium{
+    padding: .5em .7em;
+    line-height:18px;
+    font-size:13px;
+}
+.btn-circle{
+    border-radius: 50%;
+}
+.btn-red{
+    color:white;
+    background: red;
+    border-color:red;
+    font-weight:bold;
+    transition: all ease 0.35s;
+}
+.btn-red:hover{
+    color:red;
+    background: white;
+    border-color:white;
+    font-weight:bold;
+    border-bottom: 1px solid red; 
+    transition: all ease 0.35s;
+}
+.btn-blue {
+    color:white;
+    background:var(--blue-button-color);
+    border-color:var(--blue-button-color);
+    font-weight:bold;
+}
+.btn-blue:hover {
+    background:white;
+    color:var(--blue-button-color);
+    border-color:transparent;
+    border-bottom: 1px solid var(--blue-button-color); 
+    font-weight:bold;
+}
+.btn-primary, .btn-primary:hover, .btn-light, .btn-light:hover{
+    background: transparent;
+    border-color:transparent;
+    font-weight:bold;
+}
+.btn-primary, .btn-light{
+    color:rgba(255, 255, 255, 0.7);
+}
+.btn-primary:hover{
+    color:rgba(255, 255, 255, 1);
+    background:rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    transition: all ease 0.35s;
+}
+.btn-light:hover{
+    color:rgba(255, 255, 255, 1);
+}
+.float-left{float: left;}
+.div-center{
+    margin-left:auto;
+    margin-right:auto;
+}
+.align-left{
+    text-align:left;
+}
+.panel-outer, .center{text-align: center;}
+#startOrStop{
+    /* margin-right: 10px; */
+}
+.center{text-align: center;}
+.btn-disabled, .btn-disabled:hover{
+    cursor: default;
+    background: transparent;
+    border-color:transparent;
+    color:rgba(255, 255, 255, 0.1);
+    font-weight:normal;
+    font-size:13px;
+}
+
+fieldset{
+    border-radius: 5px;
+    border-color: #c1c2c0;
+    border: 1px solid;
+}
+.panel-title{
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 13px;
+}
+.panel-title-inline{
+    text-align: left;
+    font-weight: bold;
+    font-size: 13px;
+    color: white;
+    display: inline-block;
+    padding-left:1em;
+    min-width:100px;
+}
+.button-panel{
+   margin-bottom: 10px;
+}
+.hidden{display:none;}
+.time-link{
+    text-decoration: underline;
+    cursor:pointer;
+}
+.bookmark-table { margin: 0 10px; }
+
+.forced-skinny{width:15px;}
+.top-right{
+    position:absolute;
+    top:10px;
+    right:10px;
+}
+.note{
+    font-size:12px;
+}
+.progress-outer{
+    height:2px;
+    background-color:rgb(255, 255, 255);
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:5px;
+    position: relative;
+}
+.progress-inner{
+    position:relative;
+    height: 2px;
+    background-color:red;
+}
+.progress-mid{
+    position:absolute;
+    height: 8px;
+    width:2px;
+    background-color: red;
+    top:-3px;
+    z-index:10;
+}
+.separator{margin-right: 30px;}
+.separator-small{margin-right: 20px;}
+.separator-xsmall{margin-right: 10px;}
+
+/*Tooltip code, despite my changes, comes from:
+https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips-3d5a3e237346
+*/
+[tooltip]:not(.btn-disabled){
+    position:relative;
+    display:inline-block;
+  }
+  /*arrow*/
+  [tooltip]::before {
+      content: "";
+      position: absolute;
+      top:-6px;
+      left:50%;
+      transform: translateX(-50%);
+      border-width: 4px 6px 0 6px;
+      border-style: solid;
+      border-color: var(--tooltip-color) transparent transparent transparent;
+      z-index: 99;
+      opacity:0;
+  }
+  
+  [tooltip-position='left']::before{
+    left:0%;
+    top:50%;
+    margin-left:-12px;
+    transform:translatey(-50%) rotate(-90deg) 
+  }
+  [tooltip-position='top']::before{
+    left:50%;
+  }
+  [tooltip-position='bottom']::before{
+    top:100%;
+    margin-top:8px;
+    transform: translateX(-50%) translatey(-100%) rotate(-180deg)
+  }
+  [tooltip-position='right']::before{
+    left:100%;
+    top:50%;
+    margin-left:1px;
+    transform:translatey(-50%) rotate(90deg)
+  }
+  /*No outlines for tooltips*/
+  [tooltip]:focus {
+    outline: 0;
+    outline: none;
+   } 
+  /*word bubble*/
+  [tooltip]::after {
+      content: attr(tooltip);
+      position: absolute;
+      left:50%;
+      top:-6px;
+      transform: translateX(-50%)   translateY(-100%);
+      background: var(--tooltip-color);
+      text-align: center;
+      color: #fff;
+      padding:4px 2px;
+      font-size: 12px;
+      min-width: 150px;
+      max-width: 300px;
+      border-radius: 5px;
+      pointer-events: none;
+      padding: 4px 4px;
+      z-index:99;
+      opacity:0;
+  }
+  
+  [tooltip-position='left']::after{
+    left:0%;
+    top:50%;
+    margin-left:-8px;
+    transform: translateX(-100%)   translateY(-50%);
+  }
+  [tooltip-position='top']::after{
+    left:50%;
+  }
+  [tooltip-position='bottom']::after{
+    top:100%;
+    margin-top:8px;
+    transform: translateX(-50%) translateY(0%);
+  }
+  [tooltip-position='right']::after{
+    left:100%;
+    top:50%;
+    margin-left:8px;
+    transform: translateX(0%)   translateY(-50%);
+  }
+  
+  [tooltip]:not(.btn-disabled):hover::after, [tooltip]:not(.btn-disabled):hover::before {
+     opacity:1;
+     transition: all ease 0.75s;
+     transition-delay: .5s;     
+  }
+  /*End Tooltip code.*/
+  .grey-panel{
+      /* background-color: rgba(0,0,0,0.85) */
+      background-image: linear-gradient(to bottom, #000000, #222222, #3e3e3e, #5d5d5d, #7e7e7e);
+  }
+  .white{color:white;}
+  .inline-block{display:inline-block;}
+  .rounded-bottom-panel{ border-radius:0 0 3px 3px; }
+  #table-section { margin-bottom: 20px;}
+  td, th { padding: 0 5px; }
+  #ui-blocker{
+      position: absolute;
+      width:100%;
+      height:100%;
+      z-index:10;
+      top:0;
+      left:0;
+      font-size: 20px;
+  }
+@media (max-width: 656px)
+, (min-width: 657px) and (max-width: 856px)
+, (min-width: 999px) and (max-width: 1293px){ 
+    #control-html{
+        width: 100%;
+        max-height: 1000px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: .2fr .2fr .5fr;
+        grid-template-areas:"before-after-section" "jump-to-section" "bookmark-section";
+    }
+    #header{
+        padding-top:0;
+    }
+ }
