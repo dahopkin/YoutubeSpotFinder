@@ -267,6 +267,11 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
     margin-left:1px;
     transform:translatey(-50%) rotate(90deg)
   }
+  /*No outlines for tooltips*/
+  [tooltip]:focus {
+    outline: 0;
+    outline: none;
+   } 
   /*word bubble*/
   [tooltip]::after {
       content: attr(tooltip);
@@ -279,7 +284,8 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
       color: #fff;
       padding:4px 2px;
       font-size: 12px;
-      min-width: 240px;
+      min-width: 150px;
+      max-width: 300px;
       border-radius: 5px;
       pointer-events: none;
       padding: 4px 4px;
@@ -308,7 +314,7 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
     transform: translateX(0%)   translateY(-50%);
   }
   
-  [tooltip]:hover::after,[tooltip]:hover::before {
+  [tooltip]:not(.btn-disabled):hover::after, [tooltip]:not(.btn-disabled):hover::before {
      opacity:1;
      transition: all ease 0.75s;
      transition-delay: .5s;     
