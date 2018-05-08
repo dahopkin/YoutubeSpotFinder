@@ -256,6 +256,7 @@ function initializeVariables(callback){
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     callback()
 }
+var commercialCheck;
 function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
     idSource = getIdSource();
@@ -264,6 +265,8 @@ function initialize() {
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     embedUIOnPage(function () {
         setAppInfo(setPageDom);
+        clearInterval(commercialCheck);
+        commercialCheck = setInterval(blockOrShowUIDependingOnAdStatus, 250);
     });
 }
 function waitForElementToDisplay(selector, time, functionToRun) {
@@ -385,6 +388,33 @@ function resetDataForNewPage(){
 }
 function isAVideoWatchPage(url){
     return youtubeIDSource.pageMatches(url)
+}
+//block UI if an ad is playing.
+//code for this function taken (and changed) from:
+//https://github.com/adamgajzlerowicz/muter/blob/master/muter.js
+let blockedBecauseOfCommercial = false;
+let muteButton = undefined;
+let commercialElement = undefined;
+let visualElement = undefined;
+function blockOrShowUIDependingOnAdStatus(){
+    try {
+        commercialElement = document.getElementsByClassName('ad-interrupting')[0];
+        visualElement = document.getElementsByClassName('video-stream html5-main-video')[0];
+        uiElement = document.getElementsByClassName('yjt-html')[0];
+    } catch (e) {
+        console.log('no commercial playing or UI to toggle');
+        return;
+    }
+    //block UI if commercial is running.
+    if (commercialElement) {
+        blockedBecauseOfCommercial = true;
+        $("#ui-blocker").removeClass("hidden");
+        return;
+    }
+    //show UI if commercial is not running.
+    if (blockedBecauseOfCommercial) {
+        $("#ui-blocker").addClass("hidden");
+    }
 }
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "change") {
