@@ -19,12 +19,17 @@ var getHtml5VideoObject = function (videoDomElement) {
         }
     };
     var rewind = function(seconds){
+        var minTime = 0;
         var rewindTime = getCurrentTime() - seconds;
-        if(rewindTime > 0) seekToTime(rewindTime);
+        if(rewindTime < minTime) rewindTime = minTime;
+        seekToTime(rewindTime);
     };
     var fastForward = function(seconds){
+        var maxTime = getVideoDuration();
         var fastForwardTime = getCurrentTime() + seconds;
-        if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
+        //fast-forwarding to the exact end of the video restarts it.
+        if(fastForwardTime > maxTime) fastForwardTime = maxTime-1;
+        seekToTime(fastForwardTime);
     };
     var play = function(){innerPlayer().play();};
     var pause = function(){innerPlayer().pause();};
