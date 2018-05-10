@@ -22,7 +22,7 @@
     }
   ],
   "permissions": [
-    "tabs", "activeTab",
+    "tabs", "activeTab", "downloads",
     "storage",
      "*://*.youtube.com/*",
      "*://*.netflix.com/watch/*",
