@@ -36,7 +36,7 @@
     background-color: rgb(80, 80, 80);
     z-index:9;
 }
-#bas-help-close-button {
+#bas-help-close-button, .popup-close-button {
     position:absolute;
     top:5px;
     right:5px;
@@ -341,6 +341,22 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
       left:0;
       font-size: 20px;
   }
+  .ysp-popup{
+    border-radius:5px;
+    border:1px solid rgb(160, 160, 160);
+    background-color: rgb(80, 80, 80);
+    position:absolute;
+    z-index: 9;
+  }
+ .form-group{
+     margin:1em 1em;
+ }
+ #bookmark-edit-section{
+
+ }
+ .form-label{
+     min-width:7em;
+ }
 @media (max-width: 656px)
 , (min-width: 657px) and (max-width: 856px)
 , (min-width: 999px) and (max-width: 1293px){ 

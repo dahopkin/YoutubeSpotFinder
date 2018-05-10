@@ -1,5 +1,5 @@
-$(function () {
 
+$(function () {
     $(document).on("click.percentage", ".percentage-button", function(e){
         e.preventDefault();
         var percentage = $(this).data("percentage");
@@ -45,36 +45,59 @@ $(function () {
             });
         }
     });
-    $(document).on("click.update", ".update-button", function (e) {
+    $(document).on("click.update", ".cancel-button", function (e) {
+        setAppInfo(setPageDom);
+    });
+    const bookmarkEditPopupSelector = "#bookmark-edit-section";
+    var setBookmarkEditPopupFromBookmarkData = function(bookmarkData){
+        var $descriptionTextBox = $("#description-text");
+        var $timeTextBox = $("#time-text");
+        $timeTextBox.attr("data-currenttime", bookmarkData.time);
+        $descriptionTextBox.val(bookmarkData.description);
+        $timeTextBox.val(hhmmss(bookmarkData.time));
+    };
+    var setBookmarkEditPopupPosition = function(jqEditButtonElement){
+        var editButtonPagePosition = jqEditButtonElement.offset().top;
+        var editButtonPageParentPosition = jqEditButtonElement.parent().offset().top;
+        var popupTopPosition = (editButtonPagePosition - editButtonPageParentPosition) + 75;
+        $(bookmarkEditPopupSelector).css({"top": popupTopPosition + "px"})
+    };
+    var getBookmarkFromAppDataBookmarks = function(time){
+        var bookmarkArray = appInfo.bookmarkInfo;
+        var bookmarkToReturn = bookmarkArray.filter(bookmark => bookmark.time = time)[0];
+        return bookmarkToReturn;
+    };
+    var showEditPopup = function(){
+        $(bookmarkEditPopupSelector).removeClass(hiddenClass);
+    };
+    
+    $(document).on("click.edit", ".edit-button", function (e) {
+        e.preventDefault();
+        var time = $(this).data("time");
+        var bookmarkData = getBookmarkFromAppDataBookmarks(time);
+        if(!bookmarkData){ return; }
+        setBookmarkEditPopupFromBookmarkData(bookmarkData);
+        setBookmarkEditPopupPosition($(this));
+        showEditPopup();
+    });
+    $(document).on("click.update", "#bookmark-update", function (e) {
         e.preventDefault();
         var updateData = {};
-        var time = $(this).data("time");
-        updateData["oldTime"] = time;
-        updateData["newTime"] = time;
-        var newDescription = $(".edit-description[data-time='"+time+"']").val();
+        updateData["oldTime"] = $("#time-text").attr("data-currenttime");
+        updateData["newTime"] = hhmmssToSeconds($.trim($("#time-text").val()));
+        var newDescription = $.trim($("#description-text").val()) || "";
         updateData["newDescription"] = newDescription;
         var updateBookmarkData = {time:updateData.newTime, description:updateData.newDescription};
         bookmarks.updateBookmark(updateData.oldTime, updateBookmarkData, function(saveResult){
             setAppInfo(setPageDom);
+            $(bookmarkEditPopupSelector).addClass(hiddenClass);
         });
-
-    });
-    $(document).on("click.update", ".cancel-button", function (e) {
-        setAppInfo(setPageDom);
-    });
-    $(document).on("click.edit", ".edit-button", function (e) {
-        e.preventDefault();
-        var time = $(this).data("time");
-        var originalText = $(".description[data-time='"+time+"']").html();
-        var editHtml = `<input type='text' class='edit-description' data-time='${time}' maxlength=100 value='${originalText}'\>
-        <button data-time='${time}' class='btn btn-small btn-primary update-button'>Update</button>
-        <button class='btn btn-small btn-primary cancel-button'>Cancel</button>`;
-        $(".description[data-time='"+time+"']").html(editHtml);
-        $(".edit-description[data-time='"+time+"']").focus();
-
-
     });
     
+    $(document).on("click.closeedit", ".bookmark-edit-close-button", function (e) {
+        e.preventDefault();
+        $(bookmarkEditPopupSelector).addClass(hiddenClass);
+    });
     $(document).on("click.savebookmark", '#saveBookmark', function(){
         bookmarks.saveDefaultBookmark(function(saveResult){
             setAppInfo(setPageDom);
