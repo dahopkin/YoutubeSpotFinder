@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouTube Spot Finder",
-  "description": "Helps you find a specific spot in a youtube video by narrowing things down. Also has time bookmarking and buttons for going back and forth.",
+  "description": "Helps you find a specific spot in a YouTube video by narrowing things down. Also has time bookmarking and buttons for going back and forth.",
   "version": "1.0",
   "page_action": {
     "default_icon": "images/yjt_icon.png",

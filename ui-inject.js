@@ -130,7 +130,7 @@ $(function () {
         decideBasHelpButtonHTML();
     });
     $(document).on("click.togglecontrols", '#show-hide-button',function(){
-        var showHideObject = {"true":"Show Youtube Spot Finder", "false":"Hide Youtube Spot Finder"};
+        var showHideObject = {"true":"Show YouTube Spot Finder", "false":"Hide YouTube Spot Finder"};
         var $wrap = $("#wrap");
         $wrap.toggleClass(hiddenClass);
         var controlSectionIsHidden = $wrap.hasClass(hiddenClass).toString();
