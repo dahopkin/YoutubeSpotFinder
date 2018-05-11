@@ -64,7 +64,7 @@ $(function () {
     };
     var getBookmarkFromAppDataBookmarks = function(time){
         var bookmarkArray = appInfo.bookmarkInfo;
-        var bookmarkToReturn = bookmarkArray.filter(bookmark => bookmark.time = time)[0];
+        var bookmarkToReturn = bookmarkArray.filter(bookmark => bookmark.time == time)[0];
         return bookmarkToReturn;
     };
     var showEditPopup = function(){
