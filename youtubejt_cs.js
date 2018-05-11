@@ -28,7 +28,7 @@ var getHtml5VideoObject = function (videoDomElement) {
         var maxTime = getVideoDuration();
         var fastForwardTime = getCurrentTime() + seconds;
         //fast-forwarding to the exact end of the video restarts it.
-        if(fastForwardTime > maxTime) fastForwardTime = maxTime-1;
+        if(fastForwardTime > maxTime) fastForwardTime = maxTime-.1;
         seekToTime(fastForwardTime);
     };
     var play = function(){innerPlayer().play();};
