@@ -225,6 +225,7 @@ var setAppInfo = function(appInfoCallback){
         appInfoCallback(appInfo);
     });
 }
+
 var videoPlayer, idSource, binarySearcher, bookmarks;
 var insertHTMLAfterElement = function(elementSelector, html){
     $(elementSelector).after(html);
@@ -243,8 +244,7 @@ var embedUIOnPage = function (functionToRunAfter) {
         var html = $.parseHTML(data);
         var checkSelector = ".yjt-html";
         if($(checkSelector).length){$(checkSelector).remove();}
-        insertHTMLAtBottomOfElement("#content-separator", html);
-        //insertHTMLAtTopOfElement("#info", html);
+        insertHTMLAfterElement("#player.style-scope.ytd-watch", html);
         if($(checkSelector).length){$(checkSelector).show();}
         functionToRunAfter();
     });
@@ -256,7 +256,7 @@ function initializeVariables(callback){
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     callback()
 }
-var commercialCheck;
+var constantUICheck;
 function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
     idSource = getIdSource();
@@ -265,10 +265,25 @@ function initialize() {
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     embedUIOnPage(function () {
         setAppInfo(setPageDom);
-        clearInterval(commercialCheck);
-        commercialCheck = setInterval(blockOrShowUIDependingOnAdStatus, 250);
+        clearInterval(constantUICheck);
+        constantUICheck = setInterval(changeUIDependingOnCurrentState, 250);
+        resizeUIToFitPlayer();
     });
 }
+var playerWindowSelector = "#player.style-scope.ytd-watch";
+var mainPanelSelector = ".yjt-html";
+function getPlayerWindowElement(){return $(playerWindowSelector);}
+function resizeUIToFitPlayer(){
+    var $playerWindowElement = $(playerWindowSelector);
+    var playerWidth = $playerWindowElement.innerWidth();
+    var desiredWidth = playerWidth;
+    $(".yjt-html").css({width:desiredWidth});
+}
+function changePageToFitUI(){
+    var $playerWindowElement = $(playerWindowSelector);
+    $playerWindowElement.css({"margin-bottom":0});
+}
+
 function waitForElementToDisplay(selector, time, functionToRun) {
     if(document.querySelector(selector)!=null && typeof document.querySelector(selector)!= "undefined") {
         functionToRun();
@@ -395,11 +410,9 @@ function isAVideoWatchPage(url){
 let blockedBecauseOfCommercial = false;
 let muteButton = undefined;
 let commercialElement = undefined;
-let visualElement = undefined;
 function blockOrShowUIDependingOnAdStatus(){
     try {
         commercialElement = document.getElementsByClassName('ad-interrupting')[0];
-        visualElement = document.getElementsByClassName('video-stream html5-main-video')[0];
         uiElement = document.getElementsByClassName('yjt-html')[0];
     } catch (e) {
         console.log('no commercial playing or UI to toggle');
@@ -416,6 +429,44 @@ function blockOrShowUIDependingOnAdStatus(){
         $("#ui-blocker").addClass("hidden");
     }
 }
+var $containerElement = undefined;
+var uiIsAfterPlayerElement = false;
+var uiIsAtBottomOfContentSeparator = false;
+function moveUIDependingOnContainerStatus(){
+    var $containerElement = $("#container.style-scope.ytd-watch");
+    var containerWidth = $containerElement.width();
+    var $playerWindowElement = getPlayerWindowElement()
+    var playerWidth = $playerWindowElement.innerWidth();
+    var $playerSizeButtonDescription = $(".ytp-size-button").attr("title");
+    var playerWindowIsInTheaterMode = false;
+    if($playerSizeButtonDescription){
+        $playerSizeButtonDescription.toLowerCase() == "default mode"
+    };
+    //if the player is in theater mode or the main container is as big as the player window, move the UI to
+    //right after the player window so it'll sit on top of the container and all the other content.
+    if(((containerWidth <= playerWidth) || playerWindowIsInTheaterMode) && !uiIsAfterPlayerElement){
+        var ui = $(mainPanelSelector).detach();
+        insertHTMLAfterElement(playerWindowSelector, ui);
+        uiIsAfterPlayerElement = true;
+        uiIsAtBottomOfContentSeparator = false;
+    }
+    //if the main container isn't as big as the player window, move the UI to
+    //the bottom of the content-separator so it'll fit within the container.
+    if((containerWidth > playerWidth) && !uiIsAtBottomOfContentSeparator){
+        var ui = $(mainPanelSelector).detach();
+        insertHTMLAtBottomOfElement("#content-separator", ui);
+        uiIsAtBottomOfContentSeparator = true;
+        uiIsAfterPlayerElement = false;
+    }
+
+}
+function changeUIDependingOnCurrentState(){
+    blockOrShowUIDependingOnAdStatus();
+    resizeUIToFitPlayer();
+    moveUIDependingOnContainerStatus();
+    changePageToFitUI();
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "change") {
         currentTabURL = request.data.url;
