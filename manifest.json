@@ -12,7 +12,7 @@
     "scripts": [ "eventPage.js" ],
     "persistent": false
   },
-
+  "options_page": "options.html",
   "content_scripts": [
     {
       "matches": [ "*://*.youtube.com/*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
@@ -20,6 +20,7 @@
         , "common.js"
         , "binarySearcher.js"
         , "bookmarksModule.js"
+        , "idSource.js"
         , "youtubejt_cs.js"
         , "ui-inject.js" ],
       "css": ["ui.css"],
