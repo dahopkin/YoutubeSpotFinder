@@ -16,7 +16,12 @@
   "content_scripts": [
     {
       "matches": [ "*://*.youtube.com/*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
-      "js": [ "jquery-3.3.1.min.js", "common.js","binarySearcher.js", "bookmarksModule.js", "youtubejt_cs.js", "ui-inject.js" ],
+      "js": [ "jquery-3.3.1.min.js"
+        , "common.js"
+        , "binarySearcher.js"
+        , "bookmarksModule.js"
+        , "youtubejt_cs.js"
+        , "ui-inject.js" ],
       "css": ["ui.css"],
       "run_at": "document_end"
     }
