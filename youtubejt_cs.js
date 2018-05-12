@@ -164,13 +164,21 @@ var getURLIDSource = function(settings){
         url = url || currentTabURL;
         return typeof getVideoIDFromURL(url) !== "undefined";
     };
-    var getBookmarkKey = function(videoID){
+    var getIDWithPrefixAndSuffix = function(videoID, prefix, suffix){
         var videoID = videoID || getVideoIDFromURL(currentTabURL);
-        return settings.bookmarkPrefix+"-" + videoID.toString() +  "-bookmarks";
+        videoID = videoID.toString();
+        return `${prefix}-${videoID}-${suffix}`;
+    }
+    var getBookmarkKey = function(videoID){
+        return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, "bookmarks");
+    };
+    var getInfoKey = function(videoID){
+        return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, "info");
     };
     return{
         pageMatches:pageMatches,
         getBookmarkKey:getBookmarkKey,
+        getInfoKey:getInfoKey,
         getVideoID:getVideoIDFromURL
     };
 };
@@ -192,6 +200,7 @@ var huluIDSource = getURLIDSource(
         6, 2, "hulu"
     )
 );
+
 var getIdSource = function(){
     var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource]
     for(var i=0; i < potentialIDSources.length; i++){
