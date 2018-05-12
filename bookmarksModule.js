@@ -1,8 +1,4 @@
 var getBookmarksModule = function(videoPlayer, idSource){
-    var getBookmarkKey = function(videoID){
-        var videoID = videoID || getYoutubeVideoIDFromURL(currentTabURL);
-        return videoID.toString() +  "-bookmarks";
-    };
     var getBookmarkData = function(callback){
         var videoID = idSource.getVideoID(currentTabURL);
         if(videoID){
@@ -89,10 +85,6 @@ var getBookmarksModule = function(videoPlayer, idSource){
             saveResult["status"] = "failure";
             saveResult["message"] = "You cannot save bookmarks on this page.";
         }
-    };
-    var bookmarkExists = function(oneBookmarkData){
-        var key = getBookmarkKey();
-
     };
     var deleteBookmark = function(bookmarkTime, callback){
         var videoID = idSource.getVideoID(currentTabURL);
