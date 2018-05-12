@@ -21,6 +21,7 @@
         , "binarySearcher.js"
         , "bookmarksModule.js"
         , "idSource.js"
+        , "actionResult.js"
         , "youtubejt_cs.js"
         , "ui-inject.js" ],
       "css": ["ui.css"],
