@@ -99,7 +99,7 @@ $(function () {
         $(bookmarkEditPopupSelector).addClass(hiddenClass);
     });
     $(document).on("click.savebookmark", '#saveBookmark', function(){
-        bookmarks.saveDefaultBookmark(function(saveResult){
+        bookmarks.saveDefaultBookmarkAndVideoInfo(function(saveResult){
             setAppInfo(setPageDom);
         });
         

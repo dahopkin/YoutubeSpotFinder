@@ -1,3 +1,4 @@
+//TODO: change this to "getStorageModule" when done. It applies to more things now.
 var getBookmarksModule = function(videoPlayer, idSource){
     var getBookmarkData = function(callback){
         var videoID = idSource.getVideoID(currentTabURL);
@@ -10,6 +11,38 @@ var getBookmarksModule = function(videoPlayer, idSource){
                 callback(bookmarksForVideo);
               });
         }
+    };
+    var getVideoInfoData = function(callback){
+        var videoID = idSource.getVideoID(currentTabURL);
+        if(videoID){
+            var key = idSource.getVideoInfoKey(videoID);
+            var defaultObject = {};
+            defaultObject[key] = {};
+            chrome.storage.sync.get(defaultObject, function(items) {
+                var infoForVideo = items[key];
+                callback(infoForVideo);
+              });
+        }
+    };
+    var getBookmarkAndVideoInfoData = function(callback){
+        var videoID = idSource.getVideoID(currentTabURL);
+        if(videoID){
+            var bookmarkKey = idSource.getBookmarkKey(videoID);
+            var videoInfoKey = idSource.getVideoInfoKey(videoID);
+            var defaultObject = {};
+            defaultObject[bookmarkKey] = [];
+            defaultObject[videoInfoKey] = {};
+            chrome.storage.sync.get(defaultObject, function(items) {
+                var bookmarksForVideo = items[bookmarkKey];
+                var infoForVideo = items[videoInfoKey];
+                callback(bookmarksForVideo, infoForVideo);
+              });
+        }
+    };
+    var getAllData = function(callback){
+        chrome.storage.sync.get(null, function(items) {
+            callback(items);
+          });
     };
     var singleBookmarkDataIsValid = function(singleBookmarkData){
         //if the time is not a number or is more than the duration, fail.
@@ -30,6 +63,11 @@ var getBookmarksModule = function(videoPlayer, idSource){
         defaultBookmark = formatBookmarkData(defaultBookmark);
         saveCustomBookmark(defaultBookmark, callback);
     }
+    var saveDefaultBookmarkAndVideoInfo = function(callback){
+        var defaultBookmark = {time:videoPlayer.getCurrentTime(), description: ""};
+        defaultBookmark = formatBookmarkData(defaultBookmark);
+        saveCustomBookmarkAndVideoInfo(defaultBookmark, callback);
+    }
     var saveCustomBookmark = function(oneBookmarkData, callback){
         var videoID = idSource.getVideoID(currentTabURL);
         var saveResult = {status:"", message:""};
@@ -44,6 +82,41 @@ var getBookmarksModule = function(videoPlayer, idSource){
                     bookmarkArray.push(oneBookmarkData);
                     var saveObject = {};
                     saveObject[key] = bookmarkArray;
+                    chrome.storage.sync.set(saveObject, function(items) {
+                        saveResult["status"] = "success";
+                        saveResult["message"] = "Your bookmark was saved successfully.";
+                        callback(saveResult);
+                      });
+                });
+            }
+        } else{
+            saveResult["status"] = "failure";
+            saveResult["message"] = "You cannot save bookmarks on this page.";
+        }
+    };
+    //Automatically save title if no title exists for the video.
+    var saveCustomBookmarkAndVideoInfo = function(oneBookmarkData, callback){
+        var videoID = idSource.getVideoID(currentTabURL);
+        var saveResult = {status:"", message:""};
+        if(videoID){
+            var bookmarkKey = idSource.getBookmarkKey(videoID);
+            var videoInfoKey = idSource.getVideoInfoKey(videoID);
+            if(!singleBookmarkDataIsValid(oneBookmarkData)){
+                saveResult["status"] = "failure";
+                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
+                callback(saveResult);
+            }else{
+                getBookmarkAndVideoInfoData(function(bookmarkArray, videoInfo){
+                    bookmarkArray.push(oneBookmarkData);
+                    var videoTitle = videoInfo.title;
+                    var videoTitleChanged = false;
+                    if(!videoTitle || videoTitle.trim() === ""){
+                        videoTitle = idSource.getVideoTitle();
+                        videoTitleChanged = true;
+                    }
+                    var saveObject = {};
+                    saveObject[bookmarkKey] = bookmarkArray;
+                    if(videoTitleChanged){saveObject[videoInfoKey] = {title:videoTitle};}
                     chrome.storage.sync.set(saveObject, function(items) {
                         saveResult["status"] = "success";
                         saveResult["message"] = "Your bookmark was saved successfully.";
@@ -112,6 +185,8 @@ var getBookmarksModule = function(videoPlayer, idSource){
         getBookmarkData:getBookmarkData,
         saveDefaultBookmark:saveDefaultBookmark,
         saveCustomBookmark:saveCustomBookmark,
+        saveCustomBookmarkAndVideoInfo: saveCustomBookmarkAndVideoInfo,
+        saveDefaultBookmarkAndVideoInfo:saveDefaultBookmarkAndVideoInfo,
         deleteBookmark:deleteBookmark,
         updateBookmark:updateBookmark
     };

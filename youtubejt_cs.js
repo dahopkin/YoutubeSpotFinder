@@ -172,14 +172,18 @@ var getURLIDSource = function(settings){
     var getBookmarkKey = function(videoID){
         return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, "bookmarks");
     };
-    var getInfoKey = function(videoID){
+    var getVideoInfoKey = function(videoID){
         return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, "info");
+    };
+    var getVideoTitle = function(){
+        return $(".title .style-scope.ytd-video-primary-info-renderer").text();
     };
     return{
         pageMatches:pageMatches,
         getBookmarkKey:getBookmarkKey,
-        getInfoKey:getInfoKey,
-        getVideoID:getVideoIDFromURL
+        getVideoInfoKey:getVideoInfoKey,
+        getVideoID:getVideoIDFromURL,
+        getVideoTitle:getVideoTitle
     };
 };
 var youtubeIDSource = getURLIDSource(
