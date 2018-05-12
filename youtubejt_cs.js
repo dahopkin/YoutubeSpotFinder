@@ -463,7 +463,6 @@ function moveUIDependingOnContainerStatus(){
 function changeUIDependingOnCurrentState(){
     blockOrShowUIDependingOnAdStatus();
     resizeUIToFitPlayer();
-    moveUIDependingOnContainerStatus();
     changePageToFitUI();
 }
 
