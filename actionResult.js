@@ -3,6 +3,7 @@
 //getVideoDuration - a method to get a video's duration.
 var getActionResult = function () {
     let errors = {};
+    let message = "";
     let getErrors = function(){
         return errors;
     };
@@ -12,6 +13,7 @@ var getActionResult = function () {
     };
     let actionWasSuccessful = function(){return !hasErrors();};
     let setMessage = function(newMessage){message = newMessage;};
+    let getMessage = function(){return message;}
     let addToErrors = function(errorKey, errorMessage){
         errors[errorKey] = errorMessage;
     }
