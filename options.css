@@ -1,0 +1,21 @@
+.success-message{
+    background-color:green;
+}
+.progress-message{
+    background-color:gold;
+}
+.failure-message{
+    background-color: red;
+}
+.hidden{ display: none; }
+.white{ color:white }
+.rounded { border-radius: 5px;}
+.quarter { max-width: 25%; }
+.status-message{
+    color:white;
+    border-radius: 18px;
+    max-width: 10%;
+    padding:1em 1em;
+    margin: 1em 0;
+    text-align: center;
+}
