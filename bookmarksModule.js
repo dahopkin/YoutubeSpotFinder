@@ -1,5 +1,20 @@
 //TODO: change this to "getStorageModule" when done. It applies to more things now.
 var getBookmarksModule = function(videoPlayer, idSource){
+    var getItemsFromStorage = function(itemKeyValueRequestObject, itemHandlerCallback){
+        chrome.storage.sync.get(itemKeyValueRequestObject, function(items) {
+            itemHandlerCallback(items[key]);
+          })
+    };
+    var setItemsInStorage = function(itemKeyValueSetObject, storageCompleteCallback){
+        chrome.storage.sync.set(itemKeyValueSetObject, function(items) {
+            storageCompleteCallback(items[key]);
+          })
+    };
+    var getEmptyObjectDefaultForKey = function(key){
+        var defaultObject = {};
+        defaultObject[key] = {};
+        return defaultObject;
+    }
     var getBookmarkData = function(callback){
         var videoID = idSource.getVideoID(currentTabURL);
         if(videoID){
@@ -44,6 +59,16 @@ var getBookmarksModule = function(videoPlayer, idSource){
             callback(items);
           });
     };
+    var saveAllData = function(replacementData, callback){
+        chrome.storage.sync.set(replacementData, function(items) {
+            let actionResult = getActionResult();
+            actionResult.setMessage("Data was saved successfully")
+            callback(actionResult);
+          });
+    };
+    let bookmarkTimeIsANumber = function(bookmark){
+        
+    }
     var singleBookmarkDataIsValid = function(singleBookmarkData){
         //if the time is not a number or is more than the duration, fail.
         var time = singleBookmarkData.time;
@@ -181,6 +206,42 @@ var getBookmarksModule = function(videoPlayer, idSource){
             saveResult["message"] = "There was an error in deleting this bookmark.";
         }
     };
+    var getValidBookmarksFromBookmarkArray = function(bookmarkArray){
+        for (let index = bookmarkArray.length; index >= 0; index--) {
+            let currentElement = bookmarkArray[index];
+        }
+    };
+    var overwriteInternalWithExternalData = function(internalData, externalData){
+        /*for each key in the external data*/
+        for(var externalKey in externalData){
+            //if the key is a valid bookmark or video info key, validate the new data
+            // then overwrite the old data
+            if(idSource.isValidBookmarkKey(externalKey)){
+                internalData[externalKey] = externalData[externalKey];
+            } else if(idSource.isValidVideoInfoKey(externalKey)){
+                internalData[externalKey] = externalData[externalKey];
+            }
+        }
+        return internalData;
+    };
+    var importExternalData = function(fileData, callback){
+        let actionResult = getActionResult();
+        let jsonData = undefined;
+        try {
+            jsonData = JSON.parse(fileData);
+        } catch (error) {
+            actionResult.addToErrors("invalid-data", error)
+            actionResult.setMessage("The data is invalid");
+            callback(actionResult);
+            return;
+        }
+        //get all data from storage.
+        getAllData(function(allData){
+            allData = overwriteInternalWithExternalData(allData, jsonData);
+            saveAllData(allData, callback);
+        })
+
+    };
     return {
         getBookmarkData:getBookmarkData,
         saveDefaultBookmark:saveDefaultBookmark,
@@ -188,6 +249,7 @@ var getBookmarksModule = function(videoPlayer, idSource){
         saveCustomBookmarkAndVideoInfo: saveCustomBookmarkAndVideoInfo,
         saveDefaultBookmarkAndVideoInfo:saveDefaultBookmarkAndVideoInfo,
         deleteBookmark:deleteBookmark,
-        updateBookmark:updateBookmark
+        updateBookmark:updateBookmark,
+        importExternalData:importExternalData
     };
 };
