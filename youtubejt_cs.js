@@ -133,15 +133,6 @@ var netflixVideoPlayer = function () {
 
 var huluVideoPlayer = getHtml5VideoObject(document.getElementById("content-video-player"));
 
-var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber, bookmarkPrefix){
-    return{
-        urlRegex: urlRegex,
-        urlIDLength: urlIDLength,
-        urlRegexMatchNumber: urlRegexMatchNumber,
-        bookmarkPrefix:bookmarkPrefix
-    }
-};
-
 var youtubeIDSource = getURLIDSource(
     getURLIDSourceSettingsObject(
         /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/,

@@ -1,3 +1,12 @@
+var getURLIDSourceSettingsObject = function(urlRegex, urlIDLength, urlRegexMatchNumber, bookmarkPrefix){
+    return{
+        urlRegex: urlRegex,
+        urlIDLength: urlIDLength,
+        urlRegexMatchNumber: urlRegexMatchNumber,
+        bookmarkPrefix:bookmarkPrefix
+    }
+};
+
 /*
 settings:
 -urlRegex - regex to use on url for matching.
@@ -41,10 +50,10 @@ var getURLIDSource = function(settings){
         return $(".title .style-scope.ytd-video-primary-info-renderer").text();
     };
     var isValidBookmarkKey = function(bookmarkKey){
-        return beginsWithPrefixAndEndsWithSuffixWithDashes(bookmarkKey, settings.bookmarkPrefix, bookmarkSuffix);
+        return startsWithPrefixAndEndsWithSuffixWithDashes(bookmarkKey, settings.bookmarkPrefix, bookmarkSuffix);
     }
     var isValidVideoInfoKey = function(videoInfoKey){
-        return beginsWithPrefixAndEndsWithSuffixWithDashes(videoInfoKey, settings.bookmarkPrefix, videoInfoSuffix);
+        return startsWithPrefixAndEndsWithSuffixWithDashes(videoInfoKey, settings.bookmarkPrefix, videoInfoSuffix);
     }
     return{
         pageMatches:pageMatches,
