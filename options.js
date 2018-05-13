@@ -106,5 +106,4 @@ $(function(){
         };
         init();
     }(statusDisplayer));
-    statusDisplayer.displaySuccessMessage("just testing here");
 });
