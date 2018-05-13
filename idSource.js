@@ -37,8 +37,8 @@ var getURLIDSource = function(settings){
         videoID = videoID.toString();
         return `${prefix}-${videoID}-${suffix}`;
     }
-    var beginsWithPrefixAndEndsWithSuffixWithDashes = function(testString, prefix, suffix){
-        return testString.beginsWith(`${prefix}-`) && testString.endsWith(`-${suffix}`);
+    var startsWithPrefixAndEndsWithSuffixWithDashes = function(testString, prefix, suffix){
+        return testString.startsWith(`${prefix}-`) && testString.endsWith(`-${suffix}`);
     };
     var getBookmarkKey = function(videoID){
         return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, bookmarkSuffix);
