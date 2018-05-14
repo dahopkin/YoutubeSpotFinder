@@ -2,12 +2,28 @@
 function pad(str) {
     return ("0"+str).slice(-2);
 }
-function hhmmss(secs) {
-  var minutes = Math.floor(secs / 60);
-  secs = secs%60;
-  var hours = Math.floor(minutes/60)
-  minutes = minutes%60;
-  return pad(hours)+":"+pad(minutes)+":"+pad(secs);
+function getHoursMinutesSecondsFromSeconds(seconds){
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds%60;
+    var hours = Math.floor(minutes/60)
+    minutes = minutes%60;
+    return{hours:hours, minutes:minutes, seconds:seconds};
+}
+function hhmmss(seconds) {
+  let hhmmssdata = getHoursMinutesSecondsFromSeconds(seconds);
+  return pad(hhmmssdata.hours)+":"+pad(hhmmssdata.minutes)+":"+pad(hhmmssdata.seconds);
+}
+function getFormalStringFromhhmmssData(hhmmssdata){
+    let formalString = ""
+    if(hhmmssdata.hours > 0){formalString += `${hhmmssdata.hours}h`;}
+    if(hhmmssdata.minutes > 0){formalString += `${hhmmssdata.minutes}m`;}
+    if(hhmmssdata.seconds > 0){formalString += `${hhmmssdata.seconds}s`;}
+    return formalString;
+}
+function hhmmssformal(seconds){
+    let hhmmssdata = getHoursMinutesSecondsFromSeconds(seconds);
+    return getFormalStringFromhhmmssData(hhmmssdata);
+    
 }
 //end url help.
 
