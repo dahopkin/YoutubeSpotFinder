@@ -45,12 +45,7 @@ $(function(){
             hide:hide
         };
     }());
-    let youtubeIDSource = getURLIDSource(
-        getURLIDSourceSettingsObject(
-            /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/,
-            11, 2, "youtube"
-        )
-    );
+    let youtubeIDSource = getYoutubeIDSource();
     let bookmarksModule = getBookmarksModule({},youtubeIDSource);
     //need code for exporting bookmarks
     let dataExport = (function(statusDisplayer){

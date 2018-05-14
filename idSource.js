@@ -65,3 +65,10 @@ var getURLIDSource = function(settings){
         isValidVideoInfoKey:isValidVideoInfoKey
     };
 };
+
+var getYoutubeIDSource = function(){return getURLIDSource(
+    getURLIDSourceSettingsObject(
+        /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/,
+        11, 2, "youtube"
+    ));
+};
