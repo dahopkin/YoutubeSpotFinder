@@ -51,9 +51,29 @@ var getURLIDSource = function(settings){
     };
     var isValidBookmarkKey = function(bookmarkKey){
         return startsWithPrefixAndEndsWithSuffixWithDashes(bookmarkKey, settings.bookmarkPrefix, bookmarkSuffix);
-    }
+    };
     var isValidVideoInfoKey = function(videoInfoKey){
         return startsWithPrefixAndEndsWithSuffixWithDashes(videoInfoKey, settings.bookmarkPrefix, videoInfoSuffix);
+    };
+    var removeSeveralStrings = function(originalString,removeStringArray){
+        let changedString = originalString;
+        for (let index = 0; index < removeStringArray.length; index++) {
+            const stringToRemove = removeStringArray[index];
+            changedString = changedString.replace(stringToRemove, "");
+        }
+        return changedString;
+    };
+    var getVideoIDFromStorageKey = function(bookmarkKey){
+        let videoIDExtract = bookmarkKey;
+        if(isValidBookmarkKey(videoIDExtract)){
+            videoIDExtract = removeSeveralStrings(videoIDExtract, [`${settings.bookmarkPrefix}-`, `-${bookmarkSuffix}`]);
+            return videoIDExtract;
+        }
+        else if(isValidVideoInfoKey(videoIDExtract)){
+            videoIDExtract = removeSeveralStrings(videoIDExtract, [`${settings.bookmarkPrefix}-`, `-${videoInfoSuffix}`]);
+            return videoIDExtract;
+        }
+        return undefined;
     }
     return{
         pageMatches:pageMatches,
@@ -62,7 +82,8 @@ var getURLIDSource = function(settings){
         getVideoID:getVideoIDFromURL,
         getVideoTitle:getVideoTitle,
         isValidBookmarkKey:isValidBookmarkKey,
-        isValidVideoInfoKey:isValidVideoInfoKey
+        isValidVideoInfoKey:isValidVideoInfoKey,
+        getVideoIDFromStorageKey:getVideoIDFromStorageKey
     };
 };
 
