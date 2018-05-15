@@ -57,7 +57,7 @@ $(function(){
             try {
                 chrome.storage.sync.get(null, function (items) { // null implies all items
                     // Convert object to a string.
-                    var result = JSON.stringify(items);
+                    var result = JSON.stringify(items, null, 2);
 
                     // Save as file
                     var url = 'data:application/json;base64,' + btoa(result);
