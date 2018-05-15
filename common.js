@@ -62,3 +62,19 @@ var htmlEscapes = {
       return htmlEscapes[match];
     });
   };
+
+  function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+function isObject(item){
+    return item !== null 
+    && typeof item === "object"
+    && !Array.isArray(item);
+}
+function isNullOrUndefined(item){
+    return item === null || typeof item === "undefined"
+}
