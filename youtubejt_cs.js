@@ -309,18 +309,19 @@ function getTableContentsFromBookmarks(bookmarkInfo) {
                 html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
             }
             time = currentBookmark.time;
+            time = escapeHTMLString(time);
             description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
             formattedTime = hhmmss(currentBookmark.time);
             html += `<tr>
-        <td><a class='time-link' data-time='${time}'>${formattedTime}</a></td>
-        <td><span class='description' data-time='${time}'>${description}</span></td>
+        <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
+        <td><span class='description' data-time='${time}'>${escapeHTMLString(description)}</span></td>
         <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
         <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
         <tr>`;
             //Do something
         }
     }
-    return html;
+    return $.parseHTML(html);
 }
 
 function setProgressBarDom(binarySearchStatusInfo){

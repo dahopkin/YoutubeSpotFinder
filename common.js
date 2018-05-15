@@ -39,3 +39,26 @@ function hhmmssToSeconds(hhmmssString){
 
     return s;
 }
+
+//escape html
+//source code comes from:
+//https://stackoverflow.com/questions/6020714/escape-html-using-jquery
+// List of HTML entities for escaping.
+var htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;'
+  };
+  
+  // Regex containing the keys listed immediately above.
+  var htmlEscaper = /[&<>"'\/]/g;
+  
+  // Escape a string for HTML interpolation.
+  var escapeHTMLString = function(string) {
+    return ('' + string).replace(htmlEscaper, function(match) {
+      return htmlEscapes[match];
+    });
+  };
