@@ -295,35 +295,49 @@ function setUndoButtonDom(binarySearchStatusInfo){
     }
 }
 
+function getBookmarkArrayFromBookmarkListObject(bookmarkListObject){
+    let bookmarkArray = [];
+    for (const key in bookmarkListObject) {
+        if (bookmarkListObject.hasOwnProperty(key)) {
+            const element = bookmarkListObject[key];
+            if(isNullOrUndefined(element.time)){continue;}
+            bookmarkArray.push(element);
+        }
+    }
+    return bookmarkArray;
+}
+function getHTMLFromBookmark(bookmark){
+            time = bookmark.time;
+            time = escapeHTMLString(time);
+            description = bookmark.description == "" ? "No Description" : bookmark.description;
+            formattedTime = hhmmss(bookmark.time);
+            html = `<tr>
+        <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
+        <td><span class='description' data-time='${time}'>${escapeHTMLString(description)}</span></td>
+        <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
+        <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
+        <tr>`;
+        return html;
+}
 function getTableContentsFromBookmarks(bookmarkInfo) {
+    bookmarkInfo = getBookmarkArrayFromBookmarkListObject(bookmarkInfo);
     var currentBookmark, html, time, formattedTime, description;
     html = "";
-    if (bookmarkInfo.length == 0) {
+    if (isEmpty(bookmarkInfo)) {
         html += "<tr><td class='note'>No bookmarked times for this video.</td><tr>";
         return html;
     } else {
         for (var i = 0; i < bookmarkInfo.length; i++) {
             currentBookmark = bookmarkInfo[i];
             if (i === 0) {
-                //html += `<tr><th>Go To: (hh:mm:ss)</th><th>Description</th><th>Actions</th><tr>`;
                 html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
             }
-            time = currentBookmark.time;
-            time = escapeHTMLString(time);
-            description = currentBookmark.description == "" ? "No Description" : currentBookmark.description;
-            formattedTime = hhmmss(currentBookmark.time);
-            html += `<tr>
-        <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
-        <td><span class='description' data-time='${time}'>${escapeHTMLString(description)}</span></td>
-        <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
-        <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
-        <tr>`;
-            //Do something
+            currentBookmark = bookmarkInfo[i];
+            html += getHTMLFromBookmark(currentBookmark);
         }
     }
     return $.parseHTML(html);
 }
-
 function setProgressBarDom(binarySearchStatusInfo){
     var $progressBarOuter = $(".progress-outer");
     var $progressBarInner = $(".progress-inner");
