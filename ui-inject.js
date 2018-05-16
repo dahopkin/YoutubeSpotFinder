@@ -187,11 +187,12 @@ $(function () {
         $timeTextBox.val(hhmmss(bookmarkData.time));
         changeHTMLBasedOnMode(mode);
     };
-    var setBookmarkEditPopupPosition = function(jqEditButtonElement){
-        var editButtonPagePosition = jqEditButtonElement.offset().top;
-        var editButtonPageParentPosition = jqEditButtonElement.parent().offset().top;
-        var popupTopPosition = (editButtonPagePosition - editButtonPageParentPosition) + 75;
-        $(bookmarkEditPopupSelector).css({"top": popupTopPosition + "px"})
+    var setBookmarkEditPopupPosition = function($jQpositionElement){
+        var $jQpositionElement = $jQpositionElement || $("#table-section");
+        let mainUIOffset = $(".yjt-html").offset();
+        let positionTop = $jQpositionElement.offset().top - mainUIOffset.top + 25;
+        let positionLeft = $jQpositionElement.offset().left - mainUIOffset.left;
+        $(bookmarkEditPopupSelector).css({top:positionTop, left:positionLeft});
     };
     var getBookmarkFromAppDataBookmarks = function(time){
         var bookmarkArray = appInfo.bookmarkInfo;
@@ -214,7 +215,7 @@ $(function () {
         var bookmarkData = getBookmarkFromAppDataBookmarks(time);
         if(!bookmarkData){ return; }
         setBookmarkEditPopupFromBookmarkData(bookmarkData, "edit");
-        setBookmarkEditPopupPosition($(this));
+        setBookmarkEditPopupPosition($(this).closest(".bookmark-row"));
         showEditPopup();
     });
     $(document).on("click.update", "#bookmark-update", function (e) {
@@ -245,7 +246,7 @@ $(function () {
         var bookmarkData = {time: Math.floor(videoPlayer.getCurrentTime()), description:""};
         if(!bookmarkData){ return; }
         setBookmarkEditPopupFromBookmarkData(bookmarkData, "create");
-        setBookmarkEditPopupPosition($(this));
+        setBookmarkEditPopupPosition();
         showEditPopup();
         
     })
