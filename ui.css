@@ -84,7 +84,7 @@
 }
 
 .btn-small{
-    padding: 0 .25em;
+    padding: 0 .10em;
     line-height:10px;
     font-size:10px;
 }
@@ -357,6 +357,32 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
  .form-label{
      min-width:7em;
  }
+ .share-link-panel{
+    position: absolute;
+    top:100%;
+    max-width:60%;
+    min-width:40%;
+    padding:10px 0;
+    text-align: center;
+}
+.share-link-text{
+    padding:5px;
+    border-radius: 3px;
+    width:85%;
+    margin:auto;
+}
+.hidden{display:none;}
+.share-close-button{
+    position: absolute;
+    top:2px;
+    right: 2px;
+    background:transparent;
+    border:none;
+}
+.share-close-button:hover{
+    border:1px solid var(--light-grey);
+    border-radius: 10px;
+}
 @media (max-width: 656px)
 , (min-width: 657px) and (max-width: 856px)
 , (min-width: 999px) and (max-width: 1293px){ 

@@ -311,11 +311,12 @@ function getHTMLFromBookmark(bookmark){
             time = escapeHTMLString(time);
             description = bookmark.description == "" ? "No Description" : bookmark.description;
             formattedTime = hhmmss(bookmark.time);
-            html = `<tr>
+            html = `<tr class="bookmark-row">
         <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
         <td><span class='description' data-time='${time}'>${escapeHTMLString(description)}</span></td>
         <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
         <td><button data-time='${time}' class='delete-button btn btn-small btn-primary'>Delete</button></td>
+        <td><button data-time='${time}' class='share-button btn btn-small btn-primary'>Share</button></td>
         <tr>`;
         return html;
 }

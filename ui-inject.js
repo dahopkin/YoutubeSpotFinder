@@ -1,5 +1,9 @@
 
 $(function () {
+    let getTimeLink = function(videoIDKey, time){
+        let timeAddString = "?t=" + hhmmssformal(time);
+        return `https://youtu.be/${videoIDKey}${timeAddString}`;
+    }
     $(document).on("click.percentage", ".percentage-button", function(e){
         e.preventDefault();
         var percentage = $(this).data("percentage");
@@ -44,6 +48,64 @@ $(function () {
                 setAppInfo(setPageDom);
             });
         }
+    });
+    var getShareLinkPopup = function(selector, $jQpositionElement){
+        let $wholeUI = $(".yjt-html");
+        let $positionElement = $jQpositionElement;
+        let $mainEl = $(selector);
+        let $closeButton = $mainEl.find("#share-close-button");
+        let $linkTextBox = $mainEl.find(".share-link-text");
+        let link = "";
+        let setLink = function(newLink){
+            link = newLink;
+            $linkTextBox.val(link);
+        }
+        let setSharePopupPosition = function($jqElement){
+            //$jqElement.css({"top": 50 + "px"})
+            let mainUIWidth = $wholeUI.width();
+            let mainUIHeight = $wholeUI.height();
+            let mainUIOffset = $wholeUI.offset();
+            let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
+            let positionLeft = $positionElement.offset().left - mainUIOffset.left;
+            $mainEl.css({top:positionTop, left:positionLeft});
+        };
+        let stopPropagation = function(e){ e.stopPropagation();}
+        let bindEvents = function(){
+            $closeButton.on("click.close", hide);
+            $(document).on("click.showshare", "html", hide);
+            $(document).on("click.showshareblock", '.table-section', stopPropagation);
+        }
+        let unbindEvents = function(){
+            $closeButton.off("click.close", hide);
+            $(document).off("click.showshare", "html", hide);
+            $(document).off("click.showshareblock", '.table-section', stopPropagation);
+        }
+        let show = function(){
+            $mainEl.removeClass(hiddenClass);
+            bindEvents()
+        }
+        let hide = function(e){
+            e.preventDefault();
+            $mainEl.addClass(hiddenClass);
+            unbindEvents();
+        }
+        let init = function(){
+            setSharePopupPosition($mainEl);
+        }
+        init();
+        return{setLink:setLink, show:show};
+
+    };
+
+    $(document).on("click.share", ".share-button", function(e){
+        e.preventDefault();
+        var time = $(this).data("time");
+        var videoID = youtubeIDSource.getVideoID();
+        var link = getTimeLink(videoID, time);
+        shareLinkPopup = getShareLinkPopup("#share-link", $(this).closest(".bookmark-row"));
+        shareLinkPopup.setLink(link);
+        shareLinkPopup.show();
+        
     });
     $(document).on("click.update", ".cancel-button", function (e) {
         setAppInfo(setPageDom);
