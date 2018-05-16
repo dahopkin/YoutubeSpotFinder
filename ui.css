@@ -383,7 +383,7 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
 #delete-panel{
     width:300px;
     position: absolute;
-    padding:5px;
+    padding:0 5px 5px 5px;
 }
 #time-text{
     width:75px;
