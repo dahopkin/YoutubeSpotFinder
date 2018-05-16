@@ -223,10 +223,32 @@ var getBookmarksModule = function(videoPlayer, idSource){
         }
     };
     var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){ 
-        saveCustomBookmarkAndVideoInfo(oneBookmarkData, callback);
+        videoID = idSource.getVideoID(currentTabURL);
+        updateBookmarkByID(videoID, bookmarkTime, oneBookmarkData, callback);
+
     };
     var updateBookmarkByID = function(videoID, bookmarkTime, oneBookmarkData, callback){ 
-        saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
+        var videoID = videoID || idSource.getVideoID(currentTabURL);
+        var saveResult = {status:"", message:""};
+        if(videoID){
+            //var key = idSource.getBookmarkKey(videoID);
+            var key = idSource.getVideoDataKey(videoID);
+                getBookmarkAndVideoInfoDataByID(videoID, function(bookmarkObjectList, videoInfo){
+                    let successFunction = function(saveResult){
+                        saveResult = saveResult || {};
+                        saveResult["status"] = "success";
+                        saveResult["message"] = "Your bookmark was updated successfully.";
+                        callback(saveResult);
+                    }
+                    bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
+                    bookmarkObjectList = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkObjectList);
+                    setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
+                });
+        } else{
+            saveResult["status"] = "failure";
+            saveResult["message"] = "There was an error in deleting this bookmark.";
+        }
+        //saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
     };
     var deleteBookmarkByTimeFromBookmarkListObject = function(bookmarkListObject, bookmarkTime){
         bookmarkListObject = getItemOrBlankObjectIfItemIsNotObject(bookmarkListObject);
