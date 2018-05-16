@@ -55,7 +55,7 @@ $(function(){
             //export code (with modifications) comes from:
             //https://stackoverflow.com/questions/23160600/chrome-extension-local-storage-how-to-export
             try {
-                chrome.storage.sync.get(null, function (items) { // null implies all items
+                bookmarksModule.getAllData(function (items) { // null implies all items
                     // Convert object to a string.
                     var result = JSON.stringify(items, null, 2);
 
