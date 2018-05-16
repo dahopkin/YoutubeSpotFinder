@@ -28,6 +28,7 @@ var getURLIDSource = function(settings){
     };
     var bookmarkSuffix = "bookmarks";
     var videoInfoSuffix = "info";
+    var videoDataSuffix = "data";
     var pageMatches = function(url){
         url = url || currentTabURL;
         return typeof getVideoIDFromURL(url) !== "undefined";
@@ -46,6 +47,9 @@ var getURLIDSource = function(settings){
     var getVideoInfoKey = function(videoID){
         return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, videoInfoSuffix);
     };
+    var getVideoDataKey = function(videoID){
+        return getIDWithPrefixAndSuffix(videoID, settings.bookmarkPrefix, videoDataSuffix);
+    };
     var getVideoTitle = function(){
         return $(".title .style-scope.ytd-video-primary-info-renderer").text();
     };
@@ -54,6 +58,9 @@ var getURLIDSource = function(settings){
     };
     var isValidVideoInfoKey = function(videoInfoKey){
         return startsWithPrefixAndEndsWithSuffixWithDashes(videoInfoKey, settings.bookmarkPrefix, videoInfoSuffix);
+    };
+    var isValidVideoDataKey = function(videoDataKey){
+        return startsWithPrefixAndEndsWithSuffixWithDashes(videoDataKey, settings.bookmarkPrefix, videoDataSuffix);
     };
     var removeSeveralStrings = function(originalString,removeStringArray){
         let changedString = originalString;
@@ -73,6 +80,10 @@ var getURLIDSource = function(settings){
             videoIDExtract = removeSeveralStrings(videoIDExtract, [`${settings.bookmarkPrefix}-`, `-${videoInfoSuffix}`]);
             return videoIDExtract;
         }
+        else if(isValidVideoDataKey(videoIDExtract)){
+            videoIDExtract = removeSeveralStrings(videoIDExtract, [`${settings.bookmarkPrefix}-`, `-${videoDataSuffix}`]);
+            return videoIDExtract;
+        }
         return undefined;
     }
     return{
@@ -83,7 +94,9 @@ var getURLIDSource = function(settings){
         getVideoTitle:getVideoTitle,
         isValidBookmarkKey:isValidBookmarkKey,
         isValidVideoInfoKey:isValidVideoInfoKey,
-        getVideoIDFromStorageKey:getVideoIDFromStorageKey
+        getVideoIDFromStorageKey:getVideoIDFromStorageKey,
+        getVideoDataKey:getVideoDataKey,
+        isValidVideoDataKey:isValidVideoDataKey,
     };
 };
 
