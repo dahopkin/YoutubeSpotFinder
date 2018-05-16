@@ -40,14 +40,12 @@ $(function () {
         videoPlayer.seekToTime(time);
         setAppInfo(setPageDom);
     });
-    $(document).on("click.delete", ".delete-button", function(e){
+    $(document).on("click.showdelete", ".show-delete-button", function(e){
         e.preventDefault();
-        if (confirm("Are you sure you want to delete this bookmarked time?")) {
-            var time = $(this).data("time");
-            bookmarks.deleteBookmark(time, function(saveResult){
-                setAppInfo(setPageDom);
-            });
-        }
+        var time = $(this).data("time");
+        let deletePopup = getDeletePopup("#delete-panel", $(this).closest(".bookmark-row"));
+        deletePopup.setTime(time);
+        deletePopup.show();
     });
     var getShareLinkPopup = function(selector, $jQpositionElement){
         let $wholeUI = $(".yjt-html");
@@ -60,10 +58,8 @@ $(function () {
             link = newLink;
             $linkTextBox.val(link);
         }
-        let setSharePopupPosition = function($jqElement){
-            //$jqElement.css({"top": 50 + "px"})
-            let mainUIWidth = $wholeUI.width();
-            let mainUIHeight = $wholeUI.height();
+        //set the position below the bookmark row where the initial button was clicked.
+        let setPopupPosition = function(){
             let mainUIOffset = $wholeUI.offset();
             let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
             let positionLeft = $positionElement.offset().left - mainUIOffset.left;
@@ -90,10 +86,68 @@ $(function () {
             unbindEvents();
         }
         let init = function(){
-            setSharePopupPosition($mainEl);
+            setPopupPosition();
         }
         init();
         return{setLink:setLink, show:show};
+
+    };
+    var getDeletePopup = function(selector, $jQpositionElement){
+        let $wholeUI = $(".yjt-html");
+        let $positionElement = $jQpositionElement;
+        let $mainEl = $(selector);
+        let $closeButton = $mainEl.find(".delete-close-button");
+        let $deleteButton = $mainEl.find("#delete-button");
+        let time = 0;
+        let setTime = function(newTime){
+            time = newTime;
+            $deleteButton.attr("data-time", time);
+        }
+        let deleteBookmark = function(e){
+            e.preventDefault();
+            bookmarks.deleteBookmark(time, function(saveResult){
+                setAppInfo(setPageDom);
+                hide(e);
+            });
+        }
+        //set the position below the bookmark row where the initial button was clicked.
+        let setPopupPosition = function(){
+            let mainUIOffset = $wholeUI.offset();
+            let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
+            let positionLeft = $positionElement.offset().left - mainUIOffset.left;
+            $mainEl.css({top:positionTop, left:positionLeft});
+        };
+        let stopPropagation = function(e){ e.stopPropagation();}
+        const clickShowEvent = "click.showdelete";
+        const clickCloseEvent = "click.deleteclose";
+        const clickPropogationEvent = "click.showdeleteblock";
+        const clickDeleteEvent = "click.delete";
+        let bindEvents = function(){
+            $closeButton.on(clickCloseEvent, hide);
+            $(document).on(clickShowEvent, "html", hide);
+            $(document).on(clickPropogationEvent, selector, stopPropagation);
+            $deleteButton.on(clickDeleteEvent, deleteBookmark)
+        }
+        let unbindEvents = function(){
+            $closeButton.off(clickCloseEvent, hide);
+            $(document).off(clickShowEvent, "html", hide);
+            $(document).off(clickPropogationEvent, selector, stopPropagation);
+            $deleteButton.off(clickDeleteEvent, deleteBookmark)
+        }
+        let show = function(){
+            $mainEl.removeClass(hiddenClass);
+            bindEvents()
+        }
+        let hide = function(e){
+            e.preventDefault();
+            $mainEl.addClass(hiddenClass);
+            unbindEvents();
+        }
+        let init = function(){
+            setPopupPosition();
+        }
+        init();
+        return{setTime:setTime, show:show};
 
     };
 
