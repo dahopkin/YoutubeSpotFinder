@@ -49,12 +49,27 @@ $(function () {
         setAppInfo(setPageDom);
     });
     const bookmarkEditPopupSelector = "#bookmark-edit-section";
-    var setBookmarkEditPopupFromBookmarkData = function(bookmarkData){
+    var changeHTMLBasedOnMode = function(mode){
+        const $popupTitle = $("#popup-title");
+        const $updateButton = $("#bookmark-update");
+        const $createButton = $("#saveBookmark");
+        if(mode == "edit"){
+            $popupTitle.text("Edit Bookmark");
+            $updateButton.removeClass(hiddenClass);
+            $createButton.addClass(hiddenClass);
+        }else if(mode == "create"){
+            $popupTitle.text("Create Bookmark");
+            $updateButton.addClass(hiddenClass);
+            $createButton.removeClass(hiddenClass);
+        }
+    }
+    var setBookmarkEditPopupFromBookmarkData = function(bookmarkData, mode){
         var $descriptionTextBox = $("#description-text");
         var $timeTextBox = $("#time-text");
         $timeTextBox.attr("data-currenttime", bookmarkData.time);
         $descriptionTextBox.val(bookmarkData.description);
         $timeTextBox.val(hhmmss(bookmarkData.time));
+        changeHTMLBasedOnMode(mode);
     };
     var setBookmarkEditPopupPosition = function(jqEditButtonElement){
         var editButtonPagePosition = jqEditButtonElement.offset().top;
@@ -67,6 +82,12 @@ $(function () {
         var bookmarkToReturn = bookmarkArray[time.toString()];
         return bookmarkToReturn;
     };
+    var getBookmarkFromPopupData = function(){
+        return {
+            time: hhmmssToSeconds($.trim($("#time-text").val())),
+            description: $.trim($("#description-text").val()) || ""
+        }
+    }
     var showEditPopup = function(){
         $(bookmarkEditPopupSelector).removeClass(hiddenClass);
     };
@@ -76,19 +97,15 @@ $(function () {
         var time = $(this).data("time");
         var bookmarkData = getBookmarkFromAppDataBookmarks(time);
         if(!bookmarkData){ return; }
-        setBookmarkEditPopupFromBookmarkData(bookmarkData);
+        setBookmarkEditPopupFromBookmarkData(bookmarkData, "edit");
         setBookmarkEditPopupPosition($(this));
         showEditPopup();
     });
     $(document).on("click.update", "#bookmark-update", function (e) {
         e.preventDefault();
-        var updateData = {};
-        updateData["oldTime"] = $("#time-text").attr("data-currenttime");
-        updateData["newTime"] = hhmmssToSeconds($.trim($("#time-text").val()));
-        var newDescription = $.trim($("#description-text").val()) || "";
-        updateData["newDescription"] = newDescription;
-        var updateBookmarkData = {time:updateData.newTime, description:updateData.newDescription};
-        bookmarks.updateBookmark(updateData.oldTime, updateBookmarkData, function(saveResult){
+        let oldTime = $("#time-text").attr("data-currenttime");
+        var updateBookmarkData = getBookmarkFromPopupData();
+        bookmarks.updateBookmark(oldTime, updateBookmarkData, function(saveResult){
             setAppInfo(setPageDom);
             $(bookmarkEditPopupSelector).addClass(hiddenClass);
         });
@@ -99,9 +116,21 @@ $(function () {
         $(bookmarkEditPopupSelector).addClass(hiddenClass);
     });
     $(document).on("click.savebookmark", '#saveBookmark', function(){
-        bookmarks.saveDefaultBookmarkAndVideoInfo(function(saveResult){
+        let bookmark = getBookmarkFromPopupData();
+        bookmarks.saveCustomBookmarkAndVideoInfo(bookmark, function(saveResult){
             setAppInfo(setPageDom);
+            $(bookmarkEditPopupSelector).addClass(hiddenClass);
         });
+        
+    })
+    $(document).on("click.showsavebookmark", '#showSaveBookmark', function(e){
+        e.preventDefault();
+        var time = $(this).data("time");
+        var bookmarkData = {time: Math.floor(videoPlayer.getCurrentTime()), description:""};
+        if(!bookmarkData){ return; }
+        setBookmarkEditPopupFromBookmarkData(bookmarkData, "create");
+        setBookmarkEditPopupPosition($(this));
+        showEditPopup();
         
     })
 

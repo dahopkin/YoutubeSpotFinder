@@ -82,14 +82,14 @@
             <div class="" id="bookmark-section">
                 <span class="panel-title-inline">Bookmarked Times</span>
                 <span class="separator-xsmall"></span>
-                <button class="btn btn-primary btn-medium" id="saveBookmark" tooltip-position="bottom" tooltip='Save current time to bookmarks.'>Bookmark Current Time</button>
+                <button class="btn btn-primary btn-medium" id="showSaveBookmark" tooltip-position="bottom" tooltip='Save current time to bookmarks.'>Bookmark Current Time</button>
                 
                 <div id="table-section">
                     <table id="bookmark-table" class="bookmark-table white note"></table>
                 </div>
                 <div class="ysp-popup white hidden" id="bookmark-edit-section">
                     <form id="bookmark-edit-form">
-                        <h2 class="center">Edit Bookmark</h2>
+                        <h2 class="center" id="popup-title">Edit Bookmark</h2>
                         <input type="hidden" id="old-time" value="0"/>
                         <div class="form-group">
                             <div class="form-label"><label for="time-text" class="note">Time</label></div>
@@ -102,10 +102,12 @@
                             </textarea>
                         </div>
                         <div>
+                            <span class="separator"></span>
                             <div class="inline-block">
                                 <button class="btn btn-primary btn-medium update-button" id="bookmark-update" type="button">Update</button>        
+                                <button class="btn btn-primary btn-medium hidden" id="saveBookmark" type="button">Create</button>
                             </div>
-                            <span class="separator"></span>
+                            <span class="separator-xsmall"></span>
                             <div class="inline-block">
                                 <button class="btn btn-primary btn-medium bookmark-edit-close-button" type="button">Cancel</button>        
                             </div>
