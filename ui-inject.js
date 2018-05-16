@@ -73,12 +73,12 @@ $(function () {
         let bindEvents = function(){
             $closeButton.on("click.close", hide);
             $(document).on("click.showshare", "html", hide);
-            $(document).on("click.showshareblock", '.table-section', stopPropagation);
+            $(document).on("click.showshareblock", selector, stopPropagation);
         }
         let unbindEvents = function(){
             $closeButton.off("click.close", hide);
             $(document).off("click.showshare", "html", hide);
-            $(document).off("click.showshareblock", '.table-section', stopPropagation);
+            $(document).off("click.showshareblock", selector, stopPropagation);
         }
         let show = function(){
             $mainEl.removeClass(hiddenClass);

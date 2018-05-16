@@ -351,17 +351,14 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
  .form-group{
      margin:1em 1em;
  }
- #bookmark-edit-section{
 
- }
  .form-label{
      min-width:7em;
  }
  .share-link-panel{
     position: absolute;
     top:100%;
-    max-width:60%;
-    min-width:40%;
+    width:300px;
     padding:10px 0;
     text-align: center;
 }
