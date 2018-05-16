@@ -1,0 +1,167 @@
+:root{
+    --blue-button-color: hsl(206.1, 79.3%, 52.7%);
+    --light-grey: rgb(215, 215, 215);
+}
+
+body{
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color:rgb(225, 225, 225);
+    display:grid;
+    grid-template-columns: 1fr minmax(2fr, 10fr) 1fr;
+    grid-template-rows:1fr;
+    grid-template-areas:". main-content .";
+    height: 100%;
+}
+.bookmark-actions{
+    /* display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:"edit-button delete-button share-button"; */
+}
+.bookmark-row{
+    display:grid;
+    grid-template-columns: 1fr 3fr 3fr;
+    grid-template-rows: 1fr;
+    border-bottom:1px solid rgb(215, 215, 215);
+    grid-template-areas:"time description actions";
+
+}
+.time{
+    grid-area: time;
+    align-content: center;
+    justify-content: center;
+}
+.actions{
+    grid-area: actions;
+    position: relative;
+}
+.description{
+    grid-area: description;
+    align-content: center;
+    justify-content: center;
+}
+.edit-button{
+    grid-area:edit-button;
+}
+.delete-button{
+    grid-area:delete-button;
+}
+.share-button{
+    grid-area:share-button;
+}
+.inline-block{display: inline-block;}
+.video-header{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:"video-title";
+    border-bottom:1px solid var(--blue-button-color);
+}
+.edit-title-button{
+    grid-area: edit-title-button;
+    align-self: center;
+    justify-self: center;
+}
+.video-title{
+    grid-area: video-title;
+    color: var(--blue-button-color);
+    font-weight: bold;
+    font-size: 21px;
+}
+.video-info{  
+    padding:1em;
+    /* background-color:rgb(225, 225, 225); */
+    border-width: 1px 1px 1px 10px;
+    border-color: rgb(215, 215, 215);
+    border-style:solid;
+    border-radius:2px;
+    margin: 5px 0;
+}
+.text-center{ text-align:center; }
+#main-content{
+    grid-area:main-content;
+    background-color:white;
+    padding: 2em 2em;
+    border-radius:5px;
+}
+.bookmark-table{width:75%;}
+.bookmark-table > td, th{
+    padding:1em;
+    margin: 1em 0;
+}
+.btn{
+    border: 1px solid;
+    border-radius: 2px;
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: middle;
+    color: black;
+    background: white;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight:bold;
+    line-height:15px;
+}
+.btn-blue{
+    padding: 5px;
+    border-color: var(--blue-button-color);
+    color: var(--blue-button-color);
+    margin:1px;
+}
+.btn-blue:hover{
+    padding: 5px;
+    background:var(--blue-button-color);
+    color:white;
+}
+.cell{
+    padding: 5px;
+    display: inline-block;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+.no-description{
+    color:var(--light-grey);
+}
+.time-textbox{
+    width:75px;
+}
+.share-link-panel{
+    position: absolute;
+    top:100%;
+    width:75%;
+    background-color:white;
+    border:1px solid var(--light-grey);
+    padding:10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+.share-link-text{
+    padding:5px;
+    border-radius: 3px;
+    width:75%;
+    margin:auto;
+}
+.hidden{display:none;}
+.share-close-button{
+    position: absolute;
+    top:2px;
+    right: 2px;
+    background:transparent;
+    border:none;
+}
+.share-close-button:hover{
+    border:1px solid var(--light-grey);
+    border-radius: 10px;
+}
+@media (max-width: 517px){ 
+    .bookmark-row{
+        display:grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        border-bottom:1px solid rgb(215, 215, 215);
+        grid-template-areas:"time time""description description""actions actions";
+    
+    }
+ }
