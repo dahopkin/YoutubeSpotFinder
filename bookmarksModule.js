@@ -1,6 +1,6 @@
 //TODO: change this to "getStorageModule" when done. It applies to more things now.
 var getBookmarksModule = function(videoPlayer, idSource){
-    var storageArea = chrome.storage.sync;
+    var storageArea = chrome.storage.local;
     var getItemOrBlankObjectIfItemIsNotObject = function(item){
         if(!isObject(item)) return {};
         return item;
