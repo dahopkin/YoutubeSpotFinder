@@ -15,7 +15,7 @@
     width: 100%;
     max-height: 700px;
     display: grid;
-    grid-template-columns: .50fr .50fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: .10fr .90fr;
     grid-template-areas:"before-after-section bookmark-section"
                         "jump-to-section bookmark-section";
