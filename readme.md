@@ -18,7 +18,8 @@ With "Before" and "After", the Spot Finder will jump to new "middles" depending 
 
 
  **Bookmarking:** You can save spots in a video you like for later. Hit the "Bookmark Current Time" button and enter your description (or nothing) to save the current time to a bookmark. Bookmarks will re-appear on the page you saved them for when you visit the page again. They can be edited and deleted. 
- Tech Note: right now, they're saved in chrome's local extension storage, because the sync storage is only 100KB big (as opposed to local's 5MB).
+
+ Tech Note: right now, the bookmarks are saved in chrome's local extension storage, because the sync storage is only 100KB big (as opposed to local's 5MB).
 
  **Going Back/Forward:** You can click these buttons to go back/forward 15, 30, or 60 seconds in a video. 
  
