@@ -1,30 +1,31 @@
 {
   "manifest_version": 2,
+  "author": "Daniel Hopkins",
   "name": "YouTube Spot Finder",
-  "description": "Helps you find a specific spot in a YouTube video by narrowing things down. Also has time bookmarking and buttons for going back and forth.",
+  "description": "Find the spot you want in a YouTube video and save it for later (if you want).",
   "version": "1.0",
   "page_action": {
     "default_icon": "images/yjt_icon.png",
     "default_title": "YouTube Spot Finder",
-    "default_popup": "popup.html"
+    "default_popup": "html/popup.html"
   },
   "background": {
-    "scripts": [ "eventPage.js" ],
+    "scripts": [ "js/eventPage.js" ],
     "persistent": false
   },
-  "options_page": "options.html",
+  "options_page": "html/options.html",
   "content_scripts": [
     {
       "matches": [ "*://*.youtube.com/*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
-      "js": [ "jquery-3.3.1.min.js"
-        , "common.js"
-        , "binarySearcher.js"
-        , "bookmarksModule.js"
-        , "idSource.js"
-        , "actionResult.js"
-        , "youtubejt_cs.js"
-        , "ui-inject.js" ],
-      "css": ["ui.css"],
+      "js": [ "js/jquery-3.3.1.min.js"
+        , "js/common.js"
+        , "js/binarySearcher.js"
+        , "js/bookmarksModule.js"
+        , "js/idSource.js"
+        , "js/actionResult.js"
+        , "js/youtubejt_cs.js"
+        , "js/ui-inject.js" ],
+      "css": ["css/ui.css"],
       "run_at": "document_end"
     }
   ],
@@ -36,7 +37,7 @@
      "*://*.hulu.com/watch/*"
     ],
     "web_accessible_resources": [
-      "ui-inject.html"
+      "html/ui-inject.html"
     ]
 
 

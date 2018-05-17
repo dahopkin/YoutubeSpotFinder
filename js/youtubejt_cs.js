@@ -195,7 +195,7 @@ var insertHTMLAtBottomOfElement = function(elementSelector, html){
     $(elementSelector).append(html);
 }
 var embedUIOnPage = function (functionToRunAfter) {
-    $.get(chrome.runtime.getURL('ui-inject.html'), function(data) {
+    $.get(chrome.runtime.getURL('../html/ui-inject.html'), function(data) {
         var html = $.parseHTML(data);
         var checkSelector = ".yjt-html";
         if($(checkSelector).length){$(checkSelector).remove();}
