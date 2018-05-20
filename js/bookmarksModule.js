@@ -15,58 +15,100 @@ var getBookmarksModule = function(videoPlayer, idSource){
             storageCompleteCallback(items[key]);
           })
     };
+    //remove doesn't get too deep. From my understanding you can't delete nested items
+    var deleteItemsInStorage = function(keyArray, deleteComplete){
+        storageArea.set(keyArray, function(items) {
+            deleteComplete(items[key]);
+          })
+    };
     var getEmptyObjectDefaultForKey = function(key){
         var defaultObject = {};
         defaultObject[key] = {};
         return defaultObject;
+    }
+    var throwCustomErrorIfThereWasStorageError = function(){
+        if (chrome.runtime.lastError) {
+            var errorMsg = chrome.runtime.lastError.message;
+            throw new AppError(errorMsg);
+         }
+    }
+    var throwCustomErrorIfVideoIDIsInvalid = function(videoID){
+        if (!videoID) { throw new AppError("Video ID is invalid."); }
+    }
+    var throwCustomErrorIfBookmarkIsInvalid = function(bookmark){
+        if(!validators.bookmarkIsValid(bookmark)){ throw new AppError("The time must be a number."); }
+    }
+    function runCallbackWithActionResultError(callback, error){
+        callback(new ActionResult({message:error.message, error:error}));
     }
 
     var getBookmarkData = function(callback){
         var videoID = idSource.getVideoID(currentTabURL);
         getBookmarksByID(videoID, callback);
     };
-    var getBookmarksByID = function(videoID, callback){
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
-        if(videoID){
-            var key = idSource.getVideoDataKey(videoID);
-            var defaultObject = {};
-            defaultObject[key] = {};
-            defaultObject[key]["bookmarks"] = {};
-            storageArea.get(defaultObject, function(items) {
-                var bookmarksForVideo = items[key]["bookmarks"];
-                bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
-                callback(bookmarksForVideo);
-              });
+    var getBookmarksByID = function (videoID, callback) {
+        try {
+            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            if (videoID) {
+                var key = idSource.getVideoDataKey(videoID);
+                var defaultObject = {};
+                defaultObject[key] = {};
+                defaultObject[key]["bookmarks"] = {};
+                storageArea.get(defaultObject, function (items) {
+                    throwCustomErrorIfThereWasStorageError();
+                    var bookmarksForVideo = items[key]["bookmarks"];
+                    bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
+                    callback(new ActionResult({data:bookmarksForVideo}));
+                });
+            }
+
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
     };
     var getBookmarkByIDAndTime = function(videoID, time, callback){
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
-        if(videoID){
+        try {
+            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            throwCustomErrorIfVideoIDIsInvalid(videoID);
+            //if(videoID){
             var key = idSource.getVideoDataKey(videoID);
             var defaultObject = {};
             defaultObject[key] = {};
             defaultObject[key]["bookmarks"] = {};
             defaultObject[key]["bookmarks"][time.toString()] = {};
             storageArea.get(defaultObject, function(items) {
+                throwCustomErrorIfThereWasStorageError();
                 var bookmark = items[key]["bookmarks"][time.toString()];
                 bookmark = getItemOrBlankObjectIfItemIsNotObject(bookmark);
-                callback(bookmark);
+                callback(new ActionResult({data:bookmark}));
               });
+        //}
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
+        
     };
 
     var getVideoInfoData = function(callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        if(videoID){
-            var key = idSource.getVideoDataKey(videoID);
-            var defaultObject = {};
-            defaultObject[key] = {};
-            defaultObject[key]["info"] = {};
-            storageArea.get(defaultObject, function(items) {
-                var infoForVideo = items[key]["info"];
-                callback(infoForVideo);
-              });
+        try {
+            var videoID = idSource.getVideoID(currentTabURL);
+            throwCustomErrorIfVideoIDIsInvalid(videoID);
+            //if(videoID){
+                var key = idSource.getVideoDataKey(videoID);
+                var defaultObject = {};
+                defaultObject[key] = {};
+                defaultObject[key]["info"] = {};
+                storageArea.get(defaultObject, function(items) {
+                    throwCustomErrorIfThereWasStorageError();
+                    var infoForVideo = items[key]["info"];
+                    //callback(infoForVideo);
+                    callback(new ActionResult({data:infoForVideo}));
+                });
+            //}
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
+        
     };
 
     var getBookmarkAndVideoInfoData = function(callback){
@@ -74,94 +116,51 @@ var getBookmarksModule = function(videoPlayer, idSource){
         getBookmarkAndVideoInfoDataByID(videoID, callback);
     };
     var getBookmarkAndVideoInfoDataByID = function(videoID, callback){
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
-        if(videoID){
-            var videoDataKey = idSource.getVideoDataKey(videoID);
-            var defaultObject = {};
-            defaultObject[videoDataKey] = {};
-            storageArea.get(defaultObject, function(items) {
-                var bookmarksForVideo = items[videoDataKey]["bookmarks"] || {};
-                var infoForVideo = items[videoDataKey]["info"] || {};
-                bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
-                callback(bookmarksForVideo, infoForVideo);
-              });
+        try {
+            var videoID = videoID || idSource.getVideoID(currentTabURL);
+                throwCustomErrorIfVideoIDIsInvalid(videoID);
+                var videoDataKey = idSource.getVideoDataKey(videoID);
+                var defaultObject = {};
+                defaultObject[videoDataKey] = {};
+                storageArea.get(defaultObject, function(items) {
+                    throwCustomErrorIfThereWasStorageError();
+                    var bookmarksForVideo = items[videoDataKey]["bookmarks"] || {};
+                    var infoForVideo = items[videoDataKey]["info"] || {};
+                    bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
+                    callback(new ActionResult({data:{bookmarks: bookmarksForVideo, info: infoForVideo}}));
+                  });
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
     };
     var getAllData = function(callback){
-        storageArea.get(null, function(items) {
-            callback(items);
-          });
+        try {
+            storageArea.get(null, function(items) {
+            throwCustomErrorIfThereWasStorageError();
+            callback(new ActionResult({data:items}));
+            });
+            
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
+        }
     };
     var saveAllData = function(replacementData, callback){
+        try {
         storageArea.set(replacementData, function(items) {
-            let actionResult = getActionResult();
-            actionResult.setMessage("Data was saved successfully")
-            callback(actionResult);
+            throwCustomErrorIfThereWasStorageError();
+            callback(new ActionResult({message:"Data was saved successfully."}));
           });
-    };
-    let bookmarkTimeIsANumber = function(bookmark){
-        
-    }
-    var singleBookmarkDataIsValid = function(singleBookmarkData){
-        //if the time is not a number or is more than the duration, fail.
-        var time = singleBookmarkData.time;
-        if(isNaN(time) || time > videoPlayer.getVideoDuration()) return false;
-        //if the description is more than 100 characters, fail.
-        var description = singleBookmarkData.description;
-        if(description.length > 100) return false;
-        return true;
-    };
-    var singleBookmarkDataIsValid = function(singleBookmarkData){
-        return true;
-        //if the time is not a number or is more than the duration, fail.
-        var time = singleBookmarkData.time;
-        if(isNaN(time) || time > videoPlayer.getVideoDuration()) return false;
-        //if the description is more than 100 characters, fail.
-        var description = singleBookmarkData.description;
-        if(description.length > 100) return false;
-        return true;
+            
+        } catch (error) {
+            runCallbackWithActionResultError(callback,error);
+        }
     };
     var formatBookmarkData = function(oneBookmarkData){
         var time = Math.floor(oneBookmarkData.time);
         var description = oneBookmarkData.description;
         return {time:time, description:description};
     }
-    var saveDefaultBookmark = function(callback){
-        var defaultBookmark = {time:videoPlayer.getCurrentTime(), description: ""};
-        defaultBookmark = formatBookmarkData(defaultBookmark);
-        saveCustomBookmark(defaultBookmark, callback);
-    }
-    var saveDefaultBookmarkAndVideoInfo = function(callback){
-        var defaultBookmark = {time:videoPlayer.getCurrentTime(), description: ""};
-        defaultBookmark = formatBookmarkData(defaultBookmark);
-        saveCustomBookmarkAndVideoInfo(defaultBookmark, callback);
-    }
-    var saveCustomBookmark = function(oneBookmarkData, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            var key = idSource.getBookmarkKey(videoID);
-            if(!singleBookmarkDataIsValid(oneBookmarkData)){
-                saveResult["status"] = "failure";
-                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
-                callback(saveResult);
-            }else{
-                getBookmarkData(function(bookmarkArray){
-                    bookmarkArray.push(oneBookmarkData);
-                    var saveObject = {};
-                    saveObject[key] = bookmarkArray;
-                    storageArea.set(saveObject, function(items) {
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was saved successfully.";
-                        callback(saveResult);
-                      });
-                });
-            }
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "You cannot save bookmarks on this page.";
-        }
-    };
+
     //Automatically save title if no title exists for the video.
     var addBookmarkToBookmarkListObject = function(bookmark, bookmarkListObject){
         bookmarkListObject = getItemOrBlankObjectIfItemIsNotObject(bookmarkListObject);
@@ -175,8 +174,8 @@ var getBookmarksModule = function(videoPlayer, idSource){
         var videoTitle = videoInfo["title"];
         //overwrite title if it's blank from being undefined or saved blank somehow.    
         if(isNullOrUndefined(videoTitle) || videoTitle.trim() === ""){
-                videoTitle = suggestedTitle;
-                videoInfo["title"] = videoTitle;
+            videoTitle = suggestedTitle;
+            videoInfo["title"] = videoTitle;
         }
         return videoInfo;
     }
@@ -187,39 +186,30 @@ var getBookmarksModule = function(videoPlayer, idSource){
         saveSubObject["bookmarks"] = bookmarks;
         saveSubObject["info"] = videoInfo;
         saveObject[dataKey] = saveSubObject;
-        storageArea.set(saveObject, function(items) {
-            let saveResult = {};
-            saveResult["status"] = "success";
-            saveResult["message"] = "Your bookmark was saved successfully.";
-            callback(saveResult);
-        });
+        storageArea.set(saveObject, callback);
     };
 
     var saveCustomBookmarkAndVideoInfo = function(oneBookmarkData, callback){
         var videoID = idSource.getVideoID(currentTabURL);
         saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
     };
-    var saveCustomBookmarkAndVideoInfoByID = function(videoID, oneBookmarkData, callback){
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
+    var saveCustomBookmarkAndVideoInfoByID = function (videoID, oneBookmarkData, callback) {
+        try {
+            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            throwCustomErrorIfVideoIDIsInvalid(videoID);
+            //if(!validators.bookmarkIsValid(oneBookmarkData)){ throw new AppError("The time must be a number."); }
+            throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var dataKey = idSource.getVideoDataKey(videoID);
-            var bookmarkKey = idSource.getBookmarkKey(videoID);
-            var videoInfoKey = idSource.getVideoInfoKey(videoID);
-            if(!singleBookmarkDataIsValid(oneBookmarkData)){
-                saveResult["status"] = "failure";
-                saveResult["message"] = "Please check to see that the time you entered isn't more than the duration of the video, and that the description is less than 100 characters.";
-                callback(saveResult);
-            }else{
-                getBookmarkAndVideoInfoDataByID(videoID,function(bookmarkArray, videoInfo){
-                    bookmarkArray = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkArray)
-                    videoInfo = getCorrectVideoInfoFromSuggestionAndData(idSource.getVideoTitle(), videoInfo);
-                    setBookmarkAndVideoInfoInStorage(dataKey, bookmarkArray, videoInfo, callback);
-                });
-            }
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "You cannot save bookmarks on this page.";
+            getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+                let successFunction = function(){callback(ActionResult);}
+                let bookmarkArray = ActionResult.data["bookmarks"];
+                let videoInfo = ActionResult.data["info"];
+                bookmarkArray = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkArray)
+                videoInfo = getCorrectVideoInfoFromSuggestionAndData(idSource.getVideoTitle(), videoInfo);
+                setBookmarkAndVideoInfoInStorage(dataKey, bookmarkArray, videoInfo, successFunction);
+            });
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
     };
     var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){ 
@@ -227,28 +217,25 @@ var getBookmarksModule = function(videoPlayer, idSource){
         updateBookmarkByID(videoID, bookmarkTime, oneBookmarkData, callback);
 
     };
-    var updateBookmarkByID = function(videoID, bookmarkTime, oneBookmarkData, callback){ 
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            //var key = idSource.getBookmarkKey(videoID);
+    var updateBookmarkByID = function (videoID, bookmarkTime, oneBookmarkData, callback) {
+        try {
+            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            throwCustomErrorIfVideoIDIsInvalid(videoID);
+            //if (!validators.bookmarkIsValid(oneBookmarkData)) { throw new AppError("The time must be a number."); }
+            throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var key = idSource.getVideoDataKey(videoID);
-                getBookmarkAndVideoInfoDataByID(videoID, function(bookmarkObjectList, videoInfo){
-                    let successFunction = function(saveResult){
-                        saveResult = saveResult || {};
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was updated successfully.";
-                        callback(saveResult);
-                    }
-                    bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
-                    bookmarkObjectList = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkObjectList);
-                    setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
-                });
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "There was an error in deleting this bookmark.";
+            getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+                let bookmarkObjectList = ActionResult.data["bookmarks"];
+                let videoInfo = ActionResult.data["info"];
+                let successFunction = function () { callback(ActionResult); }
+                bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
+                bookmarkObjectList = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkObjectList);
+                setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
+            });
+
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
-        //saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
     };
     var deleteBookmarkByTimeFromBookmarkListObject = function(bookmarkListObject, bookmarkTime){
         bookmarkListObject = getItemOrBlankObjectIfItemIsNotObject(bookmarkListObject);
@@ -262,19 +249,17 @@ var getBookmarksModule = function(videoPlayer, idSource){
         var videoID = idSource.getVideoID(currentTabURL);
         deleteBookmarkByIDAndTime(videoID, bookmarkTime, callback);
     };
+
     var deleteBookmarkByIDAndTime = function(videoID, bookmarkTime, callback){
+        try {
         var videoID = videoID || idSource.getVideoID(currentTabURL);
-        var saveResult = {status:"", message:""};
-        if(videoID){
-            //var key = idSource.getBookmarkKey(videoID);
+        throwCustomErrorIfVideoIDIsInvalid(videoID);
             var key = idSource.getVideoDataKey(videoID);
-                getBookmarkAndVideoInfoDataByID(videoID, function(bookmarkObjectList, videoInfo){
-                    let successFunction = function(saveResult){
-                        saveResult = saveResult || {};
-                        saveResult["status"] = "success";
-                        saveResult["message"] = "Your bookmark was deleted successfully.";
-                        callback(saveResult);
-                    }
+                getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+                    throwCustomErrorIfThereWasStorageError();
+                    let bookmarkObjectList = ActionResult.data["bookmarks"];
+                    let videoInfo = ActionResult.data["info"];
+                    let successFunction = function(){callback(ActionResult);}
                     bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
                     if(isEmpty(bookmarkObjectList)){
                         storageArea.remove([key], successFunction);
@@ -282,9 +267,9 @@ var getBookmarksModule = function(videoPlayer, idSource){
                         setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
                     }
                 });
-        } else{
-            saveResult["status"] = "failure";
-            saveResult["message"] = "There was an error in deleting this bookmark.";
+            
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
         }
     };
     var getValidBookmarksFromBookmarkArray = function(bookmarkArray){
@@ -295,7 +280,7 @@ var getBookmarksModule = function(videoPlayer, idSource){
     var overwriteInternalWithExternalData = function(internalData, externalData){
         /*for each key in the external data*/
         for(var externalKey in externalData){
-            //if the key is a valid bookmark or video info key, validate the new data
+            //if the key is a valid data key, validate the new data
             // then overwrite the old data
             if(idSource.isValidVideoDataKey(externalKey)){
                 internalData[externalKey] = externalData[externalKey];
@@ -307,26 +292,31 @@ var getBookmarksModule = function(videoPlayer, idSource){
         let actionResult = getActionResult();
         let jsonData = undefined;
         try {
+            if(!validators.fileIsJSONFile(fileData)){throw new AppError("The import file can only be a .json file.")};
             jsonData = JSON.parse(fileData);
+            //get all data from storage.
+            getAllData(function(allData){
+                allData = overwriteInternalWithExternalData(allData, jsonData);
+                saveAllData(allData, callback);
+            })
         } catch (error) {
-            actionResult.addToErrors("invalid-data", error)
-            actionResult.setMessage("The data is invalid");
-            callback(actionResult);
+            runCallbackWithActionResultError(callback, error);
             return;
         }
-        //get all data from storage.
-        getAllData(function(allData){
-            allData = overwriteInternalWithExternalData(allData, jsonData);
-            saveAllData(allData, callback);
-        })
+
+    };
+    var clearAllStorage = function(callback){
+        try {
+            storageArea.clear(callback)
+        } catch (error) {
+            runCallbackWithActionResultError(callback, error);
+            return;
+        }
 
     };
     return {
         getBookmarkData:getBookmarkData,
-        saveDefaultBookmark:saveDefaultBookmark,
-        saveCustomBookmark:saveCustomBookmark,
         saveCustomBookmarkAndVideoInfo: saveCustomBookmarkAndVideoInfo,
-        saveDefaultBookmarkAndVideoInfo:saveDefaultBookmarkAndVideoInfo,
         deleteBookmark:deleteBookmark,
         updateBookmark:updateBookmark,
         updateBookmarkByID,updateBookmarkByID,
@@ -336,5 +326,6 @@ var getBookmarksModule = function(videoPlayer, idSource){
         getBookmarkByIDAndTime:getBookmarkByIDAndTime,
         deleteBookmarkByIDAndTime:deleteBookmarkByIDAndTime,
         saveCustomBookmarkAndVideoInfoByID:saveCustomBookmarkAndVideoInfoByID,
+        clearAllStorage:clearAllStorage
     };
 };

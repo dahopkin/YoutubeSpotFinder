@@ -105,7 +105,11 @@ $(function () {
         }
         let deleteBookmark = function(e){
             e.preventDefault();
-            bookmarks.deleteBookmark(time, function(saveResult){
+            bookmarks.deleteBookmark(time, function(ActionResult){
+                if(ActionResult.hasError()){
+                    displayMessageFromActionResult(ActionResult, displayMessageWithPopup)
+                    return;
+                }
                 setAppInfo(setPageDom);
                 hide(e);
             });
@@ -150,6 +154,177 @@ $(function () {
         return{setTime:setTime, show:show};
 
     };
+    var getMessagePopup = function(selector){
+        var selector = selector || "#message-popup";
+        let $wholeUI = $(".yjt-html");
+        let $positionElement = $wholeUI;
+        let $mainEl = $(selector);
+        let $closeButton = $mainEl.find(".message-close-button");
+        let $messageEl = $mainEl.find(".message-text");
+        let message = 0;
+        let setMessage = function(newMessage){
+            message = escapeHTMLString(newMessage);
+            $messageEl.text(message);
+        }
+        //set the position somewhere below the top of the main ui.
+        let setPopupPosition = function(){
+            let mainUIWidthHalf = $wholeUI.width()/2;
+            let mainElWidthHalf = $mainEl.width()/2;
+            let desiredLeftPush = mainUIWidthHalf - mainElWidthHalf;
+            let mainUIOffset = $wholeUI.offset();
+            let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
+            let positionLeft = $positionElement.offset().left - mainUIOffset.left + desiredLeftPush;
+            $mainEl.css({top:positionTop, left:positionLeft});
+        };
+        let stopPropagation = function(e){ e.stopPropagation();}
+        const clickShowEvent = "click.showmessage";
+        const clickCloseEvent = "click.messageclose";
+        const clickPropogationEvent = "click.showmessageblock";
+        let bindEvents = function(){
+            $closeButton.on(clickCloseEvent, hide);
+            $(document).on(clickShowEvent, "html", hide);
+            $(document).on(clickPropogationEvent, selector, stopPropagation);
+        }
+        let unbindEvents = function(){
+            $closeButton.off(clickCloseEvent, hide);
+            $(document).off(clickShowEvent, "html", hide);
+            $(document).off(clickPropogationEvent, selector, stopPropagation);
+        }
+        let show = function(){
+            $mainEl.removeClass(hiddenClass);
+            bindEvents()
+        }
+        let hide = function(e){
+            e.preventDefault();
+            $mainEl.addClass(hiddenClass);
+            unbindEvents();
+        }
+        let showMessage = function(newMessage){
+            setMessage(newMessage);
+            show();
+        }
+        let init = function(){
+            setPopupPosition();
+        }
+        init();
+        return{showMessage:showMessage};
+
+    };
+    var getBookmarkChangePopup = function(selector, $jQpositionElement){
+        let $wholeUI = $(".yjt-html");
+        var selector = selector || "#bookmark-edit-section";
+        let $mainEl = $(selector);
+        let $positionElement = $jQpositionElement || $wholeUI.find("#table-section");
+        let $closeButton = $mainEl.find(".bookmark-edit-close-button");
+        let $updateButton = $mainEl.find("#bookmark-update");
+        let $createButton = $mainEl.find("#saveBookmark");
+        let $timeEl = $mainEl.find("#time-text");
+        let $popupTitle = $mainEl.find("#popup-title");
+        let $descriptionEl = $mainEl.find("#description-text");
+        let $messageEl = $mainEl.find("#edit-result-message")
+        let oldTime = 0;
+        let bookmark = {};
+        let mode = "create";
+        let setOldTime = function(time){
+            oldTime = time;
+        }
+        let setMode = function(newMode){
+            mode = newMode;
+        }
+        let setBookmark = function(newBookmark){
+            bookmark = newBookmark;
+        } 
+        let getBookmarkFromForm = function(){
+            return {
+                time: hhmmssToSeconds($.trim($timeEl.val())),
+                description: $.trim($descriptionEl.val()) || ""
+            }
+        }
+        let setForm = function(){
+            $descriptionEl.val(bookmark.description);
+            $timeEl.val(hhmmss(bookmark.time));
+        }
+        let displayMessageInForm = function(message){
+            $messageEl.text(message);
+            $messageEl.removeClass(hiddenClass);
+        }
+        let hideMessage = function(){$messageEl.addClass(hiddenClass);}
+        let updateBookmark = function(e){
+            displayMessageInForm("Updating bookmark...");
+            setBookmark(getBookmarkFromForm());
+            bookmarks.updateBookmark(oldTime, bookmark, function(ActionResult){
+                if(ActionResult.hasError()){
+                    displayMessageFromActionResult(ActionResult, displayMessageInForm)
+                    return;
+                }
+                setAppInfo(setPageDom);
+                hide(e);
+            });
+        }
+        let createBookmark = function(e){
+            displayMessageInForm("Creating bookmark...");
+            setBookmark(getBookmarkFromForm());
+            bookmarks.saveCustomBookmarkAndVideoInfo(bookmark, function(ActionResult){
+                if(ActionResult.hasError()){
+                    displayMessageFromActionResult(ActionResult, displayMessageInForm)
+                    return;
+                }
+                setAppInfo(setPageDom);
+                hide(e);
+            });
+        }
+        //set the position somewhere below the top of the bookmark section.
+        let setPopupPosition = function(){
+            let mainUIOffset = $wholeUI.offset();
+            let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
+            let positionLeft = $positionElement.offset().left - mainUIOffset.left;
+            $mainEl.css({top:positionTop, left:positionLeft});
+        };
+        let stopPropagation = function(e){ e.stopPropagation();}
+        const clickShowEvent = "click.showbookmarkedit";
+        const clickCloseEvent = "click.bookmarkeditclose";
+        const clickPropogationEvent = "click.showbookmarkeditblock";
+        const clickUpdateEvent = "click.updatebookmark";
+        const clickCreateEvent = "click.createbookmark";
+        let changeHTMLBasedOnMode = function(){
+            if(mode == "edit"){
+                $popupTitle.text("Edit Bookmark");
+                $updateButton.removeClass(hiddenClass);
+                $createButton.addClass(hiddenClass);
+            }else if(mode == "create"){
+                $popupTitle.text("Create Bookmark");
+                $updateButton.addClass(hiddenClass);
+                $createButton.removeClass(hiddenClass);
+            }
+        }
+        let eventList = new jQEventList();
+        let setUpEvents = function(){
+            eventList.addEventToList($closeButton, clickCloseEvent, hide);
+            eventList.addEventToList($(document), clickShowEvent, hide);
+            eventList.addEventToList($(document), clickPropogationEvent, stopPropagation, selector);
+            eventList.addEventToList($updateButton, clickUpdateEvent, updateBookmark);
+            eventList.addEventToList($createButton, clickCreateEvent, createBookmark);
+        };
+        let show = function(){
+            setForm();
+            hideMessage();
+            changeHTMLBasedOnMode()
+            $mainEl.removeClass(hiddenClass);
+            eventList.bindEvents();
+        }
+        let hide = function(e){
+            e.preventDefault();
+            $mainEl.addClass(hiddenClass);
+            eventList.unbindEvents();
+        }
+        let init = function(){
+            setPopupPosition();
+            setUpEvents();
+        }
+        init();
+        return{show:show, setOldTime:setOldTime, setBookmark:setBookmark, setMode:setMode};
+
+    };
 
     $(document).on("click.share", ".share-button", function(e){
         e.preventDefault();
@@ -161,94 +336,37 @@ $(function () {
         shareLinkPopup.show();
         
     });
-    $(document).on("click.update", ".cancel-button", function (e) {
-        setAppInfo(setPageDom);
-    });
-    const bookmarkEditPopupSelector = "#bookmark-edit-section";
-    var changeHTMLBasedOnMode = function(mode){
-        const $popupTitle = $("#popup-title");
-        const $updateButton = $("#bookmark-update");
-        const $createButton = $("#saveBookmark");
-        if(mode == "edit"){
-            $popupTitle.text("Edit Bookmark");
-            $updateButton.removeClass(hiddenClass);
-            $createButton.addClass(hiddenClass);
-        }else if(mode == "create"){
-            $popupTitle.text("Create Bookmark");
-            $updateButton.addClass(hiddenClass);
-            $createButton.removeClass(hiddenClass);
-        }
-    }
-    var setBookmarkEditPopupFromBookmarkData = function(bookmarkData, mode){
-        var $descriptionTextBox = $("#description-text");
-        var $timeTextBox = $("#time-text");
-        $timeTextBox.attr("data-currenttime", bookmarkData.time);
-        $descriptionTextBox.val(bookmarkData.description);
-        $timeTextBox.val(hhmmss(bookmarkData.time));
-        changeHTMLBasedOnMode(mode);
-    };
-    var setBookmarkEditPopupPosition = function($jQpositionElement){
-        var $jQpositionElement = $jQpositionElement || $("#table-section");
-        let mainUIOffset = $(".yjt-html").offset();
-        let positionTop = $jQpositionElement.offset().top - mainUIOffset.top + 25;
-        let positionLeft = $jQpositionElement.offset().left - mainUIOffset.left;
-        $(bookmarkEditPopupSelector).css({top:positionTop, left:positionLeft});
-    };
+
     var getBookmarkFromAppDataBookmarks = function(time){
         var bookmarkArray = appInfo.bookmarkInfo;
         var bookmarkToReturn = bookmarkArray[time.toString()];
         return bookmarkToReturn;
     };
-    var getBookmarkFromPopupData = function(){
-        return {
-            time: hhmmssToSeconds($.trim($("#time-text").val())),
-            description: $.trim($("#description-text").val()) || ""
-        }
-    }
-    var showEditPopup = function(){
-        $(bookmarkEditPopupSelector).removeClass(hiddenClass);
-    };
-    
+
     $(document).on("click.edit", ".edit-button", function (e) {
         e.preventDefault();
         var time = $(this).data("time");
         var bookmarkData = getBookmarkFromAppDataBookmarks(time);
         if(!bookmarkData){ return; }
-        setBookmarkEditPopupFromBookmarkData(bookmarkData, "edit");
-        setBookmarkEditPopupPosition($(this).closest(".bookmark-row"));
-        showEditPopup();
+        let bookmarkChangePopup = getBookmarkChangePopup("#bookmark-edit-section", $(this).closest(".bookmark-row"));
+        bookmarkChangePopup.setBookmark(bookmarkData);
+        bookmarkChangePopup.setMode("edit");
+        bookmarkChangePopup.setOldTime(time);
+        bookmarkChangePopup.show();
     });
-    $(document).on("click.update", "#bookmark-update", function (e) {
-        e.preventDefault();
-        let oldTime = $("#time-text").attr("data-currenttime");
-        var updateBookmarkData = getBookmarkFromPopupData();
-        bookmarks.updateBookmark(oldTime, updateBookmarkData, function(saveResult){
-            setAppInfo(setPageDom);
-            $(bookmarkEditPopupSelector).addClass(hiddenClass);
-        });
-    });
-    
-    $(document).on("click.closeedit", ".bookmark-edit-close-button", function (e) {
-        e.preventDefault();
-        $(bookmarkEditPopupSelector).addClass(hiddenClass);
-    });
-    $(document).on("click.savebookmark", '#saveBookmark', function(){
-        let bookmark = getBookmarkFromPopupData();
-        bookmarks.saveCustomBookmarkAndVideoInfo(bookmark, function(saveResult){
-            setAppInfo(setPageDom);
-            $(bookmarkEditPopupSelector).addClass(hiddenClass);
-        });
-        
-    })
+    var displayMessageWithPopup = function(message){
+        let messagePopup = getMessagePopup();
+        messagePopup.showMessage(message);
+    }
     $(document).on("click.showsavebookmark", '#showSaveBookmark', function(e){
         e.preventDefault();
         var time = $(this).data("time");
         var bookmarkData = {time: Math.floor(videoPlayer.getCurrentTime()), description:""};
         if(!bookmarkData){ return; }
-        setBookmarkEditPopupFromBookmarkData(bookmarkData, "create");
-        setBookmarkEditPopupPosition();
-        showEditPopup();
-        
+        let bookmarkChangePopup = getBookmarkChangePopup("#bookmark-edit-section");
+        bookmarkChangePopup.setBookmark(bookmarkData);
+        bookmarkChangePopup.setMode("create");
+        bookmarkChangePopup.show();
     })
 
     $(document).on("click.rewind", ".rewind-button", function(e){

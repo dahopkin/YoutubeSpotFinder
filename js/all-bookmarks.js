@@ -1,5 +1,6 @@
 $(function(){
     let hiddenClass = "hidden";
+    let displayMessageAsAlert = function(message){ alert(message); }
     let statusDisplayer = (function(){
         let $sectionEl = $("#status-section");
         let $messageEl = $("#status-message");
@@ -68,7 +69,7 @@ $(function(){
         }
     }
     
-
+    
     let addDataToGroupedData = function(groupedData, videoID, dataToAdd){
         if (typeof groupedData[videoID.toString()] === "undefined"){
             groupedData[videoID.toString()] = {};
@@ -93,7 +94,6 @@ $(function(){
                 let currentData = retrievedData[storageKey];
                 if(youtubeIDSource.isValidVideoDataKey(storageKey)){
                     let videoID = youtubeIDSource.getVideoIDFromStorageKey(storageKey);
-                    //addDataToGroupedDataBookmarks(groupedData, videoID, currentData);
                     addDataToGroupedData(groupedData, videoID, currentData);
                     addEditAndDeleteModeFlagsToBookmarks(groupedData[videoID.toString()]["bookmarks"]);
                 }
@@ -146,6 +146,26 @@ $(function(){
         bookmark["description"] = newDescription;
         return bookmark;
     }
+    let getAndSetBookmarksInSection = function(videoID, $bookmarkListEl){
+        bookmarksModule.getBookmarksByID(videoID, function(ActionResult){
+            if(ActionResult.hasError()){
+                displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
+                return;
+            }
+            let items = ActionResult.data;
+            addEditAndDeleteModeFlagsToBookmarks(items);
+            groupedData[videoID]["bookmarks"] = items;
+            $bookmarkListEl.html($.parseHTML(getBookmarksHTML(videoID, groupedData[videoID]["bookmarks"])))
+        })
+    }
+    function sendActionAsMessageFromCurrentTab(actionToSend) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { action: actionToSend });
+        });
+    }
+    let sendDataChangeMessage = function(){
+        sendActionAsMessageFromCurrentTab("datachange");
+    }
     let setUpBookmarkButtonEvents = function(){
         $(document).on("click.showdelete", ".show-delete-button", function(e){
             let videoIDAndTime = getVideoIDAndTimeFromElement($(this));
@@ -172,20 +192,21 @@ $(function(){
             let $rowEl = $(this).closest(".bookmark-row");
             $rowEl.html($.parseHTML(getIndividualBookmarkHTMLBasedOnState(bookmark, videoIDAndTime.videoID)));
         })
+        
         $(document).on("click.update", ".update-button", function(e){
             let videoIDAndTime = getVideoIDAndTimeFromElement($(this));
             let videoID = videoIDAndTime.videoID;
             let time = videoIDAndTime.time;
             let bookmark = getBookmarkFromPageData(videoID, time);
             let $rowEl = $(this).closest(".bookmark-row");
+            let $bookmarkListEl = $(this).closest(".bookmarks");
             let newBookmark = getBookmarkFromEditControls($rowEl);
-            bookmarksModule.updateBookmarkByID(videoID, time, newBookmark, function(saveResult){
-                bookmarksModule.getBookmarkByIDAndTime(videoID, newBookmark.time, function(item){
-                    addEditAndDeleteModeFlagsToBookmark(item);
-                    groupedData[videoID]["bookmarks"][newBookmark.time.toString()] =  item;
-                    $rowEl.html($.parseHTML(getIndividualBookmarkHTMLBasedOnState(
-                        escapeBookmark(groupedData[videoID]["bookmarks"][newBookmark.time.toString()]), videoIDAndTime.videoID)));
-                })
+            bookmarksModule.updateBookmarkByID(videoID, time, newBookmark, function(ActionResult){
+                if(ActionResult.hasError()){
+                    displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
+                    return;
+                }
+                getAndSetBookmarksInSection(videoID, $bookmarkListEl);
             });
         })
         $(document).on("click.delete", ".delete-button", function(e){
@@ -194,11 +215,12 @@ $(function(){
             let time = videoIDAndTime.time;
             let bookmark = getBookmarkFromPageData(videoID, time);
             let $bookmarkListEl = $(this).closest(".bookmarks");
-            bookmarksModule.deleteBookmarkByIDAndTime(videoID, time, function(saveResult){
-                bookmarksModule.getBookmarksByID(videoID, function(items){
-                    groupedData[videoID]["bookmarks"] = items;
-                    $bookmarkListEl.html($.parseHTML(getBookmarksHTML(videoID, groupedData[videoID]["bookmarks"])))
-                })
+            bookmarksModule.deleteBookmarkByIDAndTime(videoID, time, function(ActionResult){
+                if(ActionResult.hasError()){
+                    displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
+                    return;
+                }
+                getAndSetBookmarksInSection(videoID, $bookmarkListEl);
             });
         })
         $(document).on("click.share", ".share-button", function(e){
@@ -320,7 +342,12 @@ $(function(){
     }
     
     let init = function(){
-        getDataForPage(function(retrievedData){
+        bookmarksModule.getAllData(function(ActionResult){
+            if(ActionResult.hasError()){
+                displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
+                return;
+            }
+            let retrievedData = ActionResult.data;
             setGroupedDataFromRetrievedData(retrievedData);
             html = getPageHTMLFromData(groupedData);
             $("#full-list").html(html);
@@ -328,6 +355,4 @@ $(function(){
         });
     }
     init();
-
-    //need code for exporting bookmarks
 });

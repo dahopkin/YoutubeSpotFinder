@@ -170,8 +170,14 @@ var getVideoPlayer = function () {
     }
 }
 var appInfo;
+
 var setAppInfo = function(appInfoCallback){
-    bookmarks.getBookmarkData(function(bookmarkData){
+    bookmarks.getBookmarkData(function(ActionResult){
+        if(ActionResult.hasError()){
+            displayMessageFromActionResult(ActionResult, function(message){alert(message);})
+            return;
+        }
+        bookmarkData = ActionResult.data;
         appInfo = {
             "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
             "bookmarkInfo":bookmarkData,
@@ -445,6 +451,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         } else {
             chrome.runtime.sendMessage({ action: "hide" });
         }
-    }
+    } 
     return true;
 });

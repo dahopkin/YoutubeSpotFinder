@@ -94,21 +94,23 @@
                         <div class="form-group">
                             <div class="form-label"><label for="time-text" class="note">Time (hh:mm:ss)</label></div>
                             <input type="text" id="time-text" data-currenttime="0" class="popup-input" maxlength="8"/ >
+                            <div id="edit-result-message" class="hidden note"></div>
                         </div>
                         <div class="form-group">
                             <div class="form-label"><label for="description-text" class="note">Description</label></div>
                             <textarea type="text" id="description-text" class="popup-input" placeholder="Description" rows=3 cols=25></textarea>
                         </div>
+                        
                         <div>
                             <span class="separator"></span>
-                            <div class="inline-block">
+                            <div class="align-right">
+                                <button class="btn btn-primary btn-medium bookmark-edit-close-button" type="button">Cancel</button>  
                                 <button class="btn btn-primary btn-medium update-button" id="bookmark-update" type="button">Update</button>        
                                 <button class="btn btn-primary btn-medium hidden" id="saveBookmark" type="button">Create</button>
                             </div>
-                            <span class="separator-xsmall"></span>
-                            <div class="inline-block">
-                                <button class="btn btn-primary btn-medium bookmark-edit-close-button" type="button">Cancel</button>        
-                            </div>
+                            <!-- <span class="separator-xsmall"></span>
+                            <div class="inline-block">      
+                            </div> -->
                         </div>
                         <button class="btn btn-light btn-small popup-close-button bookmark-edit-close-button" type="button">X</button>
                     </form>
@@ -121,11 +123,17 @@
                 <div class="ysp-popup white hidden" id="delete-panel">
                     <h2 class="center">Delete Bookmark</h2>
                     <div class="note center">Are you sure you want to delete this bookmark?</div>
-                    <div class="popup-buttons center">
-                        <button class="btn btn-primary btn-medium" id="delete-button" data-time="0"  type="button">Delete</button>        
+                    <div class="popup-buttons center">        
                         <button class="btn btn-primary btn-medium delete-close-button"  type="button">Cancel</button>
+                        <button class="btn btn-primary btn-medium" id="delete-button" data-time="0"  type="button">Delete</button>
                     </div>
                     <button type="button" class="btn btn-light btn-small popup-close-button delete-close-button">x</button>
+                </div>
+                <div class="ysp-popup white hidden" id="message-popup">
+                    <div class="note center message-text"></div>
+                    <div class="align-right">
+                        <button class="btn btn-primary btn-medium message-close-button"  type="button">OK</button>
+                    </div>
                 </div>
                         
                 

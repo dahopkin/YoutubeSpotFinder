@@ -68,8 +68,6 @@ $(function(){
                 });
 
             } catch (error) {
-                console.log("error saving");
-                //alert(JSON.stringify(error));
                 statusSection.displayFailureMessage(error);
                 return true;
             }
@@ -83,12 +81,17 @@ $(function(){
     let dataImport = (function(statusDisplayer){
         let $el = $("#input");
         let importData = function(event){
+            try {
             var jsonFile = event.target.result;
+            if(!validators.fileIsJSONFile(jsonFile)){throw new AppError("The import file can only be JSON.")}
             bookmarksModule.importExternalData(jsonFile, function(actionResult){
-                if(!actionResult.actionWasSuccessful()){
-                    statusDisplayer.displaySuccessMessage(actionResult.getMessage());
-                } else{statusDisplayer.displayFailureMessage(actionResult.getMessage());}
+                if(!actionResult.hasError()){
+                    statusDisplayer.displaySuccessMessage(actionResult.message);
+                } else{statusDisplayer.displayFailureMessage(actionResult.message);}
             });
+            } catch (error) {
+                statusDisplayer.displayFailureMessage(error.message)
+            }
         };
         let getDataFromFileInput = function(event){
             statusDisplayer.displayProgressMessage("Importing data, please wait...")
@@ -98,6 +101,23 @@ $(function(){
         };
         let init = function(){
             $el.on("change", getDataFromFileInput);
+        };
+        init();
+    }(statusDisplayer));
+    let dataClear = (function (statusDisplayer) {
+        let $el = $("#clear");
+        let clearData = function (event) {
+            try {
+                if (!confirm("Are you sure you want to delete all of your bookmarks?")) { return; }
+                bookmarksModule.clearAllStorage(function () {
+                    statusDisplayer.displaySuccessMessage("Storage cleared.");
+                });
+            } catch (error) {
+                statusDisplayer.displayFailureMessage(error.message)
+            }
+        };
+        let init = function () {
+            $el.on("click", clearData);
         };
         init();
     }(statusDisplayer));

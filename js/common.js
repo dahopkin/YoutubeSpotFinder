@@ -33,7 +33,9 @@ function hhmmssToSeconds(hhmmssString){
         s = 0, m = 1;
 
     while (p.length > 0) {
-        s += m * parseInt(p.pop(), 10);
+        let currentElement = p.pop();
+        if (isNaN(currentElement)) return undefined;
+        s += m * parseInt(currentElement, 10);
         m *= 60;
     }
 
@@ -77,4 +79,92 @@ function isObject(item){
 }
 function isNullOrUndefined(item){
     return item === null || typeof item === "undefined"
+}
+function AppError(message){
+    this.message = message;
+}
+
+AppError.prototype = new Error();
+
+let validators = (function(){
+    let fileIsJSONFile = function(fileFromFileRead){
+        let supportedFormats = ['application/json'];
+        if (fileFromFileRead && fileFromFileRead.type) {
+            if (0 > supportedFormats.indexOf(fileFromFileRead.type)) {
+                return false;
+            } else { return true };
+        }
+        return false;
+    };
+    //a top-level item from storage contains "bookmarks" and "info" objects.
+    let importDataItemIsValid = function(importDataItem){
+        if(isNullOrUndefined(importDataItem["bookmarks"]) || isNullOrUndefined(importDataItem["info"])) return false;
+        if(isNullOrUndefined(importDataItem["bookmarks"]["title"])) return false;
+        let bookmarksToCheck = importDataItem["bookmarks"];
+        for (const key in bookmarksToCheck) {
+            if (bookmarksToCheck.hasOwnProperty(key)) {
+                const currentBookmark = bookmarksToCheck[key];
+                if(!bookmarkIsValid(currentBookmark)) return false;
+            }
+        }
+        return true;
+    };
+    let bookmarkIsValid = function(bookmark){
+        return !isNaN(bookmark.time);
+    };
+    return{
+        fileIsJSONFile:fileIsJSONFile,
+        importDataItemIsValid:importDataItemIsValid,
+        bookmarkIsValid:bookmarkIsValid
+    };
+}());
+/*ActionResult's settings are:
+message: the message
+error: the error (if there is one. If there is, the error message will be the message above)
+data: if things went well, then there will be data
+*/
+function ActionResult(settings){
+    this.settings = settings;
+    this.error = settings.error;
+    this.data = settings.data;
+    this.message = settings.message;
+    this.hasError = function(){return !isNullOrUndefined(this.error);}
+}
+
+function jQEventList(){
+    this.eventList = [];
+    this.bindEvents = function(){
+        for (let index = 0; index < this.eventList.length; index++) {
+            const currentListElement = this.eventList[index];
+            if(currentListElement.selector){
+                currentListElement.element.on(currentListElement.eventName, currentListElement.selector, currentListElement.event);
+            } else{
+                currentListElement.element.on(currentListElement.eventName, currentListElement.event);
+            }
+            
+        }
+    }
+    this.unbindEvents = function(){
+        for (let index = 0; index < this.eventList.length; index++) {
+            const currentListElement = this.eventList[index];
+            if(currentListElement.selector){
+                currentListElement.element.off(currentListElement.eventName, currentListElement.selector, currentListElement.event);
+            } else{
+                currentListElement.element.off(currentListElement.eventName, currentListElement.event);
+            }
+            
+        }
+    }
+    this.addEventToList = function(jqElement, eventName, eventFunction, selector){
+        this.eventList.push({
+            "element":jqElement, 
+            "event":eventFunction, 
+            "eventName":eventName, 
+            "selector":selector
+        });
+    }
+}
+var displayMessageFromActionResult = function(ActionResult, displayFunction){
+    //let message = ActionResult.message;
+    displayFunction(ActionResult.message);
 }
