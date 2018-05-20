@@ -389,8 +389,13 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
     width:75px;
 }
 #bookmark-edit-section{
-    padding-bottom: 5px;
+    padding: 5px;
+    z-index: 999;
 }
+#message-popup{
+    padding:1em;
+}
+.align-right{text-align: right;}
 @media (max-width: 656px)
 , (min-width: 657px) and (max-width: 856px)
 , (min-width: 999px) and (max-width: 1293px){ 
