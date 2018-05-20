@@ -136,6 +136,7 @@ body{
     padding:10px 0;
     border-radius: 5px;
     text-align: center;
+    z-index: 9;
 }
 .share-link-text{
     padding:5px;
