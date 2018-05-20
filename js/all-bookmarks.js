@@ -259,28 +259,28 @@ $(function(){
             <textarea type="text" id="description-text" class="description" placeholder="Description" rows=3 cols=25>${descriptionData.description}</textarea>
             </div>
             <div class="cell actions">
-                <button class="btn btn-blue update-button" type="button" ${dataAttributesToAdd} >Update</button>
-                <button class="btn btn-blue cancel-button" type="button" ${dataAttributesToAdd}>Cancel</button>
+                <button class="btn btn-grey update-button" type="button" ${dataAttributesToAdd} >Update</button>
+                <button class="btn btn-grey cancel-button" type="button" ${dataAttributesToAdd}>Cancel</button>
             </div>`;
         }
         else if(bookmark.inDeleteMode == true){
             html += `
-            <a class="cell time" target="_blank" href="${timeLink}">${hhmmssTime}</a>
+            <a class="cell time time-link" target="_blank" href="${timeLink}">${hhmmssTime}</a>
             <div class="cell description ${descriptionData.descriptionClass}">${displayDescription}</div>
             <div class="cell actions">
                 <span>Are you sure you want to delete this bookmark?</span>
-                <button class="btn btn-blue delete-button" type="button" ${dataAttributesToAdd} >Yes</button>
-                <button class="btn btn-blue cancel-button" type="button" ${dataAttributesToAdd}>Cancel</button>
+                <button class="btn btn-grey delete-button" type="button" ${dataAttributesToAdd} >Yes</button>
+                <button class="btn btn-grey cancel-button" type="button" ${dataAttributesToAdd}>Cancel</button>
             </div>`;
         }
         else{
             html += `
-            <a class="cell time" target="_blank" href="${timeLink}">${hhmmssTime}</a>
+            <a class="cell time time-link" target="_blank" href="${timeLink}">${hhmmssTime}</a>
             <div class="cell description ${descriptionData.descriptionClass}">${displayDescription}</div>
             <div class="cell actions">
-                <button class="btn btn-blue show-edit-button" type="button" ${dataAttributesToAdd} >Edit</button>
-                <button class="btn btn-blue show-delete-button" type="button"  ${dataAttributesToAdd} >Delete</button>
-                <button class="btn btn-blue share-button" type="button"  ${dataAttributesToAdd} >Share Link</button>
+                <button class="btn btn-grey show-edit-button" type="button" ${dataAttributesToAdd} >Edit</button>
+                <button class="btn btn-grey show-delete-button" type="button"  ${dataAttributesToAdd} >Delete</button>
+                <button class="btn btn-grey share-button" type="button"  ${dataAttributesToAdd} >Share Link</button>
                 <div class="share-link-panel hidden">
                 <button type="button" class="share-close-button">x</button>
                 <div class="text-center">Copy Link</div>

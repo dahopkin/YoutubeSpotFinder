@@ -55,7 +55,7 @@ body{
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     grid-template-areas:"video-title";
-    border-bottom:1px solid var(--blue-button-color);
+    border-bottom:2px solid red;
 }
 .edit-title-button{
     grid-area: edit-title-button;
@@ -64,20 +64,25 @@ body{
 }
 .video-title{
     grid-area: video-title;
-    color: var(--blue-button-color);
+    color: black;
     font-weight: bold;
     font-size: 21px;
 }
 .video-info{  
     padding:1em;
     /* background-color:rgb(225, 225, 225); */
-    border-width: 1px 1px 1px 10px;
-    border-color: rgb(215, 215, 215);
-    border-style:solid;
-    border-radius:2px;
-    margin: 5px 0;
+    /* border-width: 0px, 0px, 1px, 0px; */
+    /* border-bottom: 2px solid rgb(215, 215, 215); */
+    /* border-color: rgb(215, 215, 215); */
+    /* /border-style:solid; */
+    /* border-radius:2px; */
+    /* margin: 5px 0; */
 }
 .text-center{ text-align:center; }
+.time-link{
+    font-size: 12px;
+    color: black;
+}
 #main-content{
     grid-area:main-content;
     background-color:white;
@@ -104,16 +109,16 @@ body{
     font-weight:bold;
     line-height:15px;
 }
-.btn-blue{
+.btn-grey{
     padding: 5px;
-    border-color: var(--blue-button-color);
-    color: var(--blue-button-color);
+    border:none;
+    color: grey;
     margin:1px;
 }
-.btn-blue:hover{
+.btn-grey:hover{
     padding: 5px;
-    background:var(--blue-button-color);
-    color:white;
+    /* background:grey; */
+    color:black;
 }
 .cell{
     padding: 5px;

@@ -111,13 +111,13 @@
     border-bottom: 1px solid red; 
     transition: all ease 0.35s;
 }
-.btn-blue {
+.btn-grey {
     color:white;
     background:var(--blue-button-color);
     border-color:var(--blue-button-color);
     font-weight:bold;
 }
-.btn-blue:hover {
+.btn-grey:hover {
     background:white;
     color:var(--blue-button-color);
     border-color:transparent;
