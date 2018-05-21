@@ -1,21 +1,80 @@
+body{
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color:rgb(225, 225, 225);
+    display:grid;
+    grid-template-columns: 1fr minmax(2fr, 10fr) 1fr;
+    grid-template-rows:1fr;
+    grid-template-areas:". main-content .";
+    height: 100%;
+}
+
 .success-message{
-    background-color:green;
+    background-color: rgb(187, 255, 187);
+    border:1px solid green;
+    color: green;
 }
 .progress-message{
-    background-color:gold;
+    background-color: rgb(255, 237, 137);
+    border:1px solid gold;
+    color:gold;
 }
 .failure-message{
-    background-color: red;
+    background-color: rgb(255, 146, 146);
+    border: 1px solid red;
+    color:red
 }
 .hidden{ display: none; }
 .white{ color:white }
 .rounded { border-radius: 5px;}
 .quarter { max-width: 25%; }
 .status-message{
-    color:white;
-    border-radius: 18px;
-    max-width: 10%;
-    padding:1em 1em;
+    border-radius: 5px;
+    width:200px;
+    padding:1.5em;
     margin: 1em 0;
     text-align: center;
+}
+:root{
+    --blue-button-color: hsl(206.1, 79.3%, 52.7%);
+    --light-grey: rgb(215, 215, 215);
+}
+#main-content{
+    grid-area:main-content;
+    background-color:white;
+    padding: 2em 2em;
+    border-radius:5px;
+}
+.option-section{
+    padding:1em;
+}
+.option-title{
+    font-weight: bold;
+    font-size:15px;
+    margin-bottom: 10px;
+}
+.btn{
+    border: 1px solid;
+    border-radius: 2px;
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: middle;
+    color: black;
+    background: white;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight:bold;
+    line-height:15px;
+}
+.btn-grey{
+    padding: 5px;
+    border:none;
+    color: grey;
+    margin:1px;
+}
+.btn-grey:hover{
+    padding: 5px;
+    /* background:grey; */
+    color:black;
 }

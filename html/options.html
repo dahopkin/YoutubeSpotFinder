@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>YouTube Spot Finder Options</title>
     <script src="../js/jquery-3.3.1.min.js"></script>
@@ -7,20 +8,33 @@
     <script src="../js/idSource.js"></script>
     <script src="../js/actionResult.js"></script>
     <script src="../js/bookmarksModule.js"></script>
-    <link href="../css/options.css" rel="stylesheet"/>
+    <link href="../css/options.css" rel="stylesheet" />
     <script src="../js/options.js"></script>
 </head>
+
 <body>
-    <h1>YouTube Spot Finder Options</h1>
-    <div>Export Bookmarks</div>
-    <div><button id="export-bookmarks">Export Bookmarks</button></div>
-    <div>Import Bookmarks</div>
-    <input type="file" id="input" accept="application/json">
-    <div id="status-section" class="status-message">
-        <span id="status-message"></span>
+    <div id="main-content">
+        <h1>YouTube Spot Finder Options</h1>
+        <div class="option-section">
+            <div class="option-title">Export Bookmarks</div>
+            <div>
+                <button id="export-bookmarks" class="btn btn-grey">Export Bookmarks</button>
+            </div>
+        </div>
+        <div class="option-section">
+        <div class="option-title">Import Bookmarks</div>
+        <input type="file" id="input" class="btn btn-grey" accept="application/json">
+        </div>
+        <div class="option-section">
+            <div class="option-title">Erase All Bookmarks</div>
+            <div>
+                <button id="clear" class="btn btn-grey">Erase Bookmarks</button>
+            </div>
+        </div>
+        <div id="status-section" class="status-message">
+            <span id="status-message"></span>
+        </div>
     </div>
-    <div>Erase All Bookmarks</div>
-    <div><button id="clear">Erase Bookmarks</button></div>
-    
 </body>
+
 </html>
