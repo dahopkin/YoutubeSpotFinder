@@ -95,6 +95,10 @@
     line-height:18px;
     font-size:13px;
 }
+.btn-square{
+    width: 35px;
+    height: 35px;
+}
 .btn-circle{
     border-radius: 50%;
 }
@@ -143,6 +147,24 @@
 }
 .btn-light:hover{
     color:rgba(255, 255, 255, 1);
+}
+.btn-rewind-picture, .btn-fastforward-picture{
+    color:white;
+    text-align:center;
+    border:transparent;
+    opacity: 0.7;
+    font-size: 11px;
+}
+.btn-rewind-picture:hover, .btn-fastforward-picture:hover{
+    opacity: 1;
+}
+.btn-rewind-picture{
+    background: url('chrome-extension://__MSG_@@extension_id__/images/assets/counterclockwise-arrow.png') no-repeat;
+    background-size: contain;
+}
+.btn-fastforward-picture{
+    background: url('chrome-extension://__MSG_@@extension_id__/images/assets/clockwise-arrow.png') no-repeat;
+    background-size: contain;
 }
 .float-left{float: left;}
 .div-center{

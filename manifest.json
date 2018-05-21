@@ -37,7 +37,8 @@
      "*://*.hulu.com/watch/*"
     ],
     "web_accessible_resources": [
-      "html/ui-inject.html"
+      "html/ui-inject.html",
+      "images/assets/*"
     ]
 
 
