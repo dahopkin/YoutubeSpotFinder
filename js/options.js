@@ -118,5 +118,5 @@ $(function(){
         };
         init();
     }(statusDisplayer));
-    
+    chrome.runtime.sendMessage({ action: "show" });
 });

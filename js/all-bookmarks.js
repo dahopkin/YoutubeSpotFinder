@@ -339,6 +339,7 @@ $(function(){
             html = getPageHTMLFromData(groupedData);
             $("#full-list").html(html);
             setUpBookmarkButtonEvents();
+            chrome.runtime.sendMessage({ action: "show" });
         });
     }
     init();
