@@ -109,6 +109,35 @@ body{
     font-weight:bold;
     line-height:15px;
 }
+
+.btn-small{
+    padding: 0 .25em;
+    line-height:10px;
+    font-size:10px;
+}
+.btn-medium{
+    padding: .3em .4em;
+    line-height:18px;
+    font-size:13px;
+}
+.btn-circle{
+    border-radius: 50%;
+}
+.btn-red{
+    color:white;
+    background: red;
+    border-color:red;
+    font-weight:bold;
+    transition: all ease 0.35s;
+}
+.btn-red:hover{
+    color:red;
+    background: white;
+    border-color:white;
+    font-weight:bold;
+    border-bottom: 1px solid red; 
+    transition: all ease 0.35s;
+}
 .btn-grey{
     padding: 5px;
     border:none;
