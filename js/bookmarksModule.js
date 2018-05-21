@@ -197,7 +197,6 @@ var getBookmarksModule = function(videoPlayer, idSource){
         try {
             var videoID = videoID || idSource.getVideoID(currentTabURL);
             throwCustomErrorIfVideoIDIsInvalid(videoID);
-            //if(!validators.bookmarkIsValid(oneBookmarkData)){ throw new AppError("The time must be a number."); }
             throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var dataKey = idSource.getVideoDataKey(videoID);
             getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
@@ -221,7 +220,6 @@ var getBookmarksModule = function(videoPlayer, idSource){
         try {
             var videoID = videoID || idSource.getVideoID(currentTabURL);
             throwCustomErrorIfVideoIDIsInvalid(videoID);
-            //if (!validators.bookmarkIsValid(oneBookmarkData)) { throw new AppError("The time must be a number."); }
             throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var key = idSource.getVideoDataKey(videoID);
             getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
@@ -288,17 +286,27 @@ var getBookmarksModule = function(videoPlayer, idSource){
         }
         return internalData;
     };
-    var importExternalData = function(fileData, callback){
+    var importData = function(firstActionResult, callback){
+        if(firstActionResult.hasError()){
+            runCallbackWithActionResultError(callback, firstActionResult.error)
+            return;
+        }
+        let jsonData = firstActionResult.data;
+        getAllData(function (ActionResult) {
+            if(ActionResult.hasError()){throw ActionResult.error;}
+            let allData = ActionResult.data;
+            allData = overwriteInternalWithExternalData(allData, jsonData);
+            saveAllData(allData, callback);
+        })
+    }
+    var importExternalData = function(fileToRead, callback){
         let actionResult = getActionResult();
         let jsonData = undefined;
         try {
-            if(!validators.fileIsJSONFile(fileData)){throw new AppError("The import file can only be a .json file.")};
-            jsonData = JSON.parse(fileData);
-            //get all data from storage.
-            getAllData(function(allData){
-                allData = overwriteInternalWithExternalData(allData, jsonData);
-                saveAllData(allData, callback);
-            })
+            let fileHandler = new JSONFileHandler(fileToRead);
+            let fileData = fileHandler.getJSONFile(function(jsonData){
+                importData(jsonData, callback);
+            });
         } catch (error) {
             runCallbackWithActionResultError(callback, error);
             return;

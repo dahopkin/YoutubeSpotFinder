@@ -174,3 +174,31 @@ var displayMessageFromActionResult = function(ActionResult, displayFunction){
     //let message = ActionResult.message;
     displayFunction(ActionResult.message);
 }
+class JSONFileHandler{
+    constructor(fileToRead){
+        this.file = fileToRead;
+    }
+    getData(event, callback){
+        try {
+            let jsonData = undefined;
+            let jsonFile = event.target.result;
+            jsonData = JSON.parse(jsonFile);
+            callback(new ActionResult({data:jsonData}));
+        } catch (error) {
+            callback(new ActionResult({message:error.message, error:new AppError(error.message)}));
+        }
+    }
+    handleFileError(event){
+        throw new AppError(event.message);
+    }
+    getJSONFile(callback){
+        if (!validators.fileIsJSONFile(this.file)) { throw new AppError("The import file can only be JSON.") }
+        var reader = new FileReader();
+        let _this = this;
+        reader.onload = function(event){
+            _this.getData(event, callback);
+        };
+        reader.onerror = this.handleFileError;
+        reader.readAsText(this.file);
+    }
+}

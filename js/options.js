@@ -80,24 +80,19 @@ $(function(){
     //need code for importing bookmarks
     let dataImport = (function(statusDisplayer){
         let $el = $("#input");
-        let importData = function(event){
+        let getDataFromFileInput = function (event) {
             try {
-            var jsonFile = event.target.result;
-            if(!validators.fileIsJSONFile(jsonFile)){throw new AppError("The import file can only be JSON.")}
-            bookmarksModule.importExternalData(jsonFile, function(actionResult){
-                if(!actionResult.hasError()){
-                    statusDisplayer.displaySuccessMessage(actionResult.message);
-                } else{statusDisplayer.displayFailureMessage(actionResult.message);}
-            });
+                statusDisplayer.displayProgressMessage("Importing data, please wait...")
+                 let fileToRead = event.target.files[0];
+                bookmarksModule.importExternalData(fileToRead, function(actionResult){
+                    if(!actionResult.hasError()){
+                        statusDisplayer.displaySuccessMessage(actionResult.message);
+                    } else{statusDisplayer.displayFailureMessage(actionResult.message);}
+                });
+
             } catch (error) {
                 statusDisplayer.displayFailureMessage(error.message)
             }
-        };
-        let getDataFromFileInput = function(event){
-            statusDisplayer.displayProgressMessage("Importing data, please wait...")
-            var reader = new FileReader();
-            reader.onload = importData;
-            reader.readAsText(event.target.files[0]);
         };
         let init = function(){
             $el.on("change", getDataFromFileInput);
@@ -121,4 +116,5 @@ $(function(){
         };
         init();
     }(statusDisplayer));
+    
 });
