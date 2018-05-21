@@ -1,5 +1,7 @@
 :root{
-    --tooltip-color: rgba(0,0,0,0.9);
+    /* --tooltip-color: rgba(0,0,0,0.9); */
+    --tooltip-color: white;
+    --tooltip-text-color: black;
     --blue-button-color: hsl(206.1, 79.3%, 52.7%);
 }
 .popup-body{
@@ -283,7 +285,7 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
       transform: translateX(-50%)   translateY(-100%);
       background: var(--tooltip-color);
       text-align: center;
-      color: #fff;
+      color: var(--tooltip-text-color);
       padding:4px 2px;
       font-size: 12px;
       min-width: 150px;
