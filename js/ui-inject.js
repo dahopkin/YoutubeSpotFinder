@@ -106,10 +106,7 @@ $(function () {
         let deleteBookmark = function(e){
             e.preventDefault();
             bookmarks.deleteBookmark(time, function(ActionResult){
-                if(ActionResult.hasError()){
-                    displayMessageFromActionResult(ActionResult, displayMessageWithPopup)
-                    return;
-                }
+                if(ActionResult.displayErrorIfPresent(displayMessageWithPopup)) return;
                 setAppInfo(setPageDom);
                 hide(e);
             });
@@ -253,10 +250,7 @@ $(function () {
             displayMessageInForm("Updating bookmark...");
             setBookmark(getBookmarkFromForm());
             bookmarks.updateBookmark(oldTime, bookmark, function(ActionResult){
-                if(ActionResult.hasError()){
-                    displayMessageFromActionResult(ActionResult, displayMessageInForm)
-                    return;
-                }
+                if(ActionResult.displayErrorIfPresent(displayMessageInForm)) return;
                 setAppInfo(setPageDom);
                 hide(e);
             });
@@ -265,10 +259,7 @@ $(function () {
             displayMessageInForm("Creating bookmark...");
             setBookmark(getBookmarkFromForm());
             bookmarks.saveCustomBookmarkAndVideoInfo(bookmark, function(ActionResult){
-                if(ActionResult.hasError()){
-                    displayMessageFromActionResult(ActionResult, displayMessageInForm)
-                    return;
-                }
+                if(ActionResult.displayErrorIfPresent(displayMessageInForm)) return;
                 setAppInfo(setPageDom);
                 hide(e);
             });

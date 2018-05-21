@@ -173,10 +173,7 @@ var appInfo;
 
 var setAppInfo = function(appInfoCallback){
     bookmarks.getBookmarkData(function(ActionResult){
-        if(ActionResult.hasError()){
-            displayMessageFromActionResult(ActionResult, function(message){alert(message);})
-            return;
-        }
+        if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
         bookmarkData = ActionResult.data;
         appInfo = {
             "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),

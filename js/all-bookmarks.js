@@ -148,10 +148,7 @@ $(function(){
     }
     let getAndSetBookmarksInSection = function(videoID, $bookmarkListEl){
         bookmarksModule.getBookmarksByID(videoID, function(ActionResult){
-            if(ActionResult.hasError()){
-                displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
-                return;
-            }
+            if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
             let items = ActionResult.data;
             addEditAndDeleteModeFlagsToBookmarks(items);
             groupedData[videoID]["bookmarks"] = items;
@@ -202,10 +199,7 @@ $(function(){
             let $bookmarkListEl = $(this).closest(".bookmarks");
             let newBookmark = getBookmarkFromEditControls($rowEl);
             bookmarksModule.updateBookmarkByID(videoID, time, newBookmark, function(ActionResult){
-                if(ActionResult.hasError()){
-                    displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
-                    return;
-                }
+                if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
                 getAndSetBookmarksInSection(videoID, $bookmarkListEl);
             });
         })
@@ -216,10 +210,7 @@ $(function(){
             let bookmark = getBookmarkFromPageData(videoID, time);
             let $bookmarkListEl = $(this).closest(".bookmarks");
             bookmarksModule.deleteBookmarkByIDAndTime(videoID, time, function(ActionResult){
-                if(ActionResult.hasError()){
-                    displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
-                    return;
-                }
+                if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
                 getAndSetBookmarksInSection(videoID, $bookmarkListEl);
             });
         })
@@ -343,10 +334,7 @@ $(function(){
     
     let init = function(){
         bookmarksModule.getAllData(function(ActionResult){
-            if(ActionResult.hasError()){
-                displayMessageFromActionResult(ActionResult, displayMessageAsAlert)
-                return;
-            }
+            if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
             let retrievedData = ActionResult.data;
             setGroupedDataFromRetrievedData(retrievedData);
             html = getPageHTMLFromData(groupedData);

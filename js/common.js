@@ -124,11 +124,17 @@ error: the error (if there is one. If there is, the error message will be the me
 data: if things went well, then there will be data
 */
 function ActionResult(settings){
-    this.settings = settings;
     this.error = settings.error;
     this.data = settings.data;
     this.message = settings.message;
     this.hasError = function(){return !isNullOrUndefined(this.error);}
+    this.displayErrorIfPresent = function(displayFunction){
+        if(this.hasError()){
+            displayFunction(this.message);
+            return true;
+        }
+        return false;
+    }
 }
 
 function jQEventList(){
