@@ -47,15 +47,17 @@ $(function(){
     }());
     let youtubeIDSource = getYoutubeIDSource();
     let bookmarksModule = getBookmarksModule({},youtubeIDSource);
+    
     //need code for exporting bookmarks
     let dataExport = (function(statusDisplayer){
-
         let $el = $("#export-bookmarks");
         let exportData = function (event) {
             //export code (with modifications) comes from:
             //https://stackoverflow.com/questions/23160600/chrome-extension-local-storage-how-to-export
             try {
-                bookmarksModule.getAllData(function (items) { // null implies all items
+                bookmarksModule.getAllData(function (ActionResult) { // null implies all items
+                    if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
+                    let items = ActionResult.data;
                     // Convert object to a string.
                     var result = JSON.stringify(items, null, 2);
 
