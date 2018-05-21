@@ -3,7 +3,7 @@
     --blue-button-color: hsl(206.1, 79.3%, 52.7%);
 }
 .popup-body{
-    min-width:275px;
+    min-width:375px;
     border-color: #c1c2c0;
     background-color: #f0f0f0
 }

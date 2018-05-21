@@ -1,13 +1,18 @@
 $(function () {
-    
+    function popupURLAsSeparatePage(url){
+      let popupURL = chrome.runtime.getURL(url)
+      chrome.tabs.create({url: popupURL});
+    }
     $("#view-bookmarks").on("click.view",function(){
-        let allBookmarksURL = chrome.runtime.getURL('../html/all-bookmarks.html')
-        chrome.tabs.create({url: allBookmarksURL});
+        popupURLAsSeparatePage('../html/all-bookmarks.html');
         return false;
       } );
       $("#view-options").on("click.view",function(){
-        let optionsURL = chrome.runtime.getURL('../html/options.html')
-        chrome.tabs.create({url: optionsURL});
+        popupURLAsSeparatePage('../html/options.html');
+        return false;
+      } );
+      $("#view-credits").on("click.view",function(){
+        popupURLAsSeparatePage('../html/credits.html');
         return false;
       } );
 });
