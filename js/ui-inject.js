@@ -264,13 +264,6 @@ $(function () {
                 hide(e);
             });
         }
-        //set the position somewhere below the top of the bookmark section.
-        let setPopupPosition = function(){
-            let mainUIOffset = $wholeUI.offset();
-            let positionTop = $positionElement.offset().top - mainUIOffset.top + 25;
-            let positionLeft = $positionElement.offset().left - mainUIOffset.left;
-            $mainEl.css({top:positionTop, left:positionLeft});
-        };
         let stopPropagation = function(e){ e.stopPropagation();}
         const clickShowEvent = "click.showbookmarkedit";
         const clickCloseEvent = "click.bookmarkeditclose";
@@ -295,6 +288,7 @@ $(function () {
             eventList.addEventToList($(document), clickPropogationEvent, stopPropagation, selector);
             eventList.addEventToList($updateButton, clickUpdateEvent, updateBookmark);
             eventList.addEventToList($createButton, clickCreateEvent, createBookmark);
+            //eventList.addEventToList($(window), "resize.bookmarkedit", center);
         };
         let show = function(){
             setForm();
@@ -309,7 +303,6 @@ $(function () {
             eventList.unbindEvents();
         }
         let init = function(){
-            setPopupPosition();
             setUpEvents();
         }
         init();
