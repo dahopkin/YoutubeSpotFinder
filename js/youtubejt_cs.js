@@ -202,7 +202,10 @@ var embedUIOnPage = function (functionToRunAfter) {
         var html = $.parseHTML(data);
         var checkSelector = ".yjt-html";
         if($(checkSelector).length){$(checkSelector).remove();}
-        insertHTMLAfterElement("#player.style-scope.ytd-watch", html);
+        //insertHTMLAfterElement("#player.style-scope.ytd-watch", html); //pushes down the items to the side.
+        //insertHTMLAfterElement("#content-separator", html); //further down the page in theater mode.
+        //insertHTMLAtBottomOfElement("#player-container", html) //appears behind other elements.
+        insertHTMLAtBottomOfElement("#content-separator", html); //further down the page in theater mode.
         if($(checkSelector).length){$(checkSelector).show();}
         functionToRunAfter();
     });
@@ -214,7 +217,28 @@ function initializeVariables(callback){
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     callback()
 }
-var constantUICheck;
+var constantUICheck, mutationObserver;
+function resetAdWatchUICheckInterval(){
+    clearInterval(constantUICheck);
+    constantUICheck = setInterval(changeUIPropertiesDependingOnCurrentState, 450);
+}
+function setupMutationObserverForAdWatch(){
+    var observer = new MutationObserver(function(mutations){
+        mutations.forEach(function(mutation){
+            console.log(mutation);
+            blockOrShowUIDependingOnAdStatus();
+        });
+    });
+    observer.observe(document.getElementsByClassName("html5-video-player")[0], {attributes:true, childList:true});
+}
+function resetWindowResizeUIChangeEvents(){
+    let theaterModeSelector = ".ytp-size-button";
+    let changeFunction = changeUIPropertiesDependingOnCurrentState
+    $(window).off("resize.ui", changeFunction);
+    $(document).off("click.ui", theaterModeSelector, changeFunction);
+    $(window).on("resize.ui", changeFunction);
+    $(document).on("click.ui", theaterModeSelector, changeFunction);
+}
 function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
     idSource = getIdSource();
@@ -222,10 +246,9 @@ function initialize() {
     binarySearcher = getBinarySearcher(videoPlayer);
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     embedUIOnPage(function () {
+        changeUIPropertiesDependingOnCurrentState();
+        resetAdWatchUICheckInterval();
         setAppInfo(setPageDom);
-        clearInterval(constantUICheck);
-        constantUICheck = setInterval(changeUIDependingOnCurrentState, 250);
-        resizeUIToFitPlayer();
     });
 }
 var playerWindowSelector = "#player.style-scope.ytd-watch";
@@ -233,12 +256,13 @@ var mainPanelSelector = ".yjt-html";
 function getPlayerWindowElement(){return $(playerWindowSelector);}
 function resizeUIToFitPlayer(){
     var $playerWindowElement = $(playerWindowSelector);
-    var playerWidth = $playerWindowElement.innerWidth();
+    var playerWidth = $playerWindowElement.outerWidth();
     var desiredWidth = playerWidth;
     $(".yjt-html").css({width:desiredWidth});
 }
 function changePageToFitUI(){
     var $playerWindowElement = $(playerWindowSelector);
+    if($playerWindowElement.css("margin-bottom") == 0) return;
     $playerWindowElement.css({"margin-bottom":0});
 }
 
@@ -414,7 +438,7 @@ function moveUIDependingOnContainerStatus(){
     var $playerSizeButtonDescription = $(".ytp-size-button").attr("title");
     var playerWindowIsInTheaterMode = false;
     if($playerSizeButtonDescription){
-        $playerSizeButtonDescription.toLowerCase() == "default mode"
+        playerWindowIsInTheaterMode = $playerSizeButtonDescription.toLowerCase() == "default mode"
     };
     //if the player is in theater mode or the main container is as big as the player window, move the UI to
     //right after the player window so it'll sit on top of the container and all the other content.
@@ -434,8 +458,9 @@ function moveUIDependingOnContainerStatus(){
     }
 
 }
-function changeUIDependingOnCurrentState(){
+function changeUIPropertiesDependingOnCurrentState(){
     blockOrShowUIDependingOnAdStatus();
+    moveUIDependingOnContainerStatus();
     resizeUIToFitPlayer();
     changePageToFitUI();
 }
@@ -444,7 +469,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "change") {
         currentTabURL = request.data.url;
         if (isAVideoWatchPage(request.data.url)) {
-            waitForElementToDisplay("#items", 500, initialize);
+            waitForElementToDisplay("#items", 250, initialize);
         } else {
             chrome.runtime.sendMessage({ action: "hide" });
         }
