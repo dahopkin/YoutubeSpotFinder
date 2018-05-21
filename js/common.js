@@ -202,3 +202,6 @@ class JSONFileHandler{
         reader.readAsText(this.file);
     }
 }
+function displayMessageAsAlert(message){
+    alert(message);
+}

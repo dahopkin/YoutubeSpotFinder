@@ -1,6 +1,5 @@
 $(function(){
     let hiddenClass = "hidden";
-    let displayMessageAsAlert = function(message){ alert(message); }
     let statusDisplayer = (function(){
         let $sectionEl = $("#status-section");
         let $messageEl = $("#status-message");
