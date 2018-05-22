@@ -89,70 +89,8 @@ var flashVideoPlayer = function () {
     };
 }();
 
-var netflixVideoPlayer = function () {
-    var innerPlayer = function () {
-        var tempPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
-        var playerSessionId = tempPlayer.getAllPlayerSessionIds()[0];
-        var player = tempPlayer.getVideoPlayerBySessionId(playerSessionId);
-        return player;
-    };
-    var getVideoDuration = function () { return Number(innerPlayer().getDuration()/1000); };
-    var seekToTime = function (seconds) { innerPlayer().seek(seconds*1000); };
-    var getCurrentTime = function(){ return innerPlayer().getCurrentTime()/1000; };
-    var seekToPercentage = function(percentage){ seekToTime(getVideoDuration() * getDecimalPercentage(percentage)); };
-    var seekToSecondsBeforeEnd = function (seconds) {
-        var milliseconds = seconds * 1000;
-        if (getVideoDuration() > milliseconds) {
-            seekToTime(getVideoDuration() - milliseconds);
-        }
-    };
-    var rewind = function(seconds){
-        var rewindTime = getCurrentTime() - seconds;
-        if(rewindTime > 0) seekToTime(rewindTime);
-    };
-    var fastForward = function(seconds){
-        var fastForwardTime = getCurrentTime() + seconds;
-        if(fastForwardTime < getVideoDuration()) seekToTime(fastForwardTime);
-    };
-    var play = function(){innerPlayer.play();};
-    var pause = function(){innerPlayer.pause();};
-    var isPlaying = function(){ return !innerPlayer.getPaused() }
-    return {
-        seekToTime: seekToTime,
-        getVideoDuration: getVideoDuration,
-        getCurrentTime:getCurrentTime,
-        seekToPercentage:seekToPercentage,
-        seekToSecondsBeforeEnd:seekToSecondsBeforeEnd,
-        rewind:rewind,
-        fastForward:fastForward,
-        play:play,
-        pause:pause,
-        isPlaying:isPlaying
-    };
-}();
-
-var huluVideoPlayer = getHtml5VideoObject(document.getElementById("content-video-player"));
-
 var youtubeIDSource = getYoutubeIDSource();
-var netflixIDSource = getURLIDSource(
-    getURLIDSourceSettingsObject(
-        /^.*(netflix\.com\/watch\/)([^#\&\?]*).*/,
-        8, 2, "netflix"
-    )
-);
-var huluIDSource = getURLIDSource(
-    getURLIDSourceSettingsObject(
-        /^.*(hulu\.com\/watch\/)([^#\&\?]*).*/,
-        6, 2, "hulu"
-    )
-);
 
-var getIdSource = function(){
-    var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource]
-    for(var i=0; i < potentialIDSources.length; i++){
-        if(potentialIDSources[i].pageMatches()) return potentialIDSources[i];
-    }
-}
 /*TODO: Figure out a solution for this; 
 the check for seeing if the page has html5 video might fail, 
 but using an html5 player anyway turns out fine. 
@@ -162,13 +100,7 @@ var youtubeVideoPlayer = function(){
     //if(pageHasFlashVideo()) return flashVideoPlayer;
     return html5VideoPlayer;
 }();
-var getVideoPlayer = function () { 
-    var potentialIDSources = [youtubeIDSource, netflixIDSource, huluIDSource];
-    var potentialPlayers = [youtubeVideoPlayer, netflixVideoPlayer, huluVideoPlayer];
-    for(var i=0; i < potentialIDSources.length; i++){
-        if(potentialIDSources[i].pageMatches()) return potentialPlayers[i];
-    }
-}
+
 var appInfo;
 
 var setAppInfo = function(appInfoCallback){
@@ -241,8 +173,8 @@ function resetWindowResizeUIChangeEvents(){
 }
 function initialize() {
     chrome.runtime.sendMessage({ action: "show" });
-    idSource = getIdSource();
-    videoPlayer = getVideoPlayer();
+    idSource = youtubeIDSource;
+    videoPlayer = youtubeVideoPlayer;
     binarySearcher = getBinarySearcher(videoPlayer);
     bookmarks = getBookmarksModule(videoPlayer, idSource);
     embedUIOnPage(function () {

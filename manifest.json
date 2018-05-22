@@ -16,7 +16,7 @@
   "options_page": "html/options.html",
   "content_scripts": [
     {
-      "matches": [ "*://*.youtube.com/*", "*://*.netflix.com/watch/*", "*://*.hulu.com/watch/*" ],
+      "matches": [ "*://*.youtube.com/*"],
       "js": [ "js/jquery-3.3.1.min.js"
         , "js/common.js"
         , "js/binarySearcher.js"
@@ -32,9 +32,7 @@
   "permissions": [
     "tabs", "activeTab", "downloads",
     "storage",
-     "*://*.youtube.com/*",
-     "*://*.netflix.com/watch/*",
-     "*://*.hulu.com/watch/*"
+     "*://*.youtube.com/*"
     ],
     "web_accessible_resources": [
       "html/ui-inject.html",
