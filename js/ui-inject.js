@@ -288,7 +288,6 @@ $(function () {
             eventList.addEventToList($(document), clickPropogationEvent, stopPropagation, selector);
             eventList.addEventToList($updateButton, clickUpdateEvent, updateBookmark);
             eventList.addEventToList($createButton, clickCreateEvent, createBookmark);
-            //eventList.addEventToList($(window), "resize.bookmarkedit", center);
         };
         let show = function(){
             setForm();
