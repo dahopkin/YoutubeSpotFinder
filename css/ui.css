@@ -317,6 +317,7 @@ https://medium.freecodecamp.org/a-step-by-step-guide-to-making-pure-css-tooltips
       padding: 4px 4px;
       z-index:99;
       opacity:0;
+      font-weight:bold;
   }
   
   [tooltip-position='left']::after{
