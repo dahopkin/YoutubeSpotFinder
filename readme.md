@@ -36,14 +36,14 @@ With "Before" and "After", the Spot Finder will jump to new "middles" depending 
 
  ![Screenshot](https://raw.githubusercontent.com/dahopkin/YoutubeSpotFinder/master/images/screenshots/cut-ui-bookmark.jpg)
 
- Tech Note: right now, the bookmarks are saved in chrome's local extension storage, because the sync storage is only 100KB big (as opposed to local's 5MB). This means that bookmarks will not sync to other machines when you log in with your google account.
+ Tech Note: right now, the bookmarks are saved in chrome's local extension storage, because the sync storage is only 100KB big (as opposed to local's 5MB). This means that bookmarks will not sync to other machines when you log in with your Google account.
 
  **Going Back/Forward:** You can click these buttons to go back/forward 15, 30, or 60 seconds in a video. 
 
  ![Screenshot](https://raw.githubusercontent.com/dahopkin/YoutubeSpotFinder/master/images/screenshots/rewind-fast-forward.jpg)
  
 ## Download
-The extension can be downloade from the Chrome Web Store [Here](https://chrome.google.com/webstore/detail/youtube-spot-finder/knhopkbnanmecaabnkopphkpjfgmgioh). It is still being actively worked on right now, so updates will be frequent. If you want to play around with the code yourself, you're free to download it and load it into Chrome as an unpacked extension for testing.
+The extension can be downloaded from the Chrome Web Store [Here](https://chrome.google.com/webstore/detail/youtube-spot-finder/knhopkbnanmecaabnkopphkpjfgmgioh). It is still being actively worked on right now, so updates will be frequent. If you want to play around with the code yourself, you're free to download it and load it into Chrome as an unpacked extension for testing.
 
 ## Community
 - **Find a bug?** [Open an issue](https://github.com/dahopkin/YoutubeJumpTo/issues). Try to be as specific as possible.
