@@ -307,6 +307,7 @@ $(function(){
         return {title:title, titleClass:titleClass};
     }
     let getHTMLForVideoInfo = function(videoIDKey, currentBookmarksAndInfo){
+        if(!currentBookmarksAndInfo){return "No data to display."}
         let bookmarksHTML = getBookmarksHTML(videoIDKey, currentBookmarksAndInfo["bookmarks"]);
         let videoTitleData = getTitleDataFromBookmarksAndInfoObject(currentBookmarksAndInfo);
         let html = 
@@ -323,12 +324,14 @@ $(function(){
     };
     let getPageHTMLFromData = function(groupedData){
         let html = "";
+        if(isEmpty(groupedData)){return "No data to display."}
         for (const videoIDKey in groupedData) {
             if (groupedData.hasOwnProperty(videoIDKey)) {
                 const currentBookmarksAndInfo = groupedData[videoIDKey];
                 html += getHTMLForVideoInfo(videoIDKey, currentBookmarksAndInfo);
             }
         }
+
         return $.parseHTML(html);
     }
     
