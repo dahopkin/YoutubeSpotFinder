@@ -25,7 +25,7 @@ If it's after, click "After This".
 
 ![Screenshot](https://raw.githubusercontent.com/dahopkin/YoutubeSpotFinder/master/images/screenshots/cut-ui-after.jpg)
 
-With "Before" and "After", the Spot Finder will jump to new "middles" depending on which you pick, cutting it's "search range" in half each time. The red-and-white progress bar will indicate the current progress of the search (because YouTube's controls are invisible while using this).
+With "Before" and "After", the Spot Finder will jump to new "middles" depending on which you pick, cutting it's "search range" in half each time. The red-and-white progress bar will indicate the current progress of the search (because YouTube's controls are typically invisible while using this).
 
 ![Screenshot](https://raw.githubusercontent.com/dahopkin/YoutubeSpotFinder/master/images/screenshots/cut-ui-narrow.jpg)
 
