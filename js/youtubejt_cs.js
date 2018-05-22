@@ -266,13 +266,15 @@ function getBookmarkArrayFromBookmarkListObject(bookmarkListObject){
     return bookmarkArray;
 }
 function getHTMLFromBookmark(bookmark){
-            time = bookmark.time;
+            let time = bookmark.time;
             time = escapeHTMLString(time);
-            description = bookmark.description == "" ? "No Description" : bookmark.description;
-            formattedTime = hhmmss(bookmark.time);
-            html = `<tr class="bookmark-row">
+            let bookmarkHasNoDescription = bookmark.description == ""
+            let description = bookmarkHasNoDescription ? "No Description" : bookmark.description;
+            let descriptionClass = bookmarkHasNoDescription ? "no-description" : "";
+            let formattedTime = hhmmss(bookmark.time);
+            let html = `<tr class="bookmark-row">
         <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
-        <td><span class='description' data-time='${time}'>${escapeHTMLString(description)}</span></td>
+        <td><span class='description ${descriptionClass}' data-time='${time}'>${escapeHTMLString(description)}</span></td>
         <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
         <td><button data-time='${time}' class='show-delete-button btn btn-small btn-primary'>Delete</button></td>
         <td><button data-time='${time}' class='share-button btn btn-small btn-primary'>Share</button></td>
