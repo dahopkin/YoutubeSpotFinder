@@ -3,7 +3,7 @@
   "author": "Daniel Hopkins",
   "name": "YouTube Spot Finder",
   "description": "Find the spot you want in a YouTube video and save spots for later.",
-  "version": "1.0.00",
+  "version": "1.0.01",
   "page_action": {
     "default_icon": "images/yjt_icon.png",
     "default_title": "YouTube Spot Finder",
