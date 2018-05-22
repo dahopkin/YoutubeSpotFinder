@@ -44,6 +44,7 @@ With "Before" and "After", the Spot Finder will jump to new "middles" depending 
 
 ## Questions
 **Question**: Why is it unavailable in full-screen?
+
 **Answer**: I wanted to mess with YouTube's page as minimially as I could, and didn't want to plan around all the ads and annotations a YouTube video could have. Full-screen is still a possibility down the line (as in, I'm working on possible solutions right now), but I'd have to change the app to potentially allow for both modes (on the page and in the video).
 
 ## Download
