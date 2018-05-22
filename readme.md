@@ -1,7 +1,7 @@
 # YouTube Spot Finder
 YouTube Spot Finder is a Chrome Extension that helps you find the spot you were looking for in a video, as well as save it for later.
 
-#Screenshot
+##Screenshot
 ![Screenshot](https://raw.githubusercontent.com/dahopkin/YoutubeSpotFinder/master/images/screenshots/whole-ui.jpg)
 ## Features
  **Find a Spot:**  Spot Finder works similar to the way you would find a spot in a YouTube video normally: by jumping to a spot, and deciding whether to jump before or after depending on where you went. Spot Finder simply keeps track of where you were so you don't have to.
