@@ -25,3 +25,29 @@
         }
     }
 };
+//helper class to store a specific list of events to bind/unbind from a pubsub object.
+class PubSubEventList{
+    constructor(){
+        this.eventList = [];
+    }
+    bindEventsToPubSub(pubSub){
+        for (let index = 0; index < this.eventList.length; index++) {
+            const currentListElement = this.eventList[index];
+            pubSub.on(currentListElement.eventName, currentListElement.event);
+        }
+        //return pubSub;
+    }
+    unbindEventsInPubSub(pubSub){
+        for (let index = 0; index < this.eventList.length; index++) {
+            const currentListElement = this.eventList[index];
+            pubSub.off(currentListElement.eventName, currentListElement.event);
+        }
+        //return pubSub;
+    }
+    addEventToList(eventName, eventFunction){
+        this.eventList.push({
+            "eventName":eventName, 
+            "event":eventFunction, 
+        });
+    }
+}
