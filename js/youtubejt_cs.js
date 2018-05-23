@@ -1,5 +1,6 @@
 
 var currentTabURL = window.location.href;
+var pubSub = new PubSub();
 
 var getDecimalPercentage = function(percentage){
     percentage = Number(percentage);
