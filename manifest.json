@@ -19,6 +19,7 @@
       "matches": [ "*://*.youtube.com/*"],
       "js": [ "js/jquery-3.3.1.min.js"
         , "js/common.js"
+        , "js/pubsub.js"
         , "js/binarySearcher.js"
         , "js/bookmarksModule.js"
         , "js/idSource.js"
