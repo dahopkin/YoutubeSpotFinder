@@ -17,6 +17,10 @@
             };
         }
     }
+    reset(eventName, fn){
+        this.off(eventName, fn);
+        this.on(eventName, fn);
+    }
     emit(eventName, data) {
         if (this.events[eventName]) {
             this.events[eventName].forEach(function (fn) {
