@@ -1,5 +1,21 @@
 //TODO: change this to "getStorageModule" when done. It applies to more things now.
-var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
+var getBookmarksModuleEventBased = function(pubSub, videoPlayer, idSource){
+    var eventNames = {
+        "bookmarksRequestedFromPage" : "bookmarksRequestedFromPage",
+        "bookmarksRequestedFromID" : "bookmarksRequestedFromID",
+        "bookmarkAndVideoInfoRequestedByPage":"bookmarkAndVideoInfoRequestedByPage",
+        "bookmarkAndVideoInfoRequestedByID":"bookmarkAndVideoInfoRequestedByID",
+        "bookmarkUpdateRequestedFromPage" : "bookmarkUpdateRequestedFromPage",
+        "bookmarkUpdateRequestedFromID" : "bookmarkUpdateRequestedFromID",
+        "bookmarkCreateRequestedFromPage" : "bookmarkCreateRequestedFromPage",
+        "bookmarkCreateRequestedFromID" : "bookmarkCreateRequestedFromID",
+        "bookmarkDeleteRequestedFromPage" : "bookmarkDeleteRequestedFromPage",
+        "bookmarkDeleteRequestedFromIDAndTime" : "bookmarkDeleteRequestedFromIDAndTime",
+        "bookmarkDeleted":"bookmarkDeleted",
+        "bookmarkUpdated":"bookmarkUpdated",
+        "bookmarkCreated":"bookmarkCreated",
+        "bookmarksRetrieved":"bookmarksRetrieved",
+    }
     var storageArea = chrome.storage.local;
     var getItemOrBlankObjectIfItemIsNotObject = function(item){
         if(!isObject(item)) return {};
@@ -38,17 +54,45 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
     var throwCustomErrorIfBookmarkIsInvalid = function(bookmark){
         if(!validators.bookmarkIsValid(bookmark)){ throw new AppError("The time must be a number."); }
     }
-    function runCallbackWithActionResultError(callback, error){
-        callback(new ActionResult({message:error.message, error:error}));
+    function emitBookmarkError(error){
+        //callback(new ActionResult({message:error.message, error:error}));
+        pubSub.emit("bookmarkError", {message:error.message});
     }
+    
+    // var getBookmarkData = function(callback){
+    //     var videoID = idSource.getVideoID(currentTabURL);
+    //     getBookmarksByID(videoID, callback);
+    // };
 
-    var getBookmarkData = function(callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        getBookmarksByID(videoID, callback);
+    var getBookmarkData = function(requestData){
+        requestData["videoID"] = idSource.getVideoID(currentTabURL);
+        getBookmarksByID(requestData);
     };
-    var getBookmarksByID = function (videoID, callback) {
+    // var getBookmarksByID = function (videoID, callback) {
+    //     try {
+    //         var videoID = videoID || idSource.getVideoID(currentTabURL);
+    //         if (videoID) {
+    //             var key = idSource.getVideoDataKey(videoID);
+    //             var defaultObject = {};
+    //             defaultObject[key] = {};
+    //             defaultObject[key]["bookmarks"] = {};
+    //             storageArea.get(defaultObject, function (items) {
+    //                 throwCustomErrorIfThereWasStorageError();
+    //                 var bookmarksForVideo = items[key]["bookmarks"];
+    //                 bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
+    //                 //callback(new ActionResult({data:bookmarksForVideo}));
+    //                 pubSub.emit("bookmarksRetrieved", bookmarksForVideo)
+    //             });
+    //         }
+
+    //     } catch (error) {
+    //         runCallbackWithActionResultError(callback, error);
+    //     }
+    // };
+    var getBookmarksByID = function (requestData, callback) {
         try {
-            var videoID = videoID || idSource.getVideoID(currentTabURL);
+
+            var videoID = requestData["videoID"] || idSource.getVideoID(currentTabURL);
             if (videoID) {
                 var key = idSource.getVideoDataKey(videoID);
                 var defaultObject = {};
@@ -58,14 +102,17 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                     throwCustomErrorIfThereWasStorageError();
                     var bookmarksForVideo = items[key]["bookmarks"];
                     bookmarksForVideo = getItemOrBlankObjectIfItemIsNotObject(bookmarksForVideo);
-                    callback(new ActionResult({data:bookmarksForVideo}));
+                    //callback(new ActionResult({data:bookmarksForVideo}));
+                    pubSub.emit(eventNames.bookmarksRetrieved, bookmarksForVideo)
                 });
             }
 
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
+    pubSub.on(eventNames.bookmarksRequestedFromPage, getBookmarkData);
+    pubSub.on(eventNames.bookmarksRequestedFromID, getBookmarksByID);
     var getBookmarkByIDAndTime = function(videoID, time, callback){
         try {
             var videoID = videoID || idSource.getVideoID(currentTabURL);
@@ -84,7 +131,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
               });
         //}
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
         
     };
@@ -106,7 +153,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                 });
             //}
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
         
     };
@@ -130,7 +177,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                     callback(new ActionResult({data:{bookmarks: bookmarksForVideo, info: infoForVideo}}));
                   });
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
     var getAllData = function(callback){
@@ -141,7 +188,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
             });
             
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
     var saveAllData = function(replacementData, callback){
@@ -152,7 +199,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
           });
             
         } catch (error) {
-            runCallbackWithActionResultError(callback,error);
+            emitBookmarkError(callback,error);
         }
     };
     var formatBookmarkData = function(oneBookmarkData){
@@ -189,18 +236,44 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
         storageArea.set(saveObject, callback);
     };
 
-    var saveCustomBookmarkAndVideoInfo = function(oneBookmarkData, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
+    // var saveCustomBookmarkAndVideoInfo = function(oneBookmarkData, callback){
+    //     var videoID = idSource.getVideoID(currentTabURL);
+    //     saveCustomBookmarkAndVideoInfoByID(videoID, oneBookmarkData, callback);
+    // };
+    // var saveCustomBookmarkAndVideoInfoByID = function (videoID, oneBookmarkData, callback) {
+    //     try {
+    //         var videoID = videoID || idSource.getVideoID(currentTabURL);
+    //         throwCustomErrorIfVideoIDIsInvalid(videoID);
+    //         throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
+    //         var dataKey = idSource.getVideoDataKey(videoID);
+    //         getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+    //             let successFunction = function(){callback(ActionResult);}
+    //             let bookmarkArray = ActionResult.data["bookmarks"];
+    //             let videoInfo = ActionResult.data["info"];
+    //             bookmarkArray = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkArray)
+    //             videoInfo = getCorrectVideoInfoFromSuggestionAndData(idSource.getVideoTitle(), videoInfo);
+    //             setBookmarkAndVideoInfoInStorage(dataKey, bookmarkArray, videoInfo, successFunction);
+    //         });
+    //     } catch (error) {
+    //         runCallbackWithActionResultError(callback, error);
+    //     }
+    // };
+    var saveCustomBookmarkAndVideoInfo = function(eventData){
+        eventData["videoID"] = idSource.getVideoID(currentTabURL);
+        saveCustomBookmarkAndVideoInfoByID(eventData);
     };
-    var saveCustomBookmarkAndVideoInfoByID = function (videoID, oneBookmarkData, callback) {
+    var saveCustomBookmarkAndVideoInfoByID = function (eventData) {
         try {
-            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            var videoID = eventData["videoID"] || idSource.getVideoID(currentTabURL);
+            var oneBookmarkData = eventData["bookmark"];
             throwCustomErrorIfVideoIDIsInvalid(videoID);
             throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var dataKey = idSource.getVideoDataKey(videoID);
             getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
-                let successFunction = function(){callback(ActionResult);}
+                let successFunction = function(){
+                //    callback(ActionResult);
+                pubSub.emit("bookmarkCreated",{});
+                }
                 let bookmarkArray = ActionResult.data["bookmarks"];
                 let videoInfo = ActionResult.data["info"];
                 bookmarkArray = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkArray)
@@ -208,33 +281,66 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                 setBookmarkAndVideoInfoInStorage(dataKey, bookmarkArray, videoInfo, successFunction);
             });
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
-    var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){ 
-        videoID = idSource.getVideoID(currentTabURL);
-        updateBookmarkByID(videoID, bookmarkTime, oneBookmarkData, callback);
+    pubSub.on(eventNames.bookmarkCreateRequestedFromPage, saveCustomBookmarkAndVideoInfo);
+    pubSub.on(eventNames.bookmarkCreateRequestedFromID, saveCustomBookmarkAndVideoInfoByID);
+    // var updateBookmark = function(bookmarkTime, oneBookmarkData, callback){ 
+    //     videoID = idSource.getVideoID(currentTabURL);
+    //     updateBookmarkByID(videoID, bookmarkTime, oneBookmarkData, callback);
+
+    // };
+    // var updateBookmarkByID = function (videoID, bookmarkTime, oneBookmarkData, callback) {
+    //     try {
+    //         var videoID = videoID || idSource.getVideoID(currentTabURL);
+    //         throwCustomErrorIfVideoIDIsInvalid(videoID);
+    //         throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
+    //         var key = idSource.getVideoDataKey(videoID);
+    //         getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+    //             let bookmarkObjectList = ActionResult.data["bookmarks"];
+    //             let videoInfo = ActionResult.data["info"];
+    //             let successFunction = function () { callback(ActionResult); }
+    //             bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
+    //             bookmarkObjectList = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkObjectList);
+    //             setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
+    //         });
+
+    //     } catch (error) {
+    //         emitBookmarkError(error);
+    //     }
+    // };
+    var updateBookmark = function(eventData){ 
+        eventData["videoID"] = idSource.getVideoID(currentTabURL);
+        updateBookmarkByID(eventData);
 
     };
-    var updateBookmarkByID = function (videoID, bookmarkTime, oneBookmarkData, callback) {
+    var updateBookmarkByID = function (eventData) {
         try {
-            var videoID = videoID || idSource.getVideoID(currentTabURL);
+            var videoID = eventData["videoID"] || idSource.getVideoID(currentTabURL);
+            var bookmarkTime = eventData["oldTime"];
+            var oneBookmarkData = eventData["bookmark"];
             throwCustomErrorIfVideoIDIsInvalid(videoID);
             throwCustomErrorIfBookmarkIsInvalid(oneBookmarkData);
             var key = idSource.getVideoDataKey(videoID);
             getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
                 let bookmarkObjectList = ActionResult.data["bookmarks"];
                 let videoInfo = ActionResult.data["info"];
-                let successFunction = function () { callback(ActionResult); }
+                let successFunction = function () { 
+                //    callback(ActionResult); 
+                pubSub.emit("bookmarkUpdated",{});
+                }
                 bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
                 bookmarkObjectList = addBookmarkToBookmarkListObject(oneBookmarkData, bookmarkObjectList);
                 setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
             });
 
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
+    pubSub.on(eventNames.bookmarkUpdateRequestedFromPage, updateBookmark);
+    pubSub.on(eventNames.bookmarkUpdateRequestedFromID, updateBookmarkByID);
     var deleteBookmarkByTimeFromBookmarkListObject = function(bookmarkListObject, bookmarkTime){
         bookmarkListObject = getItemOrBlankObjectIfItemIsNotObject(bookmarkListObject);
         if(typeof bookmarkListObject[bookmarkTime.toString()] !== "undefined"){
@@ -243,21 +349,53 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
         return bookmarkListObject;
     }
 
-    var deleteBookmark = function(bookmarkTime, callback){
-        var videoID = idSource.getVideoID(currentTabURL);
-        deleteBookmarkByIDAndTime(videoID, bookmarkTime, callback);
+    // var deleteBookmark = function(bookmarkTime, callback){
+    //     var videoID = idSource.getVideoID(currentTabURL);
+    //     deleteBookmarkByIDAndTime(videoID, bookmarkTime, callback);
+    // };
+
+    // var deleteBookmarkByIDAndTime = function(videoID, bookmarkTime, callback){
+    //     try {
+    //     var videoID = videoID || idSource.getVideoID(currentTabURL);
+    //     throwCustomErrorIfVideoIDIsInvalid(videoID);
+    //         var key = idSource.getVideoDataKey(videoID);
+    //             getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
+    //                 throwCustomErrorIfThereWasStorageError();
+    //                 let bookmarkObjectList = ActionResult.data["bookmarks"];
+    //                 let videoInfo = ActionResult.data["info"];
+    //                 let successFunction = function(){callback(ActionResult);}
+    //                 bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
+    //                 if(isEmpty(bookmarkObjectList)){
+    //                     storageArea.remove([key], successFunction);
+    //                 } else{
+    //                     setBookmarkAndVideoInfoInStorage(key, bookmarkObjectList, videoInfo, successFunction);
+    //                 }
+    //             });
+            
+    //     } catch (error) {
+    //         emitBookmarkError(error);
+    //     }
+    // };
+
+    var deleteBookmark = function(eventData){
+        eventData["videoID"] = idSource.getVideoID(currentTabURL);
+        deleteBookmarkByIDAndTime(eventData);
     };
 
-    var deleteBookmarkByIDAndTime = function(videoID, bookmarkTime, callback){
+    var deleteBookmarkByIDAndTime = function(eventData){
         try {
-        var videoID = videoID || idSource.getVideoID(currentTabURL);
+        var videoID = eventData["videoID"] || idSource.getVideoID(currentTabURL);
+        var bookmarkTime = eventData["time"];
         throwCustomErrorIfVideoIDIsInvalid(videoID);
             var key = idSource.getVideoDataKey(videoID);
                 getBookmarkAndVideoInfoDataByID(videoID, function (ActionResult) {
                     throwCustomErrorIfThereWasStorageError();
                     let bookmarkObjectList = ActionResult.data["bookmarks"];
                     let videoInfo = ActionResult.data["info"];
-                    let successFunction = function(){callback(ActionResult);}
+                    let successFunction = function(){
+                    //    callback(ActionResult);
+                    pubSub.emit("bookmarkDeleted",{});
+                    }
                     bookmarkObjectList = deleteBookmarkByTimeFromBookmarkListObject(bookmarkObjectList, bookmarkTime);
                     if(isEmpty(bookmarkObjectList)){
                         storageArea.remove([key], successFunction);
@@ -267,9 +405,11 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                 });
             
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
         }
     };
+    pubSub.on(eventNames.bookmarkDeleteRequestedFromPage, deleteBookmark);
+    pubSub.on(eventNames.bookmarkDeleteRequestedFromIDAndTime, deleteBookmarkByIDAndTime);
     var getValidBookmarksFromBookmarkArray = function(bookmarkArray){
         for (let index = bookmarkArray.length; index >= 0; index--) {
             let currentElement = bookmarkArray[index];
@@ -288,7 +428,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
     };
     var importData = function(firstActionResult, callback){
         if(firstActionResult.hasError()){
-            runCallbackWithActionResultError(callback, firstActionResult.error)
+            emitBookmarkError(callback, firstActionResult.error)
             return;
         }
         let jsonData = firstActionResult.data;
@@ -308,7 +448,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
                 importData(jsonData, callback);
             });
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
             return;
         }
 
@@ -317,7 +457,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
         try {
             storageArea.clear(callback)
         } catch (error) {
-            runCallbackWithActionResultError(callback, error);
+            emitBookmarkError(error);
             return;
         }
 
@@ -334,6 +474,7 @@ var getBookmarksModuleEventBased = function(pubsub, videoPlayer, idSource){
         getBookmarkByIDAndTime:getBookmarkByIDAndTime,
         deleteBookmarkByIDAndTime:deleteBookmarkByIDAndTime,
         saveCustomBookmarkAndVideoInfoByID:saveCustomBookmarkAndVideoInfoByID,
-        clearAllStorage:clearAllStorage
+        clearAllStorage:clearAllStorage,
+        eventNames:eventNames
     };
 };
