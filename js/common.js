@@ -161,6 +161,10 @@ function jQEventList(){
             
         }
     }
+    this.resetEvents = function(){
+        this.unbindEvents();
+        this.bindEvents();
+    }
     this.addEventToList = function(jqElement, eventName, eventFunction, selector){
         this.eventList.push({
             "element":jqElement, 
@@ -205,3 +209,4 @@ class JSONFileHandler{
 function displayMessageAsAlert(message){
     alert(message);
 }
+let hiddenClass = "hidden";
