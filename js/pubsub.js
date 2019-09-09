@@ -39,14 +39,16 @@ class PubSubEventList{
             const currentListElement = this.eventList[index];
             pubSub.on(currentListElement.eventName, currentListElement.event);
         }
-        //return pubSub;
     }
     unbindEventsInPubSub(pubSub){
         for (let index = 0; index < this.eventList.length; index++) {
             const currentListElement = this.eventList[index];
             pubSub.off(currentListElement.eventName, currentListElement.event);
         }
-        //return pubSub;
+    }
+    resetEventsInPubSub(pubSub){
+        this.unbindEventsInPubSub(pubSub);
+        this.bindEventsToPubSub(pubSub);
     }
     addEventToList(eventName, eventFunction){
         this.eventList.push({
