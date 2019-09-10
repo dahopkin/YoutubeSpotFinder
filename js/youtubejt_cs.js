@@ -8,7 +8,8 @@ var getDecimalPercentage = function(percentage){
     return percentage / 100;
 };
 var pageHasHTML5Video = function(){return typeof(document.getElementsByTagName("video")[0]) !== 'undefined';}
-var getHtml5VideoObject = function (videoDomElement) {
+
+var getHtml5VideoObject = function (pubSub, videoDomElement) {
     var innerPlayer = function(){return videoDomElement || document.getElementsByTagName("video")[0]};
     var getVideoDuration = function () { return Number(innerPlayer().duration); };
     var seekToTime = function (seconds) { innerPlayer().currentTime = seconds; };
@@ -35,6 +36,18 @@ var getHtml5VideoObject = function (videoDomElement) {
     var play = function(){innerPlayer().play();};
     var pause = function(){innerPlayer().pause();};
     var isPlaying = function(){ return !innerPlayer().paused;}
+    let pubSubEvents = new PubSubEventList();
+    let setUpEvents = function(){
+        pubSubEvents.addEventToList("durationRequested", getVideoDuration);
+        pubSubEvents.addEventToList("currentTimeRequested", getCurrentTime);
+        pubSubEvents.addEventToList("goToTime", function(data){seekToTime(data.time)});
+        pubSubEvents.addEventToList("goToPercentage", function(data){seekToPercentage(data.percentage)});
+        pubSubEvents.addEventToList("rewind", function(data){rewind(data.seconds)});
+        pubSubEvents.addEventToList("fastForward", function(data){fastForward(data.seconds)});
+        pubSubEvents.resetEventsInPubSub(pubSub);
+
+    }
+    setUpEvents();
     return {
         seekToTime: seekToTime,
         getVideoDuration: getVideoDuration,
@@ -49,7 +62,7 @@ var getHtml5VideoObject = function (videoDomElement) {
     };
 };
 
-var html5VideoPlayer = getHtml5VideoObject();
+var html5VideoPlayer = getHtml5VideoObject(pubSub);
 var pageHasFlashVideo = function(){return typeof(document.getElementById("movie_player")) !== 'undefined';}
 var flashVideoPlayer = function () {
     var innerPlayer = function(){document.getElementById("movie_player")};
@@ -103,18 +116,13 @@ var youtubeVideoPlayer = function(){
 }();
 
 var appInfo;
-
-var setAppInfo = function(appInfoCallback){
-    bookmarks.getBookmarkData(function(ActionResult){
-        if(ActionResult.displayErrorIfPresent(displayMessageAsAlert)) return;
-        bookmarkData = ActionResult.data;
-        appInfo = {
-            "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
-            "bookmarkInfo":bookmarkData,
-            "isPlaying":videoPlayer.isPlaying()
-        };
-        appInfoCallback(appInfo);
-    });
+var setAppInfo = function(bookmarkData){
+    appInfo = {
+        "binarySearchStatusInfo":binarySearcher.getBinarySearchStatus(),
+        "bookmarkInfo":bookmarkData,
+        "isPlaying":videoPlayer.isPlaying()
+    };
+    pubSub.emit("appInfoChanged", appInfo);
 }
 
 var videoPlayer, idSource, binarySearcher, bookmarks;
@@ -138,7 +146,9 @@ var embedUIOnPage = function (functionToRunAfter) {
         //insertHTMLAfterElement("#player.style-scope.ytd-watch", html); //pushes down the items to the side.
         //insertHTMLAfterElement("#content-separator", html); //further down the page in theater mode.
         //insertHTMLAtBottomOfElement("#player-container", html) //appears behind other elements.
-        insertHTMLAtBottomOfElement("#content-separator", html); //further down the page in theater mode.
+        //insertHTMLAtBottomOfElement("#content-separator", html); //further down the page in theater mode.
+        insertHTMLBeforeElement("#info", html);//works for now
+        //insertHTMLAfterElement("#player", html);//new test with flexy
         if($(checkSelector).length){$(checkSelector).show();}
         functionToRunAfter();
     });
@@ -172,16 +182,43 @@ function resetWindowResizeUIChangeEvents(){
     $(window).on("resize.ui", changeFunction);
     $(document).on("click.ui", theaterModeSelector, changeFunction);
 }
+function resetPubSubEvent(eventName, eventFunction){
+    pubSub.off(eventName, eventFunction);
+    pubSub.on(eventName, eventFunction);
+}
+function resetPubSubEvents(){
+    resetPubSubEvent("bookmarksRetrieved", setAppInfo);
+    //resetPubSubEvent("bookmarkUpdated", setAppInfo);
+    //resetPubSubEvent("bookmarkCreated", setAppInfo);
+    //resetPubSubEvent("bookmarkDeleted", setAppInfo);
+    resetPubSubEvent("appInfoChanged", setPageDom);
+}
+function requestBookmarks(){pubSub.emit("bookmarksRequestedFromPage", {})}
+let spotFinderView, bookmarkListView, bookmarkEditPopup, shareLinkPopup, deletePopup;
+function setViewElements(pubSub){
+    spotFinderView = getSpotFinderView(pubSub);
+    bookmarkListView = getBookmarkListView(pubSub);
+    deletePopup = getDeletePopup(pubSub, "#delete-panel");
+}
 function initialize() {
+    pubSub = new PubSub();
     chrome.runtime.sendMessage({ action: "show" });
     idSource = youtubeIDSource;
-    videoPlayer = youtubeVideoPlayer;
-    binarySearcher = getBinarySearcher(videoPlayer);
-    bookmarks = getBookmarksModule(videoPlayer, idSource);
+    //videoPlayer = youtubeVideoPlayer;
+    videoPlayer = getHtml5VideoObject(pubSub);
+    binarySearcher = getBinarySearcher(pubSub);
+    //bookmarks = getBookmarksModule(videoPlayer, idSource);
+    bookmarks = getBookmarksModuleEventBased(pubSub, videoPlayer, idSource);
     embedUIOnPage(function () {
+        // spotFinderView = getSpotFinderView(pubSub);
+        // bookmarkListView = getBookmarkListView(pubSub);
+        setViewElements(pubSub);
+        resetPubSubEvents();
         changeUIPropertiesDependingOnCurrentState();
         resetAdWatchUICheckInterval();
-        setAppInfo(setPageDom);
+        requestBookmarks();
+        binarySearcher.emitChangeEvent();
+        //setAppInfo(setPageDom);
     });
 }
 var playerWindowSelector = "#player.style-scope.ytd-watch";
@@ -210,125 +247,286 @@ function waitForElementToDisplay(selector, time, functionToRun) {
         }, time);
     }
 }
-function initializeWhenElementIsLoaded(){
-    $(window).on("load", function() { 
-        waitForElementToDisplay("#info", 500, initialize);
-    });
-}
+// function initializeWhenElementIsLoaded(){
+//     $(window).on("load", function() { 
+//         waitForElementToDisplay("#info", 500, initialize);
+//     });
+// }
+// function getSpotFinderView(pubSub, selector){
+//     var selector = selector || "#before-after-section";
+//     let $mainEl = $(selector);
+//     let $startStopButton = $mainEl.find("#startOrStop")
+//     let $goLeftButton = $mainEl.find("#goLeft");
+//     let $goRightButton = $mainEl.find("#goRight");
+//     let $undoButton = $mainEl.find("#undo");
+//     let $leftRightButtons = $mainEl.find("#goLeft, #goRight");
+//     let $progressBarOuter = $mainEl.find(".progress-outer");
+//     let $progressBarInner = $mainEl.find(".progress-inner");
+//     let $progressBarMid = $mainEl.find(".progress-mid");
 
+//     let disableButton = function($buttonEl){
+//         $buttonEl.prop("disabled",true).addClass("btn-disabled");
+//     }
+//     let enableButton = function($buttonEl){
+//         $buttonEl.prop("disabled",false).removeClass("btn-disabled");
+//     }
+//     let setUndoButtonDom = function(binarySearchStatusInfo){
+//         if(binarySearchStatusInfo.isRunning && binarySearchStatusInfo.canUndoLastStep){
+//             enableButton($undoButton);
+//         } else{
+//             disableButton($undoButton);
+//         }
+//     }
+//     let setProgressBarDom = function(binarySearchStatusInfo){
+//         if(binarySearchStatusInfo.isRunning){
+//             $progressBarOuter.show();
+//             var progressBarWidth = $progressBarOuter.width();
+//             var start = binarySearchStatusInfo.start;
+//             var end = binarySearchStatusInfo.end;
+//             var mid = binarySearchStatusInfo.mid;
+//             var duration = binarySearchStatusInfo.duration;
+//             var difference = end - start;
+//             var differencePercentage = difference/duration;
+//             var startOnProgressPercentage = start/duration;
+//             var midPercentage = mid/duration;
+//             var startLeftMid = midPercentage * progressBarWidth;
+//             var startLeft = startOnProgressPercentage * progressBarWidth;
+//             var innerProgressWidth = differencePercentage * progressBarWidth;
+//             $progressBarInner.css({width:innerProgressWidth, left:startLeft});
+//             $progressBarMid.css({left:startLeftMid});
+//         } else{
+//             $progressBarOuter.hide();
+//         }
+//     }
+//     let render = function (binarySearchStatusInfo){
+//         if(binarySearchStatusInfo){
+//             if(binarySearchStatusInfo.isRunning){
+//                 $startStopButton.text("Stop").removeClass("btn-blue").addClass("btn-red");
+//                 $startStopButton.attr("tooltip", "Stop spot finding.");
+//                 enableButton($leftRightButtons);
+//             } else{
+//                 $startStopButton.text("Find").removeClass("btn-red").addClass("btn-blue");
+//                 $startStopButton.attr("tooltip", "Start finding your spot.");
+//                 disableButton($leftRightButtons);
+//             }
+//         }
+//         setUndoButtonDom(binarySearchStatusInfo);
+//         setProgressBarDom(binarySearchStatusInfo);
+//     }
+//     let eventList = new jQEventList();
+//     let requestStartOrStop = function(){
+//         pubSub.emit("startOrStopSearch", {});
+//     }
+//     let requestGoLeft = function(){
+//         pubSub.emit("goLeft", {});
+//     }
+//     let requestGoRight = function(){
+//         pubSub.emit("goRight", {});
+//     }
+//     let requestUndo = function(){
+//         pubSub.emit("undo", {});
+//     }
+//     let setUpEvents = function(){
+//         pubSub.reset("binarySearchDataChanged", render);
+//         eventList.addEventToList($startStopButton, "click.startstop",requestStartOrStop);
+//         eventList.addEventToList($goLeftButton, "click.goleft",requestGoLeft);
+//         eventList.addEventToList($goRightButton, "click.goright",requestGoRight);
+//         eventList.addEventToList($undoButton, "click.undo",requestUndo);
+//         eventList.resetEvents();
+//     }
+//     let init = function(){
+//         setUpEvents();
+//     }
+//     init();
+//     return {render:render};
+// }
+
+// function getBookmarkListView(pubSub, selector){
+//     var selector = selector || "#bookmark-section";
+//     //var selector = selector || "#bookmark-table";
+//     let $mainEl = $(selector);
+//     let $tableEl = $mainEl.find("#bookmark-table");
+//     //let $editButtons = $(".edit-button");
+//     //let $shareButtons = $(".share-button");
+//     let bookmarks = {};
+//     let eventList = new jQEventList();
+//     let requestStartOrStop = function(){
+//         pubSub.emit("startOrStopSearch", {});
+//     }
+//     let requestGoLeft = function(){
+//         pubSub.emit("goLeft", {});
+//     }
+//     let requestGoRight = function(){
+//         pubSub.emit("goRight", {});
+//     }
+//     let requestUndo = function(){
+//         pubSub.emit("undo", {});
+//     }
+//     let getBookmarkArrayFromBookmarkListObject = function(bookmarkListObject){
+//         let bookmarkArray = [];
+//         for (const key in bookmarkListObject) {
+//             if (bookmarkListObject.hasOwnProperty(key)) {
+//                 const element = bookmarkListObject[key];
+//                 if(isNullOrUndefined(element.time)){continue;}
+//                 bookmarkArray.push(element);
+//             }
+//         }
+//         return bookmarkArray;
+//     }
+//     let getHTMLFromBookmark = function(bookmark){
+//         let time = bookmark.time;
+//         time = escapeHTMLString(time);
+//         let bookmarkHasNoDescription = bookmark.description == ""
+//         let description = bookmarkHasNoDescription ? "No Description" : bookmark.description;
+//         let descriptionClass = bookmarkHasNoDescription ? "no-description" : "";
+//         let formattedTime = hhmmss(bookmark.time);
+//         let html = `<tr class="bookmark-row">
+//     <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
+//     <td><span class='description ${descriptionClass}' data-time='${time}'>${escapeHTMLString(description)}</span></td>
+//     <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
+//     <td><button data-time='${time}' class='show-delete-button btn btn-small btn-primary'>Delete</button></td>
+//     <td><button data-time='${time}' class='share-button btn btn-small btn-primary'>Share</button></td>
+//     <tr>`;
+//     return html;
+//     }
+//     let getTableContentsFromBookmarks = function(bookmarkInfo) {
+//         bookmarkInfo = getBookmarkArrayFromBookmarkListObject(bookmarkInfo);
+//         var currentBookmark, html, time, formattedTime, description;
+//         html = "";
+//         if (isEmpty(bookmarkInfo)) {
+//             html += "<tr><td class='note'>No bookmarked times for this video.</td><tr>";
+//             return html;
+//         } else {
+//             for (var i = 0; i < bookmarkInfo.length; i++) {
+//                 currentBookmark = bookmarkInfo[i];
+//                 if (i === 0) {
+//                     html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
+//                 }
+//                 currentBookmark = bookmarkInfo[i];
+//                 html += getHTMLFromBookmark(currentBookmark);
+//             }
+//         }
+//         return $.parseHTML(html);
+        
+//     }
+//     let getBookmarkFromDataViewBookmarks = function(time){
+//         return bookmarks[time.toString()];
+//     }
+//     let bookmarkRowSelector = ".bookmark-row";
+//     let showCreateBookmarkForm = function(e){
+//         e.preventDefault();
+//         var time = $(this).data("time");
+//         var bookmarkData = {time: Math.floor(videoPlayer.getCurrentTime()), description:""};
+//         if(!bookmarkData){ return; }
+//         let bookmarkChangePopup = getBookmarkChangePopup(pubSub, "#bookmark-edit-section");
+//         pubSub.emit("showCreateBookmarkForm",{mode:"create", "bookmark":bookmarkData});
+//     }
+//     let showUpdateBookmarkForm = function(e){
+//         e.preventDefault();
+//         var time = $(this).data("time");
+//         var bookmarkData = getBookmarkFromDataViewBookmarks(time);
+//         if(!bookmarkData){ return; }
+//         let bookmarkChangePopup = getBookmarkChangePopup(pubSub, "#bookmark-edit-section", $(this).closest(bookmarkRowSelector));
+//         pubSub.emit("showUpdateBookmarkForm",{oldTime:time, mode:"edit", "bookmark":bookmarkData});
+//     }
+//     let showShareButtonDialog = function(e){
+//         e.preventDefault();
+//         var time = $(this).data("time");
+//         var videoID = youtubeIDSource.getVideoID();
+//         var link = getTimeLink(videoID, time);
+//         shareLinkPopup = getShareLinkPopup("#share-link", $(this).closest(bookmarkRowSelector));
+//         shareLinkPopup.setLink(link);
+//         shareLinkPopup.show(); 
+//     }
+//     let goToTime = function(e){
+//         e.preventDefault();
+//         var time = $(this).data("time");
+//         videoPlayer.seekToTime(time);
+//     };
+//    let showDeleteBookmarkDialog = function(e){
+//         e.preventDefault();
+//         var time = $(this).data("time");
+//         let deletePopup = getDeletePopup(pubSub, "#delete-panel", $(this).closest(".bookmark-row"));
+//         pubSub.emit("showDeleteBookmarkForm",{time:time});
+//     }
+//     //$(document).on("click.showsavebookmark", '#showSaveBookmark', showCreateBookmarkForm);
+//     //$(document).on("click.edit", ".edit-button", showUpdateBookmarkForm);
+//     //$(document).on("click.share", ".share-button", showShareButtonDialog);
+//     let setUpEvents = function(){
+//         pubSub.reset("bookmarksRetrieved", render);
+//         eventList.addEventToList($tableEl, "click.showsavebookmark",showCreateBookmarkForm, "#showSaveBookmark");
+//         eventList.addEventToList($tableEl, "click.edit",showUpdateBookmarkForm, ".edit-button");
+//         eventList.addEventToList($tableEl, "click.share",showShareButtonDialog, ".share-button");
+//         eventList.addEventToList($tableEl, "click.showdelete",showDeleteBookmarkDialog, ".show-delete-button");
+//         eventList.addEventToList($tableEl, "click.gototime",goToTime, ".time-link");
+//         eventList.resetEvents();
+//     }
+//     let render = function(bookmarkData){
+//         bookmarks = bookmarkData;
+//         $tableEl.html(getTableContentsFromBookmarks(bookmarks));
+//     }
+//     let init = function(){
+//         setUpEvents();
+//     }
+//     init();
+//     return {render:render};
+// }
 function setPageDom(newAppInfo){
     appInfo = newAppInfo || appInfo;
-    setBinarySearchDom(appInfo.binarySearchStatusInfo);
-    setBookmarkDom(appInfo.bookmarkInfo);
-    setPlayButton(appInfo.isPlaying);
-}
-function setPlayButton(isPlaying){
-    if(isPlaying){
-        $("#playOrPause").val("Pause").removeClass("btn-red").addClass("btn-red-inverse");
-    } else{
-        $("#playOrPause").val("Play").removeClass("btn-red-inverse").addClass("btn-red");
-    }
-};
-function setBinarySearchDom(binarySearchStatusInfo){
-    if(binarySearchStatusInfo){
-        let $startStopButton = $("#startOrStop");
-        let $leftRightButtons = $("#goLeft, #goRight");
-        if(binarySearchStatusInfo.isRunning){
-            $startStopButton.text("Stop").removeClass("btn-blue").addClass("btn-red");
-            $startStopButton.attr("tooltip", "Stop spot finding.");
-            $leftRightButtons.prop("disabled",false).removeClass("btn-disabled");
-        } else{
-            $startStopButton.text("Find").removeClass("btn-red").addClass("btn-blue");
-            $startStopButton.attr("tooltip", "Start finding your spot.");
-            $leftRightButtons.prop("disabled",true).addClass("btn-disabled");
-        }
-    }
-    setUndoButtonDom(binarySearchStatusInfo);
-    setProgressBarDom(binarySearchStatusInfo);
-    
-}
-function setUndoButtonDom(binarySearchStatusInfo){
-    if(binarySearchStatusInfo.isRunning && binarySearchStatusInfo.canUndoLastStep){
-        $("#undo").prop("disabled",false).removeClass("btn-disabled");
-    } else{
-        $("#undo").prop("disabled",true).addClass("btn-disabled");
-    }
+    //setBookmarkDom(appInfo.bookmarkInfo);
 }
 
-function getBookmarkArrayFromBookmarkListObject(bookmarkListObject){
-    let bookmarkArray = [];
-    for (const key in bookmarkListObject) {
-        if (bookmarkListObject.hasOwnProperty(key)) {
-            const element = bookmarkListObject[key];
-            if(isNullOrUndefined(element.time)){continue;}
-            bookmarkArray.push(element);
-        }
-    }
-    return bookmarkArray;
-}
-function getHTMLFromBookmark(bookmark){
-            let time = bookmark.time;
-            time = escapeHTMLString(time);
-            let bookmarkHasNoDescription = bookmark.description == ""
-            let description = bookmarkHasNoDescription ? "No Description" : bookmark.description;
-            let descriptionClass = bookmarkHasNoDescription ? "no-description" : "";
-            let formattedTime = hhmmss(bookmark.time);
-            let html = `<tr class="bookmark-row">
-        <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
-        <td><span class='description ${descriptionClass}' data-time='${time}'>${escapeHTMLString(description)}</span></td>
-        <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
-        <td><button data-time='${time}' class='show-delete-button btn btn-small btn-primary'>Delete</button></td>
-        <td><button data-time='${time}' class='share-button btn btn-small btn-primary'>Share</button></td>
-        <tr>`;
-        return html;
-}
-function getTableContentsFromBookmarks(bookmarkInfo) {
-    bookmarkInfo = getBookmarkArrayFromBookmarkListObject(bookmarkInfo);
-    var currentBookmark, html, time, formattedTime, description;
-    html = "";
-    if (isEmpty(bookmarkInfo)) {
-        html += "<tr><td class='note'>No bookmarked times for this video.</td><tr>";
-        return html;
-    } else {
-        for (var i = 0; i < bookmarkInfo.length; i++) {
-            currentBookmark = bookmarkInfo[i];
-            if (i === 0) {
-                html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
-            }
-            currentBookmark = bookmarkInfo[i];
-            html += getHTMLFromBookmark(currentBookmark);
-        }
-    }
-    return $.parseHTML(html);
-}
-function setProgressBarDom(binarySearchStatusInfo){
-    var $progressBarOuter = $(".progress-outer");
-    var $progressBarInner = $(".progress-inner");
-    var $progressBarMid = $(".progress-mid");
-    if(binarySearchStatusInfo.isRunning){
-        $progressBarOuter.show();
-        var progressBarWidth = $progressBarOuter.width();
-        var start = binarySearchStatusInfo.start;
-        var end = binarySearchStatusInfo.end;
-        var mid = binarySearchStatusInfo.mid;
-        var duration = binarySearchStatusInfo.duration;
-        var difference = end - start;
-        var differencePercentage = difference/duration;
-        var startOnProgressPercentage = start/duration;
-        var midPercentage = mid/duration;
-        var startLeftMid = midPercentage * progressBarWidth;
-        var startLeft = startOnProgressPercentage * progressBarWidth;
-        var innerProgressWidth = differencePercentage * progressBarWidth;
-        $progressBarInner.css({width:innerProgressWidth, left:startLeft});
-        $progressBarMid.css({left:startLeftMid});
-    } else{
-        $progressBarOuter.hide();
-    }
-}
+// function getBookmarkArrayFromBookmarkListObject(bookmarkListObject){
+//     let bookmarkArray = [];
+//     for (const key in bookmarkListObject) {
+//         if (bookmarkListObject.hasOwnProperty(key)) {
+//             const element = bookmarkListObject[key];
+//             if(isNullOrUndefined(element.time)){continue;}
+//             bookmarkArray.push(element);
+//         }
+//     }
+//     return bookmarkArray;
+// }
+// function getHTMLFromBookmark(bookmark){
+//             let time = bookmark.time;
+//             time = escapeHTMLString(time);
+//             let bookmarkHasNoDescription = bookmark.description == ""
+//             let description = bookmarkHasNoDescription ? "No Description" : bookmark.description;
+//             let descriptionClass = bookmarkHasNoDescription ? "no-description" : "";
+//             let formattedTime = hhmmss(bookmark.time);
+//             let html = `<tr class="bookmark-row">
+//         <td><a class='time-link' data-time='${time}'>${escapeHTMLString(formattedTime)}</a></td>
+//         <td><span class='description ${descriptionClass}' data-time='${time}'>${escapeHTMLString(description)}</span></td>
+//         <td><button data-time='${time}' class='edit-button btn btn-small btn-primary'>Edit</button></td>
+//         <td><button data-time='${time}' class='show-delete-button btn btn-small btn-primary'>Delete</button></td>
+//         <td><button data-time='${time}' class='share-button btn btn-small btn-primary'>Share</button></td>
+//         <tr>`;
+//         return html;
+// }
+// function getTableContentsFromBookmarks(bookmarkInfo) {
+//     bookmarkInfo = getBookmarkArrayFromBookmarkListObject(bookmarkInfo);
+//     var currentBookmark, html, time, formattedTime, description;
+//     html = "";
+//     if (isEmpty(bookmarkInfo)) {
+//         html += "<tr><td class='note'>No bookmarked times for this video.</td><tr>";
+//         return html;
+//     } else {
+//         for (var i = 0; i < bookmarkInfo.length; i++) {
+//             currentBookmark = bookmarkInfo[i];
+//             if (i === 0) {
+//                 html += `<tr><th>Go To</th><th>Description</th><th>Actions</th><tr>`;
+//             }
+//             currentBookmark = bookmarkInfo[i];
+//             html += getHTMLFromBookmark(currentBookmark);
+//         }
+//     }
+//     return $.parseHTML(html);
+// }
+
 function setBookmarkDom(bookmarkInfo){
-    $('#description').val("");
-    $('#time').text('');
-    $('#bookmark-table').html(getTableContentsFromBookmarks(bookmarkInfo));
+    //$('#description').val("");
+    //$('#time').text('');
+    //$('#bookmark-table').html(getTableContentsFromBookmarks(bookmarkInfo));
 }
 function resetDataForNewPage(){
     binarySearcher.reset();
