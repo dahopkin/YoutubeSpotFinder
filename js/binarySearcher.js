@@ -1,7 +1,8 @@
 //the videoPlayer should have an interface including:
 //seekToTime - a method to go to a certain time.
 //getVideoDuration - a method to get a video's duration.
-var getBinarySearcher = function (videoPlayer) {
+//var getBinarySearcher = function (pubSub, videoPlayer) {
+var getBinarySearcher = function (pubSub) {
     var isRunning = false;
     var start, end, mid;
     var calculateMid = function () { mid = (start + end) / 2; }
@@ -27,13 +28,18 @@ var getBinarySearcher = function (videoPlayer) {
         setStartEndAndMidToDefault();
         clearSearchHistory();
         isRunning = false;
+        emitChangeEvent();
     };
     var startBinarySearcher = function () {
         setStartEndAndMidToDefault();
         isRunning = true;
         goToMid();
+        emitChangeEvent();
     }
-    var goToMid = function () { videoPlayer.seekToTime(mid); }
+    var goToMid = function () { 
+        //videoPlayer.seekToTime(mid); 
+        pubSub.emit("goToTime", {time:mid});
+    }
     var startOrStop = function () {
         if (isRunning) { resetBinarySearcher(); }
         else {
@@ -46,6 +52,9 @@ var getBinarySearcher = function (videoPlayer) {
     };
     var setStartAfterMiddle = function(){start = mid + 1;};
     var setEndBeforeMiddle = function(){end = mid - 1;};
+    var emitChangeEvent = function(){
+        pubSub.emit("binarySearchDataChanged", getBinarySearchStatus());
+    }
     var changeStartOrEndAndJumpToMiddle = function (startOrEndChangeFunction) {
         if (!isRunning) { return; }
         saveCurrentStatusToSearchHistory();
@@ -53,6 +62,7 @@ var getBinarySearcher = function (videoPlayer) {
         calculateMid();
         goToMid();
         endSearchIfNoMoreValidTimes();
+        emitChangeEvent()
     };
     var goLeft = function () {
         changeStartOrEndAndJumpToMiddle(setEndBeforeMiddle);  
@@ -66,6 +76,7 @@ var getBinarySearcher = function (videoPlayer) {
             setStatusFromStatusObject(lastStatusObject);
             goToMid();
             endSearchIfNoMoreValidTimes();
+            emitChangeEvent();
         }
     }
     var getBinarySearchStatus = function(){
@@ -78,6 +89,14 @@ var getBinarySearcher = function (videoPlayer) {
             canUndoLastStep: !searchHistoryIsEmpty(),
           };
     };
+    var pubSubEventList = new PubSubEventList();
+    var setUpPubSubEvents = function(){
+        pubSubEventList.addEventToList("undo", undoLastStep);
+        pubSubEventList.addEventToList("goRight", goRight);
+        pubSubEventList.addEventToList("goLeft", goLeft);
+        pubSubEventList.addEventToList("startOrStopSearch", startOrStop);
+        pubSubEventList.bindEventsToPubSub(pubSub);
+    }();
     return {
         startOrStop: startOrStop,
         goLeft: goLeft,
@@ -85,6 +104,7 @@ var getBinarySearcher = function (videoPlayer) {
         getBinarySearchStatus: getBinarySearchStatus,
         reset:resetBinarySearcher,
         undoLastStep:undoLastStep,
+        emitChangeEvent:emitChangeEvent
 
     };
 };
