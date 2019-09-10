@@ -25,6 +25,7 @@
         , "js/bookmarksModuleEvent.js"
         , "js/idSource.js"
         , "js/actionResult.js"
+        , "js/ui-views.js"
         , "js/youtubejt_cs.js"
         , "js/ui-inject.js" ],
       "css": ["css/ui.css"],
